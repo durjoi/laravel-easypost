@@ -75,3 +75,6 @@ Use Administrator credential to access backend page
 email: admin@tronicspay.com
 password: 123456
 ```
+```
+Added develop branch
+```
