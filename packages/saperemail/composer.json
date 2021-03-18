@@ -1,0 +1,28 @@
+{
+    "name": "saperemarketing/mailer",
+    "description": "Laravel 8 sending emails",
+    "type": "library",
+    "require": {
+        "phpmailer/phpmailer": "^6.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jelson Lanto",
+            "email": "jelson@saperemarketing.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Saperemarketing\\Phpmailer\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Saperemarketing\\Phpmailer\\PhpmailerServiceProvider"
+            ]
+        }
+    }
+}
