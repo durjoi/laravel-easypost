@@ -15,11 +15,21 @@ class CreateOrderItemsTable extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
+            // $table->integer('order_id');
+            // $table->string('name');
+            // $table->string('sku');
+            // $table->integer('quantity');
+            // $table->string('cost', 20);
+            
+            $table->integer('customer_id');
             $table->integer('order_id');
-            $table->string('name');
-            $table->string('sku');
+            $table->integer('product_id');
+            $table->integer('network_id');
+            $table->integer('product_storage_id');
             $table->integer('quantity');
-            $table->string('cost', 20);
+            $table->integer('device_type');
+            $table->string('amount');
+
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Admin\Menu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,8 +24,8 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        $footermenus = \App\Models\Admin\Menu::where('bottom_display', 1)->get();
-        View::share('footermenus', $footermenus);
+    { 
+        // $footermenus = \App\Models\Admin\Menu::where('bottom_display', 1)->get();
+        // View::share('footermenus', $footermenus);
     }
 }

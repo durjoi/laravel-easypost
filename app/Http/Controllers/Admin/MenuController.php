@@ -18,6 +18,7 @@ class MenuController extends Controller
     public function index()
     {
         $data['menus'] = $this->menuRepo->all();
+        $data['module'] = 'menu';
         return view('admin.settings.menus.index', $data);
     }
 }

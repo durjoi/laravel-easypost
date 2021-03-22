@@ -23,36 +23,38 @@
         <div class="card">
           <div class="card-header">
             <div class="float-left">
-              <h4 id="table-header">Both Selling and Buying</h4>
+              <h4 id="table-header">Product List</h4>
             </div>
             <div class="card-tools">
               <div>
-                <div class="form-check form-check-inline">
+                <!-- <div class="form-check form-check-inline">
                   <input class="form-check-input chk-type" name="type_device" type="checkbox" id="chk-buying" value="Buy" checked>
                   <label class="form-check-label" for="chk-buying">Buying</label>
                 </div>
                 <div class="form-check form-check-inline">
                   <input class="form-check-input chk-type" name="type_device" type="checkbox" id="chk-selling" value="Sell" checked>
                   <label class="form-check-label" for="chk-selling">Selling</label>
-                </div>
+                </div> -->
                 <a class="btn btn-primary btn-sm" href="{{ url('admin/products/create') }}">Create Product</a>
               </div>
             </div>
           </div>
           <div class="card-body">
-            <table class="table-hover table-striped text-nowrap table-sm" id="product-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th class="text-center">Photo</th>
-                  <th>Brand</th>
-                  <th>Model</th>
-                  <th>Amount</th>
-                  <th>Type</th>
-                  <th class="text-center">Action</th>
-                </tr>
-              </thead>
-            </table>
+            <div class="table-responsive">
+              <table class="table-hover table-striped text-nowrap table-sm" id="product-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th class="text-center">Photo</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>Color</th>
+                    <th>Other Info</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
             <input type="hidden" id="filtertype" value="Both">
           </div>
         </div>
@@ -76,6 +78,8 @@
 <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
+
+<script src="{{ url('library/js/admin/products/components.js') }}"></script>
 <script type="text/javascript">
 var productTable;
 $(document).ready(function() {
@@ -98,11 +102,11 @@ $(document).ready(function() {
         }, className: "text-center"
       },
       { data: 'photo', name: 'photo', searchable: false, orderable: false, width:'10%', className: "text-center" },
-      { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'15%' },
-      { data: 'model', name: 'model', searchable: true, orderable: true, width:'25%' },
-      { data: 'amount', name: 'amount', searchable: false, orderable: false, width:'20%' },
-      { data: 'type', name: 'type', searchable: false, orderable: false, width:'5%' },
-      { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center" },
+      { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'18%' },
+      { data: 'model', name: 'model', searchable: true, orderable: true, width:'23%' },
+      { data: 'color', name: 'color', searchable: false, orderable: false, width:'9%' }, 
+      { data: 'otherInfo', name: 'otherInfo', searchable: false, orderable: false, width:'25%' },
+      { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
     ]
   });
 
@@ -181,19 +185,19 @@ $(document).ready(function() {
   });
 });
 
-function deleteproduct(id){
-  if(confirm('Are you sure you want to delete this?')){
-    $.ajax({
-      type: "DELETE",
-      url: "{{ url('admin/products') }}/"+id,
-      dataType: "json",
-      success: function (response) {
-        toastr.success('Product has been deleted!')
-        productTable.draw();
-      }
-    });
-  }
-}
+// function deleteproduct(id){
+//   if(confirm('Are you sure you want to delete this?')){
+//     $.ajax({
+//       type: "DELETE",
+//       url: "{{ url('admin/products') }}/"+id,
+//       dataType: "json",
+//       success: function (response) {
+//         toastr.success('Product has been deleted!')
+//         productTable.draw();
+//       }
+//     });
+//   }
+// }
 
 function filter(type){
   if(type == 'Sell'){
@@ -225,11 +229,18 @@ function filter(type){
         }, className: "text-center"
       },
       { data: 'photo', name: 'photo', searchable: false, orderable: false, width:'10%', className: "text-center" },
-      { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'15%' },
+      { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'20%' },
       { data: 'model', name: 'model', searchable: true, orderable: true, width:'25%' },
-      { data: 'amount', name: 'amount', searchable: false, orderable: false, width:'20%' },
       { data: 'type', name: 'type', searchable: false, orderable: false, width:'5%' },
-      { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center" },
+      { data: 'otherInfo', name: 'otherInfo', searchable: false, orderable: false, width:'25%' },
+      { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
+
+      // { data: 'photo', name: 'photo', searchable: false, orderable: false, width:'10%', className: "text-center" },
+      // { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'15%' },
+      // { data: 'model', name: 'model', searchable: true, orderable: true, width:'25%' },
+      // { data: 'type', name: 'type', searchable: false, orderable: false, width:'5%' },
+      // { data: 'otherInfo', name: 'otherInfo', searchable: false, orderable: false, width:'20%' },
+      // { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center" },
     ]
   });
 }
@@ -251,6 +262,7 @@ function duplicate(id){
 }
 
 function percent(amount, offer) {
+  console.log(amount);
   goodPrice = parseFloat($('#good').val());
   fairPrice = parseFloat($('#fair').val());
   poorPrice = parseFloat($('#poor').val());

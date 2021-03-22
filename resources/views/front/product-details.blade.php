@@ -1,6 +1,7 @@
 @extends('layouts.front')
 @section('content')
 <div class="pt-70">
+zxc
   <section>
     <div class="container pt-70 pb-50">
       <div class="row">

@@ -72,9 +72,6 @@ Open `PHPMyAdmin` and import `page_builder.sql` and `run`
 Use Administrator credential to access backend page
 
 ```CREDENTIALS
-email: tronicspay@gmail.com
-password: tronicspay
-```
-```
-Added develop branch
+email: admin@tronicspay.com
+password: 123456
 ```

@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Http\Requests\Admin\BrandRequest;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Http\Requests\Admin\SettingsBrandRequest;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 
 class BrandController extends Controller
 {
@@ -20,6 +20,7 @@ class BrandController extends Controller
 
     public function index()
     {
+        $data['module'] = 'brand';
         $data['types'] = [''=>'Choose Device', 'Mobile'=>'Mobile Device', 'Other'=>'Other Devices'];
         $data['featureList'] = [''=>'No', 1=>'Yes at Row 1', 2=>'Yes at Row 2', 3=>'Yes at Row 3'];
         return view('admin.settings.brands.index', $data);

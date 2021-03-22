@@ -14,6 +14,7 @@ function addtocart(id){
 }
 
 $(function () {
+    alert('asd');
     $('#div-product-list').html('');
     $.ajax({
         url: 'api/web/getproductlist',
@@ -53,4 +54,6 @@ $(function () {
     .fail(function() {
         console.log("error");
     });
+
+
 });

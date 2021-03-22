@@ -84,6 +84,9 @@ class LoginController extends Controller
             if($request['cart']){
                 return redirect()->back();
             }
+            if ($request['from_email'] == true) {
+                return redirect()->to($request['redirect_to_custom_url']);
+            }
             return redirect()->to($this->redirectTo);
         }
     }

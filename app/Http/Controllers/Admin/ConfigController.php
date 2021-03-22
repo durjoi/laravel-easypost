@@ -21,7 +21,9 @@ class ConfigController extends Controller
     public function index()
     {
         $data['config'] = $this->configRepo->find(1);
+        $data['tvsettings'] = true;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
+        $data['module'] = 'config';
         return view('admin.settings.config.index', $data);
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Vinkla\Hashids\HashidsManager;
 
 class User extends Authenticatable
 {
@@ -17,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $guarded = [];
-    protected $appends = ['photo'];
+    protected $appends = ['photo', 'hashedid'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -42,5 +43,10 @@ class User extends Authenticatable
     {
         $name = str_replace(" ", "+", $this->attributes['name']);
         return 'https://ui-avatars.com/api/?name='.$name.'&color=7F9CF5&background=EBF4FF';
+    }
+
+    public function getHashedidAttribute()
+    {
+        return \Hashids::encode($this->id);
     }
 }

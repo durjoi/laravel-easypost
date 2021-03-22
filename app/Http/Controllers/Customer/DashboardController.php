@@ -27,6 +27,7 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $data['module'] = 'dashboard';
         $customer_id = Auth::guard('customer')->user()->id;
         $data['ordercount'] = $this->orderRepo->rawCount("customer_id = ?", $customer_id);
         return view('customer.dashboard', $data);

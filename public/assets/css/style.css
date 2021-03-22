@@ -643,3 +643,41 @@ strong {
     bottom: 5%;
   }
 }
+
+body { 
+  background: #eaeded;
+}
+
+.valign-middle {
+  vertical-align: middle !important;
+}
+.cart-details {
+
+}
+.border-bot1-gray {
+  border-bottom: 1px solid #aaa; 
+}
+.box-gray {
+  border: 1px solid #dfdfdf;
+}
+.mt-10 {
+  margin-top: -10px;
+}
+.pt10 {
+  padding-top: 10px;
+}
+.mb10 {
+  margin-bottom: 10px;
+}
+.pb50 {
+  padding-bottom: 50px;
+}
+.padtb10 {
+  padding: 10px 0 10px 0px;
+}
+.font14 {
+  font-size: 14px;
+}
+.padtb15 {
+    padding: 15px 0 15px 0;
+}

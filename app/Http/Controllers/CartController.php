@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Saperemarketing\SCart\Facades\Cart;
 use Srmklive\PayPal\Services\ExpressCheckout;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
@@ -106,6 +106,22 @@ class CartController extends Controller
             'Bank Transfer' => 'Bank Transfer'
         ];
         return view('front.seller.index', $data);
+    }
+
+    public function cartCheckout () 
+    {
+        $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
+        $data['brands'] = $this->brandRepo->all();
+        $data['paymentList'] = [
+            '' => '--',
+            'Apple Pay' => 'Apple Pay',
+            'Google Pay' => 'Google Pay',
+            'Venmo' => 'Venmo',
+            'Cash App' => 'Cash App',
+            'Paypal' => 'Paypal',
+            'Bank Transfer' => 'Bank Transfer'
+        ];
+        return view("front.cart.checkout", $data);
     }
 
     public function storecheckout(Request $request)

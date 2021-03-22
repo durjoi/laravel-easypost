@@ -47,19 +47,19 @@ function resizeFileUpload($path, $field, $hasfile, $width, $small_default = '', 
           $smallheight = ($imgproperties[0] / $imgproperties[1]) * $smallwidth;
           $filename = $field->getClientOriginalName();
           $extension = $field->getClientOriginalExtension();
-          $file = $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension;
+          $file = $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension;
 
           $small = Image::make($field->getRealPath())->resize($smallheight, $smallwidth);
           $imgsmall = $small->stream();
 
           $full = Image::make($field->getRealPath());
           $imgfull = $full->stream();
-          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension, $imgsmall->__toString(), 'public');
-          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension, $imgfull->__toString(), 'public');
+          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgsmall->__toString(), 'public');
+          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgfull->__toString(), 'public');
 
           return [
-            'small' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension),
-            'full' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension)
+            'small' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension),
+            'full' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension)
           ];
         }
       } else {
@@ -78,15 +78,15 @@ function resizeFileUpload($path, $field, $hasfile, $width, $small_default = '', 
         $smallheight = ($imgproperties[0] / $imgproperties[1]) * $smallwidth;
         $filename = $field->getClientOriginalName();
         $extension = $field->getClientOriginalExtension();
-        $file = $destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension;
+        $file = $destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension;
 
         $small = Image::make($field->getRealPath())->resize($smallheight, $smallwidth);
-        $small->save($destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension, 100);
+        $small->save($destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, 100);
         $field->move($destinationPath, $file);
 
         return [
-          'small' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension,
-          'full' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension
+          'small' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension,
+          'full' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension
         ];
       }
     } else {
@@ -112,19 +112,19 @@ function productFileUpload($path, $field, $hasfile, $width, $small_default = '',
           $smallheight = ($imgproperties[0] / $imgproperties[1]) * $smallwidth;
           $filename = $field->getClientOriginalName();
           $extension = $field->getClientOriginalExtension();
-          $file = $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension;
+          $file = $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension;
 
           $small = Image::make($field->getRealPath())->resize($smallheight, $smallwidth);
           $imgsmall = $small->stream();
 
           $full = Image::make($field->getRealPath());
           $imgfull = $full->stream();
-          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgsmall->__toString(), 'public');
-          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension, $imgfull->__toString(), 'public');
+          Storage::disk('s3')->put($path.'/thumb/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgsmall->__toString(), 'public');
+          Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgfull->__toString(), 'public');
 
           return [
-            'small' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'_small.'.$extension),
-            'full' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension)
+            'small' => Storage::cloud()->url($path.'/thumb/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'_small.'.$extension),
+            'full' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension)
           ];
         }
       } else {
@@ -143,15 +143,15 @@ function productFileUpload($path, $field, $hasfile, $width, $small_default = '',
         $smallheight = ($imgproperties[0] / $imgproperties[1]) * $smallwidth;
         $filename = $field->getClientOriginalName();
         $extension = $field->getClientOriginalExtension();
-        $file = $destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension;
+        $file = $destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension;
 
         $small = Image::make($field->getRealPath())->resize($smallheight, $smallwidth);
-        $small->save($destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, 100);
+        $small->save($destinationPath.'/thumb/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, 100);
         $field->move($destinationPath, $file);
 
         return [
-          'small' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension,
-          'full' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension
+          'small' => $path.'/thumb/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension,
+          'full' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension
         ];
       }
     } else {
@@ -179,19 +179,19 @@ function multipleFileUpload($path, $fields, $hasfile, $width, $small_default = '
             $smallheight = ($imgproperties[0] / $imgproperties[1]) * $smallwidth;
             $filename = $field->getClientOriginalName();
             $extension = $field->getClientOriginalExtension();
-            $file = $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension;
+            $file = $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension;
 
             $small = Image::make($field->getRealPath())->resize($smallheight, $smallwidth);
             $imgsmall = $small->stream();
 
             $full = Image::make($field->getRealPath());
             $imgfull = $full->stream();
-            Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension, $imgsmall->__toString(), 'public');
-            Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension, $imgfull->__toString(), 'public');
+            Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgsmall->__toString(), 'public');
+            Storage::disk('s3')->put($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, $imgfull->__toString(), 'public');
 
             $photos[] = [
-              'small' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension),
-              'full' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension)
+              'small' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension),
+              'full' => Storage::cloud()->url($path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension)
             ];
           }
         }
@@ -211,15 +211,15 @@ function multipleFileUpload($path, $fields, $hasfile, $width, $small_default = '
           $smallheight = ($imgproperties[0] / $imgproperties[1]) * $smallwidth;
           $filename = $field->getClientOriginalName();
           $extension = $field->getClientOriginalExtension();
-          $file = $destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension;
+          $file = $destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension;
 
           $small = Image::make($field->getRealPath())->resize($smallheight, $smallwidth);
-          $small->save($destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension, 100);
+          $small->save($destinationPath.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension, 100);
           $field->move($destinationPath, $file);
 
           $photos[] = [
-            'small' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_small.'.$extension,
-            'full' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).time().'_full.'.$extension
+            'small' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension,
+            'full' => $path.'/'.pathinfo(str_replace(' ', '_', $filename), PATHINFO_FILENAME).'.'.$extension
           ];
         }
       }

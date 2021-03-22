@@ -65,10 +65,10 @@
     <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
     <script type="text/javascript">
-        var brandTable;
+        var statusTable;
         $(document).ready(function() {
             $('#summernote').summernote();
-            brandTable = $('#status-table').DataTable({
+            statusTable = $('#status-table').DataTable({
                 processing: true,
                 serverSide: true,
                 "pagingType": "input",
@@ -111,7 +111,7 @@
                         contentType: false,
                         success: function (response) {
                             $('#modal-brand').modal('hide');
-                            brandTable.draw();
+                            statusTable.draw();
                         }
                     });
                 }
@@ -146,7 +146,7 @@
                     dataType: "json",
                     success: function (response) {
                         alert('Brand has been deleted!');
-                        brandTable.draw();
+                        statusTable.draw();
                     }
                 });
             }

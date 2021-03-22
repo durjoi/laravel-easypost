@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\Admin\PageRepositoryEloquent as Page;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\PageRowRepositoryEloquent as PageRow;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\PageColumnRepositoryEloquent as PageColumn;
@@ -15,6 +16,11 @@ use App\Repositories\Admin\PageContentRepositoryEloquent as PageContent;
 use App\Repositories\Admin\PageSectionRepositoryEloquent as PageSection;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
+use App\Repositories\Admin\PageBuilderRepositoryEloquent as PageBuilder;
+use App\Repositories\Admin\NetworkRepositoryEloquent as NetworkRepo;
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Routing\UrlGenerator;
 
 class FrontPageController extends Controller
 {
@@ -28,8 +34,24 @@ class FrontPageController extends Controller
     protected $productPhotoRepo;
     protected $brandRepo;
     protected $stateRepo;
+    protected $pageBuilderRepo;
+    protected $networkRepo;
+    protected $url;
 
-    function __construct(Page $pageRepo, PageSection $sectionRepo, PageRow $rowRepo, PageColumn $columnRepo, PageContent $contentRepo, PageStatic $staticRepo, Product $productRepo, ProductPhoto $productPhotoRepo, Brand $brandRepo, State $stateRepo)
+
+    function __construct(Page $pageRepo, 
+                         PageSection $sectionRepo, 
+                         PageRow $rowRepo, 
+                         PageColumn $columnRepo, 
+                         PageContent $contentRepo, 
+                         PageStatic $staticRepo, 
+                         Product $productRepo, 
+                         ProductPhoto $productPhotoRepo, 
+                         Brand $brandRepo, 
+                         State $stateRepo, 
+                         PageBuilder $pageBuilderRepo, 
+                         NetworkRepo $networkRepo,
+                         UrlGenerator $url)
     {
         $this->pageRepo = $pageRepo;
         $this->sectionRepo = $sectionRepo;
@@ -41,22 +63,84 @@ class FrontPageController extends Controller
         $this->productPhotoRepo = $productPhotoRepo;
         $this->brandRepo = $brandRepo;
         $this->stateRepo = $stateRepo;
+        $this->pageBuilderRepo = $pageBuilderRepo;
+        $this->networkRepo = $networkRepo;
+        $this->url = $url;
     }
+
+
+    public function handleRequest ($uri) 
+    {
+        $data['page'] = $this->pageBuilderRepo->findByField('url', $uri);
+        if ($data['page']) {
+            $data['page_id'] = $data['page']->id;
+            $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
+        }
+        $page_url = basename(request()->path());
+        
+        /**
+         * start: Products Page
+         */
+        if ($page_url == "products") {
+            return $this->products($data['page_id'] );
+        }
+
+        /**
+         * start: Device Page
+         */
+        if ($page_url == "device") {
+            if(session()->has('result')){
+                return view('front.device.index');
+            }
+            return redirect()->to('/');
+        }
+
+        /**
+         * start: Customer Cart Page
+         */
+        if ($page_url == "cart") {
+            $data['brands'] = $this->brandRepo->all();
+            return view("front.cart.index", $data);
+        }
+        
+        return view('front.pagebuilder.pagehandler', $data);
+    }
+
+
+    public function processRequest ($id) 
+    {
+        return $data['page'] = $this->pageBuilderRepo->find($id);
+        return $id;
+    }
+
 
     public function welcome()
     {
-        $data['page'] = $this->staticRepo->findByField('page_id', 1);
-        $data['rowone'] = $this->brandRepo->rawAll("feature = ?", [1]);
-        $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
-        $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
+        $data['page'] = $this->pageBuilderRepo->findByField('url', '/');
+        // $data['page'] = $this->pageBuilderRepo->find(1);
+        $data['page_id'] = $data['page']->id;
+        $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
+        $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
         return view('welcome', $data);
     }
 
     public function aboutus()
     {
-        $data['page'] = $this->staticRepo->findByField('page_id', 2);
-        return view('front.aboutus', $data);
+
+        $page_url = basename(request()->path());
+
+
+        $data['page'] = $this->pageBuilderRepo->findByField('url', $page_url);
+        return view('front.pagebuilder.aboutus', $data);
+        // $data['page'] = $this->staticRepo->findByField('page_id', 2);
+        // return view('front.aboutus', $data);
     }
+
+    // public function loadAboutUs($id)
+    // {
+    //     $data['page'] = $this->pageBuilderRepo->findByField('url', $page_url);
+    //     return view('front.pagebuilder.aboutus', $data);
+    // }
 
     public function howitworks()
     {
@@ -79,13 +163,36 @@ class FrontPageController extends Controller
         return view('front.custompage', $data);
     }
 
-    public function products()
+    public function products($page_id)
     {
-        $data['products'] = $this->productRepo->rawWith(['photo' => function($query){
-            $query->first();
-        }], "status = ?", ['Active']);
+        $data['page'] = $this->pageBuilderRepo->find($page_id);
+        $data['page_id'] = $data['page']->id;
+        $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
         return view('front.products', $data);
     }
+
+    public function getProductList () 
+    {
+        $products = $this->productRepo->rawWith(['photo' => function($query){
+            $query->first();
+        }], "status = ?", ['Active']);
+        $output['response'] = ($products != null) ? 200 : 204;
+        $output['message'] = ($products != null) ? "Products retrived" : "No Products Found";
+        $output['products'] = $products;
+        return $output;
+    }
+
+    /**
+     * Old Product Method
+     */
+
+    // public function products()
+    // {
+    //     $data['products'] = $this->productRepo->rawWith(['photo' => function($query){
+    //         $query->first();
+    //     }], "status = ?", ['Active']);
+    //     return view('front.products', $data);
+    // }
 
     public function productdetails($model)
     {
@@ -181,5 +288,87 @@ class FrontPageController extends Controller
         }
 
         return response()->json(['content'=>$content]);
+    }
+
+    public function getCartList (Request $request) 
+    {
+        if (!$request->sessionCart) {
+            $data['hasCart'] = false;
+            // return $data['cartHtml'] = base_path()."/public/assets/images/empty-cart.png";
+            $data['cartHtml'] = '<div class="form-group"><img src="/assets/images/empty-cart.png" class="img-fluid"></div>';
+        } else {
+            $data['hasCart'] = true;
+            $data['cartHtml'] = '<div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="mt-10">Your Items</h5>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%"></th>
+                                                            <th width="13%"></th>
+                                                            <th width="34%">Item</th>
+                                                            <th width="16%">Cash Offer</th>
+                                                            <th width="16%">Quantity</th>
+                                                            <th width="16%">SubTotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>';
+                $subTotal = 0;
+                foreach ($request->sessionCart as $key => $value) 
+                {
+                    $device_type = '';
+                    if ($value['device_type'] == 1) {
+                        $device_type = 'Excellent';
+                    } else if ($value['device_type'] == 2) {
+                        $device_type = 'Good';
+                    } else if ($value['device_type'] == 3) {
+                        $device_type = 'Fair';
+                    } else if ($value['device_type'] == 4) {
+                        $device_type = 'Broken';
+                    }
+                    
+                    $network = $this->networkRepo->find($value['cart_id']);
+                    
+                    $brands = $this->brandRepo->findByField('name', $value['brand']);
+                    $product = $this->productRepo->rawWith(['photo'], "brand_id = ? and model = '".$value["model"]."'", [$brands['id']])->first();
+                    
+                    $itemSubTotal = $value['amount'] * $value['quantity'];
+                    $subTotal = $subTotal + $itemSubTotal;
+                    $data['cartHtml'] .= '<tr>
+                                            <td align="center" class="valign-middle">
+                                                <a href="javascript:void(0)" class="removeItem" data-attr-id="'.$key.'">
+                                                    <i class="fa fa-times"></i>
+                                                </a>
+                                            </td>
+                                            <td align="center" class="valign-middle">
+                                                <img src="'.$product['photo']['photo'].'" class="img-fluid">
+                                            </td>
+                                            <td align="left" class="valign-middle font14">
+                                                <b>Model:</b> '.$value['brand'].' '.$value['model'].'<br /> 
+                                                <b>Storage:</b> '.$value['storage'].'<br />
+                                                <b>Carrier:</b> '.$network['title'].'<br />
+                                                <b>Condition: </b> '.$device_type.'
+                                            </td>
+                                            <td align="right" class="valign-middle font14">
+                                                $'.number_format($value['amount'], 2).'
+                                            </td>
+                                            <td align="center" class="valign-middle">
+                                                <input type="number" name="quantity[]" min="1" data-attr-id="'.$key.'" class="form-control cart-item-quantity"  style="width: 75px !important;" value="'.$value['quantity'].'">
+                                            </td>
+                                            <td align="right" class="valign-middle font14">
+                                                $'.number_format($itemSubTotal, 2).'
+                                            </td>
+                                </tr>';
+                }
+
+                                $data['cartHtml'] .= '</tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>';
+                $data['subTotal'] = '$'.number_format($subTotal, 2);
+        }
+        return $data;
     }
 }
