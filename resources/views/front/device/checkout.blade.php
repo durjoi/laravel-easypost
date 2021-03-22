@@ -241,7 +241,6 @@
                     },
                     dataType: "json",
                     success: function (response) {
-                        console.log(response);
                         $('#header').html(brand+' / '+ response.selectedProduct.model);
                         $('#row-devices').slideUp();
                         $('#row-checkout').fadeIn();
@@ -251,7 +250,8 @@
                         $('#device-amount').html('<b>$'+response.amount+'</b>');
                         
                         $.each(response.selectedProduct.networks, function( index, value ) {
-                            $('#section-networks').append('<label class="btn btn-outline-warning radio-btn btn-carrier" data-attr-id="'+value.network_id+'" id="label-carrier-'+value.network_id+'" onClick="selectDeviceCarrier('+value.network_id+')"><img src="'+$('body').attr('data-url')+'/assets/images/network/'+value.network_id+'.png" class="img-fluid"></label>');
+                            var isActive = (index === 0) ? 'active' : '';
+                            $('#section-networks').append('<label class="btn btn-outline-warning radio-btn btn-carrier '+isActive+'" data-attr-id="'+value.network_id+'" id="label-carrier-'+value.network_id+'" onClick="selectDeviceCarrier('+value.network_id+')"><img src="'+$('body').attr('data-url')+'/assets/images/network/'+value.network_id+'.png" class="img-fluid"></label>');
                         });
                     }
                 });

@@ -53,8 +53,8 @@
                         <p>Users</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview {{ ($module == 'config' || $module == 'menu' || $module == 'brand' || $module == 'status') ? 'menu-open' : '' }} ">
-                    <a href="#" class="nav-link {{ ($module == 'config' || $module == 'menu' || $module == 'brand' || $module == 'status') ? 'active' : '' }}">
+                <li class="nav-item has-treeview {{ (isset($tvsettings) && $tvsettings == true) ? 'menu-open' : '' }} ">
+                    <a href="#" class="nav-link {{ (isset($tvsettings) && $tvsettings == true) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cogs"></i>
                         <p>Settings<i class="fas fa-angle-left right"></i></p>
                     </a>
@@ -81,6 +81,12 @@
                     <a href="{{ url('admin/settings/status') }}" class="nav-link {{ (isset($module) && $module == 'status') ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Manage Status</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('admin/settings/categories') }}" class="nav-link {{ (isset($module) && $module == 'category') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage Categories</p>
                     </a>
                 </li>
             </ul>

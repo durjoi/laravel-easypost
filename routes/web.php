@@ -35,12 +35,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class);
     });
 
-    // Route::get('device-sellers', [\App\Http\Controllers\Admin\CustomerSellController::class, 'index']);
-    // Route::post('device-sellers/get-sellers', [\App\Http\Controllers\Admin\CustomerSellController::class, 'getSellers']);
-    // Route::get('device-sellers/{hashedId}/edit', [\App\Http\Controllers\Admin\CustomerSellController::class, 'editSellerDetails']);
-    // Route::get('device-sellers/{hashedId}/customersell/', [\App\Http\Controllers\Admin\CustomerSellController::class, 'getCustomerSell']);
-
-
     Route::get('products/list-all/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'listfile']);
     Route::post('products/getproduct', [\App\Http\Controllers\Admin\ProductController::class, 'getproduct']);
     Route::post('products/postproduct', [\App\Http\Controllers\Admin\ProductController::class, 'postproduct']);
@@ -70,24 +64,34 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     Route::get('pagebuilder/{hashedid}/build/getcontent', ['as' => 'admin.pagebuilder.build.getcontent', 'uses' => 'App\Http\Controllers\Admin\PageBuilderController@getContent']);
 
 
-    Route::get('settings/status', ['as' => 'admin.settings.status', 'uses' => 'App\Http\Controllers\Admin\SettingsStatusController@index']);
-    
+    Route::get('settings/status', ['as' => 'admin.settings.status', 'uses' => 'App\Http\Controllers\Admin\SettingsController@status']);
+    Route::get('settings/categories', ['as' => 'admin.settings.categories', 'uses' => 'App\Http\Controllers\Admin\SettingsController@categories']);
 });
 
 
 
-Route::group(['prefix' => 'api', 'middleware' => ['auth:web']], function() {
-    Route::post('orders/getorders', [\App\Http\Controllers\Admin\OrderController::class, 'getOrders']);
-    Route::post('settings/statuses', [App\Http\Controllers\Api\DatatableController::class, 'GetStatuses']);
-    Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
-    Route::patch('products/{hashedid}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchProduct']);
-    Route::get('modules', ['as' => 'api.modules', 'uses' => 'App\Http\Controllers\Api\ApiController@GetModules']);
-    Route::get('enableoptions', ['as' => 'api.enableoptions', 'uses' => 'App\Http\Controllers\Api\ApiController@GetEnableOptions']);
-    Route::patch('settings/status', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchStatus']);
-    Route::get('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@GetStatusDetails']);
-    Route::delete('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteStatus']);
-    Route::delete('order/{hashedId}/orderitem', ['as' => 'api.order.orderitem', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderItem']);
+Route::group(['prefix' => 'api'], function() {
+    Route::group(['middleware' => ['auth:web']], function() {
+        Route::get('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@GetStatusDetails']);
+        Route::post('settings/statuses', [App\Http\Controllers\Api\DatatableController::class, 'GetStatuses']);
+        Route::patch('settings/status', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchStatus']);
+        Route::delete('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteStatus']);
 
+        Route::post('orders/getorders', [\App\Http\Controllers\Admin\OrderController::class, 'getOrders']);
+        Route::delete('order/{hashedId}/orderitem', ['as' => 'api.order.orderitem', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderItem']);
+
+        Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
+        Route::patch('products/{hashedid}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchProduct']);
+        
+        Route::get('modules', ['as' => 'api.modules', 'uses' => 'App\Http\Controllers\Api\ApiController@GetModules']);
+        Route::get('enableoptions', ['as' => 'api.enableoptions', 'uses' => 'App\Http\Controllers\Api\ApiController@GetEnableOptions']);
+
+        Route::post('settings/categories', [App\Http\Controllers\Api\DatatableController::class, 'GetCategories']);
+        Route::patch('settings/categories', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchCategories']);
+        Route::get('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@GetCategoryDetails']);
+        Route::delete('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteCategory']);
+
+    });
     Route::group(['prefix' => 'cron'], function () {
         Route::get('notifyday7', ['as' => 'api.cron.notifyday7', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay7']);
         Route::get('notifyday29', ['as' => 'api.cron.notifyday29', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay29']);

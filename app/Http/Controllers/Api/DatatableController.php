@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Http\Requests\Admin\ProductDupRequest;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
@@ -20,6 +20,7 @@ use App\Repositories\Customer\CustomerSellRepositoryEloquent as CustomerSell;
 use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Admin\SettingsStatusEloquentRepository as SettingsStatus;
+use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 
 class DatatableController extends Controller
 {
@@ -34,6 +35,7 @@ class DatatableController extends Controller
     protected $orderRepo;
     protected $orderItemRepo;
     protected $settingsStatusRepo;
+    protected $settingsCategoryRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -46,7 +48,8 @@ class DatatableController extends Controller
                         CustomerSell $customerSellRepo, 
                         Order $orderRepo, 
                         OrderItem $orderItemRepo, 
-                        SettingsStatus $settingsStatusRepo
+                        SettingsStatus $settingsStatusRepo, 
+                        SettingsCategory $settingsCategoryRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -60,6 +63,7 @@ class DatatableController extends Controller
         $this->orderRepo = $orderRepo;
         $this->orderItemRepo = $orderItemRepo;
         $this->settingsStatusRepo = $settingsStatusRepo;
+        $this->settingsCategoryRepo = $settingsCategoryRepo;
     }
     
 
@@ -164,6 +168,23 @@ class DatatableController extends Controller
         ->make(true);
     }
     
+
+    public function GetCategories()
+    {
+        $category = $this->settingsCategoryRepo->all();
+        return Datatables::of($category)
+        ->editColumn('name', function($category) {
+            return $category->name;
+        })
+        ->addColumn('action', function ($category) {
+            $html_out  = '';
+            $html_out .= '<a href="javascript:void(0)" onclick="editCategory(\''.$category->hashedid.'\')" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-pencil-alt fa-fw"></i> &nbsp;Edit</a>&nbsp;&nbsp;';
+            $html_out .= '<a href="javascript:void(0)" onclick="deleteCategory(\''.$category->hashedid.'\')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-trash-alt fa-fw"></i> &nbsp;Delete</a>';
+            return $html_out;
+        })
+        ->rawColumns(['name', 'action'])
+        ->make(true);
+    }
     
     
 }

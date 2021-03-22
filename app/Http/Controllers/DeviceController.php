@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Requests\SellRequest;
 use Saperemarketing\Phpmailer\Facades\Mailer;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
@@ -400,6 +400,12 @@ class DeviceController extends Controller
         } else if ($request['payment_method'] == null) {
             $response['status'] = 400;
             $response['message'] = "Payment method field is required";
+        } else if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL)) {
+            $response['status'] = 400;
+            $response['message'] = "Invalid Email Address Format";
+        } else if ($request['account_username'] != null && !filter_var($request['account_username'], FILTER_VALIDATE_EMAIL)) {
+            $response['status'] = 400;
+            $response['message'] = "Invalid Payment Email Address format";
         }
 
         if ($request['payment_method'] == "Bank Transfer") 
@@ -477,24 +483,35 @@ class DeviceController extends Controller
                     $product = $this->productRepo->rawByField("brand_id = ? and model = ?", [$brand->id, $value['model']]);
                     
                     $parcel = $this->parcel($product);
+
                     $shipment = $this->shipping($address, $parcel);
-                    // $ship = $shipment->buy($shipment->lowest_rate());
+                    // // $shipment->buy($shipment->lowest_rate());
+                    // // $shipment->buy($shipment->lowest_rate(array('USPS'), array('First')));
+                    // return $shipment;
+                    
+                    
+                    // $shipment->insure(array('amount' => 100));
+                    
+                    // $shipment->postage_label->label_url;
+                    // return $shipment;
+                    $ship = $shipment->buy($shipment->lowest_rate());
             
-                    // $makeRequest = [
-                    //     'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
-                    //     'product_id' => $product->id,
-                    //     'amount' => $value['amount'],
-                    //     'payment_method' => $value['payment_method'],
-                    //     'account_username' => $value['account_username'],
-                    //     'account_bank' => $value['bank'],
-                    //     'account_name' => $value['account_name'],
-                    //     'account_number' => $value['account_number'],
-                    //     'shipping_label' => $ship->postage_label->label_url,
-                    //     'shipping_fee' => $ship->rates[0]->retail_rate,
-                    //     'tracking_code' => $ship->tracking_code,
-                    //     'carrier' => $ship->rates[0]->carrier,
-                    //     'delivery_days' => $ship->rates[0]->delivery_days
-                    // ];
+                    $makeRequest = [
+                        'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
+                        'product_id' => $product->id,
+                        'amount' => $value['amount'],
+                        'payment_method' => $value['payment_method'],
+                        'account_username' => $value['account_username'],
+                        'account_bank' => $value['bank'],
+                        'account_name' => $value['account_name'],
+                        'account_number' => $value['account_number'],
+                        'shipping_label' => $ship->postage_label->label_url,
+                        'shipping_fee' => $ship->rates[0]->retail_rate,
+                        'tracking_code' => $ship->tracking_code,
+                        'carrier' => $ship->rates[0]->carrier,
+                        'delivery_days' => $ship->rates[0]->delivery_days
+                    ];
+                    return $makeRequest;
                     $productStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$product->id, $value['storage']]);
 
 
@@ -529,6 +546,13 @@ class DeviceController extends Controller
             ];
     
             $htmlResult = '<div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-12" align="center">
+                                        <img src="'.url("./assets/images/logo.png").'" class="img-fluid">
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
                                 <div class="row">
                                     <div class="col-md-12">
                                     <div class="text-center">
@@ -762,7 +786,7 @@ class DeviceController extends Controller
             'city'    => $config->city,
             'state'   => $config->state,
             'zip'     => $config->zip_code,
-            'phone'   => $config->phone
+            'phone'   => $config->phone,
         ]);
 
         $from_address = Address::create([

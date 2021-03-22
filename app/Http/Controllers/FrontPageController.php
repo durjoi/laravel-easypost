@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Admin\PageRepositoryEloquent as Page;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\PageRowRepositoryEloquent as PageRow;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\PageColumnRepositoryEloquent as PageColumn;

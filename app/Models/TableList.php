@@ -8,11 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Tablelist extends Model
 {
 
+    public $paypal_admin = [
+                    'sandbox_account' => 'sb-jcj7x5459425@business.example.com', 
+                    'client_id' => 'AZzP0992muG3HjX47WcmQ2slRRV5AjOBp5Lf2_BEStDtS5sZyMCFkoOOwnEDFhEwi_mtoNWa7DW2Fwrm',
+                    'secret' => 'EO6wqntzqUb5aajIv1l4xNWmJ0p5ZLbLrJJB9E3clGjfbJUEL485ks9f_g2vQjk4VYInnO5e7sJSMfQJ'
+    ];
+
     public $email_support = [
                                 'email' => 'support@lawsheroes.com',
                                 'password' => 'rpg46jWa@tL('
                             ];
     
+    public $networkList = ['AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked','Others'=>'Others'];
+
+    public $storageList = [''=>'--', '32GB'=>'32GB', '64GB'=>'64GB', '128GB'=>'128GB', '256GB'=>'256GB', '512GB'=>'512GB'];
+
     public $smtp = [
         'MAIL_MAILER' => 'smtp',
         'MAIL_HOST' => 'smtp.mailtrap.io',

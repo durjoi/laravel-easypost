@@ -5,13 +5,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h2>Manage Status</h2>
+                        <h2>Manage Categories</h2>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
                             <li class="breadcrumb-item">Settings</li>
-                            <li class="breadcrumb-item active">Manage Status</li>
+                            <li class="breadcrumb-item active">Manage Categories</li>
                         </ol>
                     </div>
                 </div>
@@ -23,19 +23,16 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-tools">
-                                <a href="javascript:void(0)" id="create-status" class="btn btn-primary btn-sm">Create Status</a>
+                                <a href="javascript:void(0)" id="create-category" class="btn btn-primary btn-sm">Create Category</a>
                             </div>
                         </div>
                         <div class="card-body table-responsive">
-                            <table class="table-hover table-striped text-nowrap table-sm" id="status-table">
+                            <table class="table-hover table-striped text-nowrap table-sm" id="category-table">
                                 <thead>
                                     <tr>
-                                        <th class="text-center"></th>
-                                        <th class="text-center">Name</th>
-                                        <th>Module</th>
-                                        <th>Automatic Email</th>
-                                        <th>Default</th>
-                                        <th>Action</th>
+                                        <th></th>
+                                        <th>Category Name</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -56,7 +53,7 @@
 @endsection
 
 @section('page-js')
-    @include('admin.modals.settings.status.modal')
+    @include('admin.modals.settings.categories.modal')
     <script src="{{ url('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
     <script src="{{ url('library/js/admin/settings/components.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
@@ -65,57 +62,29 @@
     <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
     <script type="text/javascript">
-        var statusTable;
+        var categoryTable;
         $(document).ready(function() {
             $('#summernote').summernote();
-            statusTable = $('#status-table').DataTable({
+            categoryTable = $('#category-table').DataTable({
                 processing: true,
                 serverSide: true,
                 "pagingType": "input",
                 ajax: {
-                    url: "{{ url('api/settings/statuses') }}",
+                    url: "{{ url('api/settings/categories') }}",
                     type:'POST'
                 },
                 columns: [
                     {
-                        width:'2%', searchable: false, orderable: false,
+                        width:'5%', searchable: false, orderable: false,
                         render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }, className: "text-center"
                     },
-                    { data: 'name', name: 'name', searchable: true, orderable: true, width:'10%' },
-                    { data: 'module', name: 'module', searchable: true, orderable: true, width:'25%', className: "text-center" },
-                    { data: 'email_sending', name: 'email_sending', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                    { data: 'default', name: 'default', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center"},
+                    { data: 'name', name: 'name', searchable: true, orderable: true, width:'85%' },
+                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center"},
                 ]
             });
 
-
-            $('#brand-form').submit(function(e) {
-                e.preventDefault();
-                if($(this).valid())
-                {
-                    var fdata = new FormData();
-                    var data = $(this).serializeArray();
-                    fdata.append('photo', $("[name='photo']").prop('files')[0]);
-                    $.each(data,function(key,input){
-                        fdata.append(input.name, input.value);
-                    });
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url('admin/settings/brands') }}",
-                        data: fdata,
-                        dataType: "json",
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            $('#modal-brand').modal('hide');
-                            statusTable.draw();
-                        }
-                    });
-                }
-            });
         });
 
         function updatebrand(id){
@@ -146,7 +115,7 @@
                     dataType: "json",
                     success: function (response) {
                         alert('Brand has been deleted!');
-                        statusTable.draw();
+                        categoryTable.draw();
                     }
                 });
             }

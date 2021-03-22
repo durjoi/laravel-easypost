@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Http\Requests\Admin\ProductDupRequest;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
@@ -20,6 +20,8 @@ use App\Repositories\Customer\CustomerSellRepositoryEloquent as CustomerSell;
 use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Admin\SettingsStatusEloquentRepository as Status;
+use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
+use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
 use App\Models\TableList;
 use Saperemarketing\Phpmailer\Facades\Mailer;
 
@@ -37,6 +39,8 @@ class ApiController extends Controller
     protected $orderItemRepo;
     protected $statusRepo;
     protected $tablelist;
+    protected $settingsCategoryRepo;
+    protected $productCategoryRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -50,7 +54,9 @@ class ApiController extends Controller
                         Order $orderRepo, 
                         OrderItem $orderItemRepo, 
                         Status $statusRepo,
-                        TableList $tablelist
+                        TableList $tablelist, 
+                        SettingsCategory $settingsCategoryRepo, 
+                        ProductCategory $productCategoryRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -65,6 +71,8 @@ class ApiController extends Controller
         $this->orderItemRepo = $orderItemRepo;
         $this->statusRepo = $statusRepo;
         $this->tablelist = $tablelist;
+        $this->settingsCategoryRepo = $settingsCategoryRepo;
+        $this->productCategoryRepo = $productCategoryRepo;
     }
 
     public function GetProduct ($id) 
@@ -137,7 +145,6 @@ class ApiController extends Controller
     
     public function PatchStatus (Request $request) 
     {
-        // return $request->all();
         if ($request['id']) {
             $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
             $checkDuplicate = $this->statusRepo->rawByField("name = ? and module = ? and id != ?", [$request['name'], $request['module'], $id]);
@@ -231,6 +238,73 @@ class ApiController extends Controller
         $response['message'] = "Record has been successfully deleted";
         return response()->json($response);  
     }
+
+
+    
+    public function PatchCategories (Request $request) 
+    {
+        if ($request['id']) {
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
+            $checkDuplicate = $this->settingsCategoryRepo->rawByField("name = ? and id != ?", [$request['name'], $id]);
+        } else {
+            $checkDuplicate = $this->settingsCategoryRepo->rawByField("name = ?", [$request['name']]);
+        }
+        if ($checkDuplicate) 
+        {
+            $response['status'] = 400;
+            $response['error'] = $request['name'].' already exists';
+        } 
+        else 
+        {
+            $response['status'] = 200;
+            $response['message'] = 'Status has been successfully saved.';
+            $makeRequest = ['name' => $request['name']];
+            if ($request['id']) 
+            {
+                $this->settingsCategoryRepo->update($makeRequest, $id);
+            }
+            else 
+            {
+                $this->settingsCategoryRepo->create($makeRequest);
+            }
+        }
+        return response()->json($response);   
+    }
+
+    public function GetCategoryDetails ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $response['status'] = 200;
+        $response['model'] = $this->settingsCategoryRepo->rawByField("id = ?", [$id]);
+        return response()->json($response);   
+    }
+
+    public function DeleteCategory ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $checkInUsed = $this->productCategoryRepo->rawByField("category_id = ?", [$id]);
+        $category = $this->settingsCategoryRepo->find($id);
+        if ($checkInUsed) 
+        {
+            $response['status'] = 1010;
+            $response['error'] = "Selected record is currently in used. Cannot be deleted";
+        }
+        else 
+        {
+            $this->settingsCategoryRepo->delete($id);
+            $response['status'] = 200;
+            $response['message'] = "Record has been successfully deleted";
+        }
+        return response()->json($response);  
+    }
+
+
+
+    
+
+    /**
+     * CRON JOBS
+     */
 
     
 

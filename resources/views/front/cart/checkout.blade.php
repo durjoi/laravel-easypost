@@ -96,7 +96,8 @@
                                                     <div class="form-row" id="payment-row"></div>
                                                     <div class="form-group">
                                                         <div class="float-right">
-                                                            <button type="submit" class="btn btn-warning btn-md">Checkout</button>
+                                                            <button type="submit" class="btn btn-warning btn-md" id="btn-checkout">Checkout</button>
+                                                            <button type="button" class="btn btn-warning btn-md disabled hideme" id="btn-checkout-loader"><i class="fas fa-spinner fa-spin"></i> Please wait...</button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -171,10 +172,10 @@
 @section('page-js')
 <script>
     $(function () {
-        $('#sectionPreloader, #checkoutCompletedSection').addClass('hideme');
+        $('#btn-checkout-loader, #checkoutCompletedSection').addClass('hideme');
         $(document).on('submit', '#form-checkout', function () {
-            $('#sectionPreloader').removeClass('hideme');
-            $('#checkoutInProgress').addClass('hideme');
+            $('#btn-checkout-loader').removeClass('hideme');
+            $('#btn-checkout').addClass('hideme');
             var obj = {
                 '_token' : '',
                 'fname' : '',
@@ -218,9 +219,9 @@
                             icon : "warning", 
                             buttons: "Close",
                         })
-                        $('#checkoutInProgress').removeClass('hideme');
+                        $('#btn-checkout').removeClass('hideme');
                     }
-                    $('#sectionPreloader').addClass('hideme');
+                    $('#btn-checkout-loader').addClass('hideme');
                 }
             });
             return false;

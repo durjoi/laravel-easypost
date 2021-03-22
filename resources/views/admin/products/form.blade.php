@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-6">
                         <label class="col-form-label col-form-label-sm">Network</label>
                         <select name="network[]" class="form-control" multiple>
                             @if(count($networkList) >= 1)
@@ -107,8 +107,23 @@
                                 @endforeach
                             @endif
                         </select>
-                        <!-- {!! Form::select('network', $networkList, isset($product->network) ? $product->network : '', ['class'=>'custom-select select-sm']) !!} -->
-                        <!-- <span id="network-exist-error" class="invalid-feedback" style="display: none;">This device is already exist in the database.</span> -->
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label col-form-label-sm">Categories</label>
+                        <select name="categories[]" class="form-control" multiple>
+                            @if(count($categoryList) >= 1)
+                                @foreach($categoryList as $clKey => $clVal)
+                                    <option 
+                                        value="{{ $clVal->id }}" 
+                                        <?php if (isset($product) && $product->categories != null) {?>
+                                            {{ (selectItem($product->categories, 'category_id', $clVal->id) == true) ? ' selected="selected"' : '' }}
+                                        <?php } ?>
+                                    >
+                                        {{ $clVal->name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">

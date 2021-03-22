@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,16 +12,16 @@ use App\Http\Requests\Admin\ProductDupRequest;
 use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
+use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
 use App\Repositories\Admin\NetworkRepositoryEloquent as Network;
 use App\Repositories\Admin\ProductNetworkEloquentRepository as ProductNetwork;
 use App\Repositories\Admin\ProductStorageEloquentRepository as ProductStorage;
 use App\Repositories\Customer\CustomerSellRepositoryEloquent as CustomerSell;
-use App\Repositories\Admin\OrderRepositoryEloquent as Order;
-use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
-use App\Repositories\Admin\SettingsStatusEloquentRepository as SettingsStatus;
+use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
+use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
 
-class BundleController extends Controller
+class SettingsController extends Controller
 {
     protected $brandRepo;
     protected $productRepo;
@@ -31,9 +31,9 @@ class BundleController extends Controller
     protected $productNetworkRepo;
     protected $productStorageRepo;
     protected $customerSellRepo;
-    protected $orderRepo;
-    protected $orderItemRepo;
-    protected $settingsStatusRepo;
+    protected $customerRepo;
+    protected $customerTransactionRepo;
+    protected $stateRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -44,9 +44,9 @@ class BundleController extends Controller
                         ProductNetwork $productNetworkRepo, 
                         ProductStorage $productStorageRepo, 
                         CustomerSell $customerSellRepo, 
-                        Order $orderRepo, 
-                        OrderItem $orderItemRepo, 
-                        SettingsStatus $settingsStatusRepo
+                        Customer $customerRepo, 
+                        CustomerTransaction $customerTransactionRepo, 
+                        State $stateRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -57,35 +57,33 @@ class BundleController extends Controller
         $this->productNetworkRepo = $productNetworkRepo;
         $this->productStorageRepo = $productStorageRepo;
         $this->customerSellRepo = $customerSellRepo;
-        $this->orderRepo = $orderRepo;
-        $this->orderItemRepo = $orderItemRepo;
-        $this->settingsStatusRepo = $settingsStatusRepo;
+        $this->customerRepo = $customerRepo;
+        $this->customerTransactionRepo = $customerTransactionRepo;
+        $this->stateRepo = $stateRepo;
     }
 
-    public function Index () 
+    public function config()
     {
-        $data['module'] = 'mybundles';
-        return view('customer.bundles.index', $data);
-    }
-
-    public function Edit ($hashedId) 
-    {
-        $data['module'] = 'mybundles';
-        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $data['config'] = $this->configRepo->find(1);
-        
-        $data['order'] = $this->orderRepo->rawByWithField(
-                                            [
-                                                'customer', 
-                                                'customer.bill',
-                                                'order_item',
-                                                'order_item.product',
-                                                'order_item.product.brand',
-                                                'order_item.network',
-                                                'order_item.product_storage'
-                                            ], "id = ?", [$id]);
-        $data['hashedId'] = $hashedId;
-        $data['products'] = $this->productRepo->rawWith(['brand','photo','networks.network','storages'], "status = ?", ['Active']);
-        return view('customer.bundles.edit', $data);
+        $data['tvsettings'] = true;
+        $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
+        $data['module'] = 'config';
+        return view('admin.settings.config.index', $data);
+    }
+    
+    public function status () 
+    {
+        $data['module'] = 'status';
+        $data['tvsettings'] = true;
+        $data['config'] = $this->configRepo->find(1);
+        return view('admin.settings.status.index', $data);
+    }
+    
+    public function categories () 
+    {
+        $data['module'] = 'category';
+        $data['tvsettings'] = true;
+        $data['config'] = $this->configRepo->find(1);
+        return view('admin.settings.categories.index', $data);
     }
 }
