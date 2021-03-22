@@ -44,17 +44,17 @@
                                                     <div class="form-row">
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">First Name</label>
-                                                            <input type="text" name="fname" class="form-control form-control-sm" value="Glenn"> <!--Remove value -->
+                                                            <input type="text" name="fname" class="form-control form-control-sm">
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Last Name</label>
-                                                            <input type="text" name="lname" class="form-control form-control-sm" value="Abalos"> <!--Remove value -->
+                                                            <input type="text" name="lname" class="form-control form-control-sm">
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Address Line 1</label>
-                                                            <input type="text" name="address1" class="form-control form-control-sm" value="1214 S Noland Rd"> <!--Remove value -->
+                                                            <input type="text" name="address1" class="form-control form-control-sm">
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Address Line 2 (Optional)</label>
@@ -64,7 +64,7 @@
                                                     <div class="form-row">
                                                         <div class="form-group col-md-4">
                                                             <label class="col-form-label col-form-label-sm">City</label>
-                                                            <input type="text" name="city" class="form-control form-control-sm" value="Independence"> <!--Remove value -->
+                                                            <input type="text" name="city" class="form-control form-control-sm">
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label class="col-form-label col-form-label-sm">State</label>
@@ -72,17 +72,17 @@
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label class="col-form-label col-form-label-sm">Zip Code</label>
-                                                            <input type="text" name="zip_code" class="form-control form-control-sm" value="64055"> <!--Remove value -->
+                                                            <input type="text" name="zip_code" class="form-control form-control-sm">
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Email Address</label>
-                                                            <input type="email" name="email" class="form-control form-control-sm" value="aen00100@gmail.com"> <!--Remove value -->
+                                                            <input type="email" name="email" class="form-control form-control-sm">
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Phone</label>
-                                                            <input type="text" name="phone" class="form-control form-control-sm" value="1-816-886-7285"> <!--Remove value -->
+                                                            <input type="text" name="phone" class="form-control form-control-sm">
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
