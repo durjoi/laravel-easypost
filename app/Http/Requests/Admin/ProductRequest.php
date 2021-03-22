@@ -27,18 +27,17 @@ class ProductRequest extends FormRequest
         return [
             'brand_id' => 'required',
             'name' => 'required',
-            // 'excellent_offer' => 'required_unless:device_type,!=,Sell',
-            // 'good_offer' => 'required_unless:device_type,!=,Sell',
-            // 'fair_offer' => 'required_unless:device_type,!=,Sell',
-            // 'poor_offer' => 'required_unless:device_type,!=,Sell',
-            // 'storage' => 'required',
+            'excellent_offer' => 'required_unless:device_type,!=,Sell',
+            'good_offer' => 'required_unless:device_type,!=,Sell',
+            'fair_offer' => 'required_unless:device_type,!=,Sell',
+            'poor_offer' => 'required_unless:device_type,!=,Sell',
+            'storage' => 'required',
             'height' => 'required',
             'width' => 'required',
             'length' => 'required',
             'weight' => 'required',
-            'photo' => 'required',
-            // 'network' => 'required',
-            // 'amount' => 'required_unless:device_type,!=,Buy'
+            'network' => 'required',
+            'amount' => 'required_unless:device_type,!=,Buy'
         ];
     }
 
@@ -51,8 +50,7 @@ class ProductRequest extends FormRequest
             'good_offer.required_unless' => 'This field is required.',
             'fair_offer.required_unless' => 'This field is required.',
             'poor_offer.required_unless' => 'This field is required.',
-            'amount.required_unless' => 'This field is required.',
-            'photo.required' => 'Device Photo is required.'
+            'amount.required_unless' => 'This field is required.'
         ];
     }
 }

@@ -1,26 +1,13 @@
 @extends('layouts.front')
 @section('content')
-<?php
-    $url = redirect()->getUrlGenerator()->previous();
-    $parts = parse_url($url);
-    $from_email = false;
-    $path = '';
-    if (isset($parts['query']) && $parts['query'] == 'email=true') {
-      parse_str($parts['query'], $query);
-      $from_email = $query['email'];
-      $path = substr($parts['path'], 1);
-    }
-?>
 <div class="pt-70">
-  <div class="container">
+  <div class="container pt-70">
     <div class="row">
       <div class="col-lg-7">
         <h3>Member Login</h3>
         <div class="card">
           <div class="card-body">
             <form action="{{ url('customer/auth/login') }}" method="POST">
-              <input type="hidden" name="redirect_to_custom_url" value="{{ $path }}">
-              <input type="hidden" name="from_email" value="{{ $from_email }}">
               @csrf
               <div class="form-row">
                 <div class="form-group col-md-12">
@@ -58,5 +45,4 @@
     </div>
   </div>
 </div>
-<br />
 @endsection

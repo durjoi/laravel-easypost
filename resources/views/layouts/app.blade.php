@@ -3,31 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ config('app.name') }}</title>
+  <title>{{ config('app.name') }} | Blank Page</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Font Awesome -->
-  <!-- <link rel="stylesheet" href="{{ url('/library/plugins/fontawesome/css/font-awesome.css') }}"> -->
   <link rel="stylesheet" href="{{ url('assets/plugins/fontawesome-free/css/all.min.css') }}">
-  
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- icheck bootstrap -->
   <link rel="stylesheet" href="{{ url('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url('assets/plugins/toastr/toastr.min.css') }}">
-  <link rel="stylesheet" href="{{ url('library/plugins/sweetalert/dist/sweetalert.css') }}">
   @yield('page-css')
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ url('assets/dist/css/adminlte.min.css') }}">
   <link rel="stylesheet" href="{{ url('css/admin-style.css') }}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-
-  
 </head>
-<body class="hold-transition sidebar-mini" data-url="{{ url('/') }}">
+<body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
 <div class="wrapper">
   <!-- Navbar -->
@@ -173,9 +168,6 @@ $.ajaxSetup({
 });
 </script>
 <script src="{{ url('assets/plugins/toastr/toastr.min.js') }}"></script>
-<script type="text/javascript" src="{{ url('library/plugins/sweetalert/sweetalert_old.min.js')}}"></script>
-
-<script src="{{ url('library/js/jsfunctions.js') }}"></script>
 @yield('page-js')
 <script src="{{ url('assets/dist/js/adminlte.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>

@@ -22,10 +22,10 @@
       <div class="col-md-8 offset-md-2">
         <div class="card">
           <div class="card-body">
-            <form action="{{ url('admin/settings/users', $user->hashedid) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url('admin/settings/users', $user->id) }}" method="POST" enctype="multipart/form-data">
               @csrf
               @method('PUT')
-              <input type="hidden" name="hashedid" value="{{ $user->hashedid }}" />
+              <input type="hidden" name="id" value="{{ $user->id }}" />
               @include('admin.settings.users.form')
             </form>
           </div>

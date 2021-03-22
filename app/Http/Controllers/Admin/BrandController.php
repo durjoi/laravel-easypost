@@ -20,7 +20,6 @@ class BrandController extends Controller
 
     public function index()
     {
-        $data['module'] = 'brand';
         $data['types'] = [''=>'Choose Device', 'Mobile'=>'Mobile Device', 'Other'=>'Other Devices'];
         $data['featureList'] = [''=>'No', 1=>'Yes at Row 1', 2=>'Yes at Row 2', 3=>'Yes at Row 3'];
         return view('admin.settings.brands.index', $data);

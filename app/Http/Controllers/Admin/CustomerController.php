@@ -18,8 +18,7 @@ class CustomerController extends Controller
 
     public function index()
     {
-        $data['module'] = 'customer';
-        return view('admin.customers.index', $data);
+        return view('admin.customers.index');
     }
 
     public function getcustomer()

@@ -12,9 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        '/products/sell/payment-method',
-        '/device'
         //
-        // 'admin/pagebuilder/{id}/build'
     ];
 }

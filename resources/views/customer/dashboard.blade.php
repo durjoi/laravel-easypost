@@ -1,133 +1,130 @@
 @extends('layouts.customer')
 @section('content')
-<div class="content-wrapper">
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                <h1>Dashboard</h1>
-                </div>
-                <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ url ('customer/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Dashboard</li>
-                </ol>
-                </div>
-            </div>
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Dashboard</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item">Welcome {{ Auth::guard('customer')->user()->fullname }}!</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h4>My Orders</h4>
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-hover table-striped text-nowrap table-sm" id="order-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th class="text-center">Photo</th>
+                  <th>Order Number</th>
+                  <th>Product Name</th>
+                  <th>SKU</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
         </div>
-    </section>
-
-    <section class="content">
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">My Devices</h3>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                                <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fas fa-times"></i></button> -->
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-striped text-nowrap table-sm" id="dashboard-my-device-table">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Device</th>
-                                                    <th>Storage</th>
-                                                    <th>Status</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">My Bundles</h3>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                                <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fas fa-times"></i></button> -->
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-striped text-nowrap table-sm" id="dashboard-my-bundle-table">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Device</th>
-                                                    <th>Storage</th>
-                                                    <th>Status</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="row" style="padding-top: 50px;">
+      <div class="col-md-12">
+        <h4>My Devices</h4>
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-hover table-striped text-nowrap table-sm" id="device-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Device</th>
+                  <th>Carrier</th>
+                  <th>Storage</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
-@section('page-js')
-    <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
-    <script>
-        var deviceTable;
-        var orderTable;
-        $(document).ready(function () {
 
-            // orderTable = $('#order-table').DataTable({
-            //     processing: true,
-            //     serverSide: true,
-            //     "pagingType": "input",
-            //     ajax: {
-            //         url: "{{ url('customer/getorders') }}",
-            //         type:'POST'
-            //     },
-            //     columns: [
-            //         {
-            //             width:'2%', searchable: false, orderable: false,
-            //             render: function (data, type, row, meta) {
-            //                 return meta.row + meta.settings._iDisplayStart + 1;
-            //             }, className: "text-center"
-            //         },
-            //         { data: 'photo', name: 'photo', searchable: false, orderable: false, width:'10%', className: "text-center" },
-            //         { data: 'order_number', name: 'order_number', searchable: true, orderable: true, width:'15%' },
-            //         { data: 'model', name: 'model', searchable: true, orderable: true, width:'25%' },
-            //         { data: 'sku', name: 'sku', searchable: false, orderable: false, width:'15%', className: "text-center" },
-            //         { data: 'amount', name: 'amount', searchable: false, orderable: false, width:'15%' },
-            //         { data: 'status', name: 'status', searchable: false, orderable: false, width:'15%' },
-            //     ]
-            // });
-        });
-    </script>
+@section('page-css')
+<link rel="stylesheet" href="{{ url('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/datatables-keytable/css/keyTable.bootstrap4.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/datatables-responsive/css/responsive.bootstrap4.css') }}">
+@endsection
+
+@section('page-js')
+<script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
+<script>
+var deviceTable;
+var orderTable;
+$(document).ready(function () {
+  deviceTable = $('#device-table').DataTable({
+    processing: true,
+    serverSide: true,
+    "pagingType": "input",
+    ajax: {
+      url: "{{ url('customer/getdevices') }}",
+      type:'POST'
+    },
+    columns: [
+      {
+        width:'2%', searchable: false, orderable: false,
+        render: function (data, type, row, meta) {
+          return meta.row + meta.settings._iDisplayStart + 1;
+        }, className: "text-center"
+      },
+      { data: 'device', name: 'device', searchable: true, orderable: true, width:'15%' },
+      { data: 'carrier', name: 'carrier', searchable: true, orderable: true, width:'15%' },
+      { data: 'storage', name: 'storage', searchable: false, orderable: false, width:'15%' },
+      { data: 'amount', name: 'amount', searchable: false, orderable: false, width:'15%' },
+      { data: 'status', name: 'status', searchable: false, orderable: false, width:'15%', className: "text-center" },
+    ]
+  });
+
+  orderTable = $('#order-table').DataTable({
+    processing: true,
+    serverSide: true,
+    "pagingType": "input",
+    ajax: {
+      url: "{{ url('customer/getorders') }}",
+      type:'POST'
+    },
+    columns: [
+      {
+        width:'2%', searchable: false, orderable: false,
+        render: function (data, type, row, meta) {
+          return meta.row + meta.settings._iDisplayStart + 1;
+        }, className: "text-center"
+      },
+      { data: 'photo', name: 'photo', searchable: false, orderable: false, width:'10%', className: "text-center" },
+      { data: 'order_number', name: 'order_number', searchable: true, orderable: true, width:'15%' },
+      { data: 'model', name: 'model', searchable: true, orderable: true, width:'25%' },
+      { data: 'sku', name: 'sku', searchable: false, orderable: false, width:'15%', className: "text-center" },
+      { data: 'amount', name: 'amount', searchable: false, orderable: false, width:'15%' },
+      { data: 'status', name: 'status', searchable: false, orderable: false, width:'15%' },
+    ]
+  });
+});
+</script>
 @endsection

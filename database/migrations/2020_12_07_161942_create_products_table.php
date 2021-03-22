@@ -18,11 +18,11 @@ class CreateProductsTable extends Migration
             $table->integer('brand_id');
             $table->string('model');
             $table->string('sku')->nullable();
-            $table->decimal('excellent_offer', $precision = 8, $scale = 2)->nullable();
-            $table->decimal('good_offer', $precision = 8, $scale = 2)->nullable();
-            $table->decimal('fair_offer', $precision = 8, $scale = 2)->nullable();
-            $table->decimal('poor_offer', $precision = 8, $scale = 2)->nullable();
-            $table->decimal('amount', $precision = 8, $scale = 2)->nullable();
+            $table->string('excellent_offer')->nullable();
+            $table->string('good_offer')->nullable();
+            $table->string('fair_offer')->nullable();
+            $table->string('poor_offer')->nullable();
+            $table->string('amount')->nullable();
             $table->string('storage')->nullable();
             $table->text('description')->nullable();
             $table->text('color')->nullable();

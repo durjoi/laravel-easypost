@@ -6,7 +6,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Vinkla\Hashids\HashidsManager;
 
 class Customer extends Authenticatable
 {
@@ -14,7 +13,7 @@ class Customer extends Authenticatable
 
     protected $guard = 'customer';
     protected $guarded = [];
-    protected $appends = ['fullname', 'hashedid'];
+    protected $appends = ['fullname'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -43,22 +42,5 @@ class Customer extends Authenticatable
     public function bill()
     {
         return $this->hasOne(\App\Models\Customer\CustomerAddress::class, 'customer_id');
-    }
-
-    public function sells()
-    {
-        return $this->hasMany(\App\Models\Customer\CustomerSell::class, 'customer_id');
-    }
-
-    public function addresses()
-    {
-        return $this->hasMany(\App\Models\Customer\CustomerAddress::class, 'customer_id');
-    }
-
-    
-
-    public function getHashedidAttribute()
-    {
-        return \Hashids::encode($this->id);
     }
 }

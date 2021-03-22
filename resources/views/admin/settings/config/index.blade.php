@@ -88,7 +88,7 @@
       <div class="row">
         <div class="col-md-5 fn">
           <div class="config-legend">
-            <h4>Price Offer Percentage</h4>
+            <h4>Pirce Offer Percentage</h4>
             <p>Update price percentage base on device condition like less 20% if in good condition. Be reminded that the percentage you input will deduct to the original offer.</p>
           </div>
         </div>

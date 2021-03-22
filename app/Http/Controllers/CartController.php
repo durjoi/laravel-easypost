@@ -108,22 +108,6 @@ class CartController extends Controller
         return view('front.seller.index', $data);
     }
 
-    public function cartCheckout () 
-    {
-        $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
-        $data['brands'] = $this->brandRepo->all();
-        $data['paymentList'] = [
-            '' => '--',
-            'Apple Pay' => 'Apple Pay',
-            'Google Pay' => 'Google Pay',
-            'Venmo' => 'Venmo',
-            'Cash App' => 'Cash App',
-            'Paypal' => 'Paypal',
-            'Bank Transfer' => 'Bank Transfer'
-        ];
-        return view("front.cart.checkout", $data);
-    }
-
     public function storecheckout(Request $request)
     {
         session(['session_rate' => $request['rate']]);

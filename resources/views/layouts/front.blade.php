@@ -8,11 +8,9 @@
 	<link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="{{ url('assets/css/style.css') }}" rel="stylesheet">
 	<link rel="stylesheet" href="{{ url('assets/plugins/fontawesome-free/css/all.min.css') }}">
-  	<link rel="stylesheet" href="{{ url('css/admin-style.css') }}">
-  	<link rel="stylesheet" href="{{ url('library/plugins/sweetalert/dist/sweetalert.css') }}">
 	@yield('page-css')
 </head>
-<body data-url="{{ url('/') }}">>
+<body>
 	@include('partial.front.navbar')
   @yield('content')
   <footer class="section-footer">
@@ -50,14 +48,10 @@
 					<div class="footer-title"><h4 class="footer-subtitle">Navigation</h4></div>
 					<div class="top-margin">
 						<ul class="list-footer">
-							@if(isset($footermenus))
-								@foreach($footermenus as $menu)
-								<li><a href="{{ url($menu->menu_url) }}" class="hvr-shrink">{{ $menu->name }}</a></li>
-								@endforeach
-								@if(isset($isValidAuthentication) && $isValidAuthentication == false)
-								<li><a href="{{ url('customer/auth/login') }}" class="hvr-shrink">Member Login</a></li>
-								@endif
-							@endif
+							@foreach($footermenus as $menu)
+							<li><a href="{{ url($menu->menu_url) }}" class="hvr-shrink">{{ $menu->name }}</a></li>
+							@endforeach
+							<li><a href="{{ url('customer/auth/login') }}" class="hvr-shrink">Member Login</a></li>
 						</ul>
 					</div>
 				</div>
@@ -103,10 +97,7 @@
 	</footer>
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	<script src="https://getbootstrap.com/docs/4.5/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 	<script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
-	<script src="{{ url('assets/dist/js/functions.js') }}"></script>
-	<script type="text/javascript" src="{{ url('library/plugins/sweetalert/sweetalert_old.min.js')}}"></script>
 	<script>
 	$.ajaxSetup({
 		headers: {
@@ -117,15 +108,14 @@
 	@yield('page-js')
 	<script>
 		$(document).ready(function () {
-			$('#cart-counter').html('<i class="fas fa-shopping-cart fa-fw"></i> <span>'+JSON.parse(decryptData(localStorage.getItem("sessionCart"))).length+'</span>');
-			// $.ajax({
-			// 	type: "GET",
-			// 	url: "{{ url('products/cart') }}",
-			// 	dataType: "json",
-			// 	success: function (response) {
-			// 		$('#cart-counter').html('<i class="fas fa-shopping-cart fa-fw"></i> <span>'+response+'</span>');
-			// 	}
-			// });
+			$.ajax({
+				type: "GET",
+				url: "{{ url('products/cart') }}",
+				dataType: "json",
+				success: function (response) {
+					$('#cart-counter').html('<i class="fas fa-shopping-cart fa-fw"></i> <span>'+response+'</span>');
+				}
+			});
 		});
 	</script>
 </body>

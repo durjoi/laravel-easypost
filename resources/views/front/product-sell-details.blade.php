@@ -1,6 +1,6 @@
 @extends('layouts.front')
 @section('content')
-<div class="pt-70">asd
+<div class="pt-70">
   <section>
     <div class="container pt-70 pb-50">
       <div class="row">
@@ -13,7 +13,7 @@
                   <h3 class="mt-0">You choose to sell {{ $product->model }}</h3>
                   <br>
                   <p>
-                    <b>Price Offer: </b>${{ $product->amount }}<br>
+                    <b>Price Offer: </b>${{ number_format($product->buy_amount,2) }}<br>
                     @if($product->dimension)
                     <b>Device Dimension (inches): </b>{{ $product->dimension }}<br>
                     @endif

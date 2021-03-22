@@ -23,8 +23,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules()
     {
-        $hashedid = $this->input('hashedid');
-        $id = isset($hashedid) ? app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedid) : 0;
+        $id = $this->input('id');
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.(($id) ? $id : null).',id',

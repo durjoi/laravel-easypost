@@ -103,11 +103,6 @@ abstract class AbstractRepository
         return $this->query->where($field,'=',$value)->first();
     }
 
-    public function rawByFieldAll($sql, $array)
-    {
-    	return $this->query->whereRaw($sql, $array)->get();
-    }
-
     public function getWhereIn($field, array $array, $ordervalue = null, $sortorder = null, $columns = array('*'))
     {
     	$order = is_null($ordervalue) ? 'id' : $ordervalue;
@@ -121,26 +116,6 @@ abstract class AbstractRepository
         $sort = is_null($sortorder) ? 'asc' : $sortorder;
     	return $this->query->whereNotIn($field, $array)->orderBy($order,$sort)->get($columns);
     }
-
-    public function rawByWithField($relations, $sql, $array)
-    {
-    	return $this->query->with($relations)->whereRaw($sql, $array)->first();
-    }
-
-    public function rawByWithFieldAll($relations, $sql, $array)
-    {
-    	return $this->query->with($relations)->whereRaw($sql, $array)->get();
-    }
-
-    public function rawByWithFieldWhereIn($relations, $field, $value)
-    {
-    	return $this->query->with($relations)->whereIn($field, $value)->get();
-    }
-
-    // public function rawByFieldAllWith($relations, $sql, $array)
-    // {
-    //     return $this->query->with($relations)->where($sql, $array)->get();
-    // }
 
     public function rawByField($sql, $array)
     {

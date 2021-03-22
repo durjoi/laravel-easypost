@@ -22,7 +22,6 @@ class ConfigController extends Controller
     {
         $data['config'] = $this->configRepo->find(1);
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
-        $data['module'] = 'config';
         return view('admin.settings.config.index', $data);
     }
 

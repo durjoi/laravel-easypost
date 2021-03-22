@@ -17,14 +17,14 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('fname');
             $table->string('lname');
-            $table->string('username');
+            $table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('status')->default('Active')->nullable();
             $table->string('photo')->nullable();
             $table->string('payment_method')->nullable();
-            $table->string('account_username')->unique()->nullable();
+            $table->string('account_username')->nullable();
             $table->string('account_name')->nullable();
             $table->string('account_number')->nullable();
             $table->string('bank')->nullable();
