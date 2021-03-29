@@ -14,7 +14,7 @@ class Product extends Model
 
     public function brand()
     {
-        return $this->belongsTo(\App\Models\Admin\Brand::class, 'brand_id');
+        return $this->belongsTo(\App\Models\Admin\SettingsBrand::class, 'brand_id');
     }
 
     public function photos()
@@ -35,6 +35,11 @@ class Product extends Model
     public function storages()
     {
         return $this->hasMany(\App\Models\Admin\ProductStorage::class, 'product_id');
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(\App\Models\Admin\ProductCategory::class, 'product_id');
     }
 
     public function storagesForBuying()

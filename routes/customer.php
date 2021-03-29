@@ -23,6 +23,7 @@ Route::group(['prefix' => 'customer'], function() {
 
         Route::get('my-bundles', [\App\Http\Controllers\Customer\BundleController::class, 'index']);
         Route::get('my-bundles/{hashedId}', [\App\Http\Controllers\Customer\BundleController::class, 'edit']);
+        Route::get('my-bundles/{hashedId}/generatePDF', [\App\Http\Controllers\Admin\OrderController::class, 'generatePDF']);
 
         Route::get('profile', [\App\Http\Controllers\Customer\ProfileController::class, 'index']);
     });

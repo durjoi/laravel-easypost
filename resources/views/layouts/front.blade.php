@@ -54,8 +54,12 @@
 								@foreach($footermenus as $menu)
 								<li><a href="{{ url($menu->menu_url) }}" class="hvr-shrink">{{ $menu->name }}</a></li>
 								@endforeach
-								@if(isset($isValidAuthentication) && $isValidAuthentication == false)
-								<li><a href="{{ url('customer/auth/login') }}" class="hvr-shrink">Member Login</a></li>
+								@if(isset($isValidAuthentication)) 
+									@if(isset($isValidAuthentication) && $isValidAuthentication == false)
+									<li><a href="{{ url('customer/auth/login') }}" class="hvr-shrink">Member Login</a></li>
+									@elseif(isset($isValidAuthentication) && $isValidAuthentication == true)
+									<li><a href="{{ url('customer/dashboard') }}" class="hvr-shrink">Back to Dashboard</a></li>
+									@endif
 								@endif
 							@endif
 						</ul>
@@ -117,15 +121,9 @@
 	@yield('page-js')
 	<script>
 		$(document).ready(function () {
-			$('#cart-counter').html('<i class="fas fa-shopping-cart fa-fw"></i> <span>'+JSON.parse(decryptData(localStorage.getItem("sessionCart"))).length+'</span>');
-			// $.ajax({
-			// 	type: "GET",
-			// 	url: "{{ url('products/cart') }}",
-			// 	dataType: "json",
-			// 	success: function (response) {
-			// 		$('#cart-counter').html('<i class="fas fa-shopping-cart fa-fw"></i> <span>'+response+'</span>');
-			// 	}
-			// });
+			if (localStorage.getItem("sessionCart")) {
+				$('#cart-counter').html('<i class="fas fa-shopping-cart fa-fw"></i> <span>'+JSON.parse(decryptData(localStorage.getItem("sessionCart"))).length+'</span>');
+			}
 		});
 	</script>
 </body>

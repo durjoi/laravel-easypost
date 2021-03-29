@@ -1,5 +1,5 @@
 <?php
-    $shippingFee = 10;
+    $shippingFee = ($order['shipping_fee']) ? $order['shipping_fee']  : 0;
     $overallSubTotal = 0;
 ?>
 <div class="row">
@@ -40,7 +40,7 @@
                             <b>Transaction #{{ $order['order_no'] }}</b><br />
                             <br />
                             <b>Tracking Code:</b> {{ $order['tracking_code'] }}<br />
-                            <b>Status:</b> {{ $order['status']['name'] }}<br />
+                            <b>Status:</b> {{ strtoupper(str_replace("_", " ", $order['shipping_status'])) }}<br />
                             <b>Delivery Due:</b> {{ $order['display_delivery_due'] }}<br />
                         </div>
                     </div>
@@ -181,6 +181,25 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="{{ url('customer/my-bundles/'.$hashedId.'/generatePDF') }}" class="btn btn-danger btn-sm pull-right">
+                                        <i class="fas fa-download"></i> Generate PDF
+                                    </a>
+                                    @if($order['shipping_tracker'] != '')
+                                    <a href="{{ $order['shipping_tracker'] }}" class="btn btn-primary btn-sm pull-right" target="_blank">
+                                        <i class="fas fa-file-alt fa-fw"></i> Track Order
+                                    </a>
+                                    @endif
+                                    @if($order['shipping_label'] != '')
+                                    <a href="{{ $order['shipping_label'] }}" class="btn btn-success btn-sm pull-right" target="_blank">
+                                        <i class="fa fa-eye"></i> Shipping Label
+                                    </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

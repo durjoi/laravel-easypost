@@ -68,10 +68,10 @@
     <script>
     $(document).ready(function() {
         <?php if(session()->has('msg')){ ?>
-            toastr.success('<?php echo session('msg'); ?>')
+            swalWarning ("Congratulations", "<?php echo session('msg'); ?>", "success", "Close");
         <?php } ?>
         <?php if(session()->has('errormsg')){ ?>
-            toastr.error('<?php echo session('errormsg'); ?>')
+            swalWarning ("Oops", "<?php echo session('errormsg'); ?>", "waarning", "Close");
         <?php } ?>
         $('.textarea').summernote({
             tabsize: 2,

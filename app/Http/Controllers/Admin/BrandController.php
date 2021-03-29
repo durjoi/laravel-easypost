@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Http\Requests\Admin\BrandRequest;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Http\Requests\Admin\SettingsBrandRequest;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 
 class BrandController extends Controller
 {

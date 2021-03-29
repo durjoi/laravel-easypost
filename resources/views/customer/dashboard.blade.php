@@ -71,13 +71,12 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsivex">
                                         <table class="table table-hover table-striped text-nowrap table-sm" id="dashboard-my-bundle-table">
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>Device</th>
-                                                    <th>Storage</th>
+                                                    <th>Transaction No</th>
                                                     <th>Status</th>
                                                     <th></th>
                                                 </tr>

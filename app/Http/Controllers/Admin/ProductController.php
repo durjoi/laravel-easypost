@@ -9,13 +9,16 @@ use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Http\Requests\Admin\ProductDupRequest;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
 use App\Repositories\Admin\NetworkRepositoryEloquent as NetworkRepo;
-use App\Repositories\Admin\ProductNetworkEloquentRepository as ProductNetworkRepo;
-use App\Repositories\Admin\ProductStorageEloquentRepository as ProductStorageRepo;
+use App\Repositories\Admin\ProductNetworkEloquentRepository as ProductNetwork;
+use App\Repositories\Admin\ProductStorageEloquentRepository as ProductStorage;
+use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
+use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
+use App\Models\TableList as Tablelist;
 
 class ProductController extends Controller
 {
@@ -26,6 +29,9 @@ class ProductController extends Controller
     protected $networkRepo;
     protected $productNetworkRepo;
     protected $productStorageRepo;
+    protected $settingsCategoryRepo;
+    protected $productCategoryRepo;
+    protected $tablelist;
 
     function __construct(
                         Brand $brandRepo, 
@@ -33,8 +39,11 @@ class ProductController extends Controller
                         ProductPhoto $productPhotoRepo, 
                         Config $configRepo, 
                         NetworkRepo $networkRepo, 
-                        ProductNetworkRepo $productNetworkRepo, 
-                        ProductStorageRepo $productStorageRepo
+                        ProductNetwork $productNetworkRepo, 
+                        ProductStorage $productStorageRepo, 
+                        SettingsCategory $settingsCategoryRepo,
+                        ProductCategory $productCategoryRepo,
+                        Tablelist $tablelist
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -44,12 +53,17 @@ class ProductController extends Controller
         $this->networkRepo = $networkRepo;
         $this->productNetworkRepo = $productNetworkRepo;
         $this->productStorageRepo = $productStorageRepo;
+        $this->settingsCategoryRepo = $settingsCategoryRepo;
+        $this->productCategoryRepo = $productCategoryRepo;
+        $this->tablelist = $tablelist;
     }
 
     public function index()
     {
-        $data['storageList'] = [''=>'--','32GB'=>'32GB','64GB'=>'64GB','128GB'=>'128GB','256GB'=>'256GB'];
-        $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked','Others'=>'Others'];
+        // $data['storageList'] = $this->tablelist->storageList;
+        $data['storageList'] = [''=>'--','32GB', '64GB','128GB','256GB','512GB'];
+        // $data['networkList'] = $this->tablelist->networkList;
+        $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
         return view('admin.products.index', $data);
@@ -57,6 +71,7 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
+        // return $request->all();
         $device_type = $request['device_type'];
         $user_id = Auth::user()->id;
         // $chkdup = $this->productRepo->rawCount("brand_id = ? and device_type = ? and model = ? and color = ?", [$request['brand_id'], $request['device_type'], $request['name'], $request['color']]);
@@ -72,6 +87,12 @@ class ProductController extends Controller
                 if(isset($request['network']) && $request['network'] != null) {
                     foreach ($request['network'] as $nKey => $nVal) {
                         $this->createProductNetwork($product->id, $nVal);
+                    }
+                }
+
+                if(isset($request['categories']) && $request['categories'] != null) {
+                    foreach ($request['categories'] as $cKey => $cVal) {
+                        $this->createProductCategory($product->id, $cVal);
                     }
                 }
                 if (isset($request['storage']) && $request['storage'] != null) {
@@ -160,9 +181,9 @@ class ProductController extends Controller
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
-        $data['storageList'] = [''=>'--','32GB'=>'32GB','64GB'=>'64GB','128GB'=>'128GB','256GB'=>'256GB','512GB'=>'512GB'];
         // $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
-        // $data['storageList'] = ['32GB', '64GB','128GB','256GB','512GB'];
+        $data['storageList'] = $this->tablelist->storageList;
+        $data['categoryList'] = $this->settingsCategoryRepo->all();
         $data['networkList'] = $this->networkRepo->all();
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
@@ -173,7 +194,6 @@ class ProductController extends Controller
 
     public function update(Request $request, $hashedId)
     {
-        // return $request->all();
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $device_type = $request['device_type'];
         $user_id = Auth::user()->id;
@@ -197,6 +217,14 @@ class ProductController extends Controller
                 }
             }
 
+            if(isset($request['categories']) && $request['categories'] != null) {
+                foreach ($request['categories'] as $cKey => $cVal) {
+                    if ($this->productCategoryRepo->rawCount("product_id = ? and category_id = ?", [$id, $cVal]) == 0){
+                        $this->createProductCategory($product->id, $cVal);
+                    }
+                }
+            }
+
             if (isset($request['storage']) && $request['storage'] != null) {
                 $this->createProductStorageList($request, $product->id);
             }
@@ -209,6 +237,11 @@ class ProductController extends Controller
             foreach ($this->productNetworkRepo->findByFieldAll('product_id', $id) as $pnrKey => $pnrVal) {
                 if (!in_array($pnrVal['network_id'], $request['network'])) {
                     $this->productNetworkRepo->delete($pnrVal['id']);
+                }
+            }
+            foreach ($this->productCategoryRepo->findByFieldAll('product_id', $id) as $pcrKey => $pcrVal) {
+                if (!in_array($pcrVal['category_id'], $request['categories'])) {
+                    $this->productCategoryRepo->delete($pcrVal['id']);
                 }
             }
 
@@ -293,9 +326,10 @@ class ProductController extends Controller
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
-        $data['storageList'] = [''=>'--','32GB'=>'32GB','64GB'=>'64GB','128GB'=>'128GB','256GB'=>'256GB','512GB'=>'512GB'];
+        // $data['storageList'] = $this->tablelist->storageList;
         // $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
-        // $data['storageList'] = ['32GB', '64GB','128GB','256GB','512GB'];
+        $data['storageList'] = $this->tablelist->storageList;
+        $data['categoryList'] = $this->settingsCategoryRepo->all();
         $data['networkList'] = $this->networkRepo->all();
         $data['config'] = $this->configRepo->find(1);
         $data['hashedId'] = $hashedId;
@@ -628,6 +662,13 @@ class ProductController extends Controller
         $request = ['product_id' => $product_id, 'title' => $title];
         $this->productStorageRepo->create($request);
     }
+
+    private function createProductCategory($product_id, $category_id) 
+    {
+        $request = ['product_id' => $product_id, 'category_id' => $category_id];
+        $this->productCategoryRepo->create($request);
+    }
+
 
     private function populateProductBuy($arr_storage, $product_id) 
     {

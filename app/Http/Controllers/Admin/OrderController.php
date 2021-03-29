@@ -37,18 +37,23 @@ class OrderController extends Controller
     public function getOrders (Request $request) 
     {
         $orders = $this->orderRepo->rawWith([
-                                                            'customer',
-                                                            'order_item', 
-                                                            'order_item.customer',
-                                                            'order_item.product', 
-                                                            'order_item.product.brand', 
-                                                            'order_item.product.photo', 
-                                                            'order_item.network', 
-                                                        ], 
-                                                        "1 = ?", 
-                                                        [1]);
+                                                'customer',
+                                                'order_item', 
+                                                'order_item.customer',
+                                                'order_item.product', 
+                                                'order_item.product.brand', 
+                                                'order_item.product.photo', 
+                                                'order_item.network', 
+                                            ], 
+                                            "1 = ?", 
+                                            [1], 
+                                            'id', 'desc');
                                                         
         return Datatables::of($orders)
+        ->editColumn('tracking_code', function($orders) {
+            $html  = $orders['tracking_code'];
+            return $html;
+        })
         ->editColumn('seller_name', function($orders) {
             $html  = $orders['customer']['fullname'];
             return $html;
@@ -58,11 +63,11 @@ class OrderController extends Controller
             return $html;
         })
         ->editColumn('status', function($orders) {
-            $html  = $orders['status']['name'];
+            $html  = strtoupper(str_replace("_", " ", $orders['shipping_status']));
             return $html;
         })
         ->editColumn('transaction_date', function($orders) {
-            $html  = $orders['display_transaction_date'];
+            $html  = '<center>'.$orders['display_transaction_date'].'</center>';
             return $html;
         })
         ->editColumn('delivery_due', function($orders) {
@@ -74,6 +79,12 @@ class OrderController extends Controller
             $html_out .= '<div class="dropdown">';
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                if ($orders['shipping_label'] != '') {
+                    $html_out .= '<a class="dropdown-item" href="'.$orders['shipping_label'].'" target="_blank">Shipping Label</a>';
+                }
+                if ($orders['shipping_tracker'] != '') {
+                    $html_out .= '<a class="dropdown-item" href="'.$orders['shipping_tracker'].'" target="_blank">Track Order</a>';
+                }
                     $html_out .= '<a class="dropdown-item" href="'.url('admin/orders/'.$orders['hashedid']).'/edit">Edit</a>';
                     $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="deleteproduct(\''.$orders['hashedid'].'\')">Delete</a>';
                 $html_out .= '</div>';
@@ -81,7 +92,7 @@ class OrderController extends Controller
             return $html_out;
         })
         // ->rawColumns(['photo', 'action', 'model','brand','amount'])
-        ->rawColumns(['order_no', 'seller_name', 'status', 'transaction_date', 'delivery_due', 'action'])
+        ->rawColumns(['tracking_code', 'order_no', 'seller_name', 'status', 'transaction_date', 'delivery_due', 'action'])
         ->make(true);
     }
 
@@ -116,7 +127,6 @@ class OrderController extends Controller
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $config = $this->configRepo->find(1);
         
-        $shippingFee = 10;
         $overallSubTotal = 0;
         $counter = 1;
 
@@ -131,6 +141,7 @@ class OrderController extends Controller
                                                         'order_item.product_storage'
                                                     ], "id = ?", [$id]);
 
+        $shippingFee = $customer_transaction['shipping_fee'];
         $generateHtml = '<html>
                             <head>
                                 <style>
@@ -246,7 +257,7 @@ class OrderController extends Controller
                                                 <div class="pad10rem"><b>Transaction #'.$customer_transaction['order_no'].'</b></div>
                                                 <br />
                                                 <div class="pad10rem"><b>Tracking Code:</b> '.$customer_transaction['tracking_code'].'<br /></div>
-                                                <div class="pad10rem"><b>Status:</b> '.$customer_transaction['status'].'<br /></div>
+                                                <div class="pad10rem"><b>Status:</b> '.strtoupper(str_replace("_", " ", $customer_transaction['shipping_status'])).'<br /></div>
                                                 <div class="pad10rem"><b>Delivery Due:</b> '.$customer_transaction['display_delivery_due'].'<br /></div>
                                             </td>
                                         </tr>

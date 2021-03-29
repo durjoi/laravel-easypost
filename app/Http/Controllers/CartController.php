@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Saperemarketing\SCart\Facades\Cart;
 use Srmklive\PayPal\Services\ExpressCheckout;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;

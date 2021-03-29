@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Http\Requests\Admin\ProductDupRequest;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
@@ -100,14 +100,17 @@ class DatatableController extends Controller
             return $order_items->quantity;
         })
         ->editColumn('status', function ($order_items) {
-            return '<center><small class="badge badge-warning">Pending</small></center>';
+            return '<center><small class="badge badge-warning">'.strtoupper(str_replace("_", " ", $order_items['order']['shipping_status'])).'</small></center>';
         })
         ->addColumn('action', function ($order_items) {
             $html_out  = '';
-            $html_out .= '<center>';
-            $html_out .= '<a href="'.url('customer/my-devices/'.$order_items['hashedid']).'" class="btn btn-xs btn-primary"><i class="fa fa-pencil-alt fa-fw"></i></a>';
-            $html_out .= '<a href="javascript:void(0)" onclick="deleteStatus('.$order_items['hashedid'].')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-trash-alt fa-fw"></i></a>';
-            $html_out .= '</center>';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                $html_out .= '<a class="dropdown-item font14px" href="'.url('customer/my-devices/'.$order_items['hashedid']).'"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteStatus(\''.$order_items['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
             return $html_out;
         })
         ->rawColumns(['device', 'storage', 'quantity', 'status', 'action'])
@@ -155,14 +158,17 @@ class DatatableController extends Controller
             return '<div class="pull-right">$'.number_format($order_items->amount, 2, '.', ',').'</div>';
         })
         ->editColumn('status', function ($order_items) {
-            return '<center><small class="badge badge-warning">Pending</small></center>';
+            return '<center><small class="badge badge-warning">'.strtoupper(str_replace("_", " ", $order_items['order']['shipping_status'])).'</small></center>';
         })
         ->addColumn('action', function ($order_items) {
             $html_out  = '';
-            $html_out .= '<center>';
-            $html_out .= '<a href="'.url('customer/my-devices/'.$order_items['hashedid']).'" class="btn btn-xs btn-primary"><i class="fa fa-pencil-alt fa-fw"></i></a>';
-            $html_out .= '<a href="javascript:void(0)" onclick="deleteStatus('.$order_items['hashedid'].')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-trash-alt fa-fw"></i></a>';
-            $html_out .= '</center>';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                $html_out .= '<a class="dropdown-item font14px" href="'.url('customer/my-devices/'.$order_items['hashedid']).'"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteStatus(\''.$order_items['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
             return $html_out;
         })
         ->rawColumns(['device', 'carrier', 'storage', 'quantity', 'amount', 'status', 'action'])
@@ -179,23 +185,32 @@ class DatatableController extends Controller
         ->editColumn('order_no', function($orders) {
             return $orders->order_no;
         })
-        ->editColumn('tracking_code', function($orders) {
-            $html_out  = '';
-            $html_out .= '<center>'.$orders->tracking_code.'</center>';
-            return $html_out;
-        })
-        ->editColumn('shipping_label', function($orders) {
-            return '<center>'.$orders->shipping_label.'</center>';
+        // ->editColumn('tracking_code', function($orders) {
+        //     $html_out  = '';
+        //     $html_out .= '<center>'.$orders->tracking_code.'</center>';
+        //     return $html_out;
+        // })
+        ->editColumn('shipping_status', function($orders) {
+            return '<center>'.strtoupper(str_replace("_", " ", $orders['shipping_status'])).'</center>';
         })
         ->addColumn('action', function ($orders) {
             $html_out  = '';
-            $html_out .= '<center>';
-            $html_out .= '<a href="'.url('customer/my-bundles/'.$orders['hashedid']).'" class="btn btn-xs btn-primary"><i class="fa fa-pencil-alt fa-fw"></i></a>';
-            $html_out .= '<a href="javascript:void(0)" onclick="deleteStatus('.$orders['hashedid'].')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-trash-alt fa-fw"></i></a>';
-            $html_out .= '</center>';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                if ($orders['shipping_label'] != '') {
+                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
+                }
+                if ($orders['shipping_tracker'] != '') {
+                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="nav-icon fas fa-file-alt fa-fw"></i> Track Order</a>';
+                }
+                $html_out .= '<a class="dropdown-item font14px" href="'.url('customer/my-bundles/'.$orders['hashedid']).'"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteStatus(\''.$orders['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
             return $html_out;
         })
-        ->rawColumns(['order_no', 'tracking_code', 'shipping_label', 'action'])
+        ->rawColumns(['order_no', 'shipping_status', 'action'])
         ->make(true);
     }
 
@@ -214,8 +229,8 @@ class DatatableController extends Controller
             $html_out .= '<center>'.$orders->tracking_code.'</center>';
             return $html_out;
         })
-        ->editColumn('shipping_label', function($orders) {
-            return '<center>'.$orders->shipping_label.'</center>';
+        ->editColumn('shipping_status', function($orders) {
+            return '<center>'.strtoupper(str_replace("_", "", $orders->shipping_status)).'</center>';
         })
         ->editColumn('transaction_date', function($orders) {
             return '<center>'.$orders->display_transaction_date.'</center>';
@@ -225,13 +240,22 @@ class DatatableController extends Controller
         })
         ->addColumn('action', function ($orders) {
             $html_out  = '';
-            $html_out .= '<center>';
-            $html_out .= '<a href="'.url('customer/my-bundles/'.$orders['hashedid']).'" class="btn btn-xs btn-primary"><i class="fa fa-pencil-alt fa-fw"></i></a>';
-            $html_out .= '<a href="javascript:void(0)" onclick="deleteStatus('.$orders['hashedid'].')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-trash-alt fa-fw"></i></a>';
-            $html_out .= '</center>';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                if ($orders['shipping_label'] != '') {
+                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
+                }
+                if ($orders['shipping_tracker'] != '') {
+                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="nav-icon fas fa-file-alt fa-fw"></i> Track Order</a>';
+                }
+                $html_out .= '<a class="dropdown-item font14px" href="'.url('customer/my-bundles/'.$orders['hashedid']).'"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteStatus(\''.$orders['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
             return $html_out;
         })
-        ->rawColumns(['order_no', 'tracking_code', 'shipping_label', 'transaction_date', 'delivery_due', 'action'])
+        ->rawColumns(['order_no', 'tracking_code', 'shipping_status', 'transaction_date', 'delivery_due', 'action'])
         ->make(true);
     }    
 }

@@ -166,8 +166,6 @@ $(function() {
     
     $('#product-buy-submit').click(function () {
         var data = $('#product-buy-form').serializeArray();
-        console.log(data);
-        // return false;
         var setId = (data[5].value == 0) ? 0 : data[5].value;
         if ($('#isBuyForEdit').val() == "true") {
             var tempId = $('#fieldBuyId').val();

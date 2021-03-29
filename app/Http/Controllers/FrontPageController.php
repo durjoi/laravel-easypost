@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Admin\PageRepositoryEloquent as Page;
-use App\Repositories\Admin\BrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\PageRowRepositoryEloquent as PageRow;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\PageColumnRepositoryEloquent as PageColumn;
@@ -71,6 +71,7 @@ class FrontPageController extends Controller
 
     public function handleRequest ($uri) 
     {
+        $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
         $data['page'] = $this->pageBuilderRepo->findByField('url', $uri);
         if ($data['page']) {
             $data['page_id'] = $data['page']->id;
@@ -102,6 +103,15 @@ class FrontPageController extends Controller
             $data['brands'] = $this->brandRepo->all();
             return view("front.cart.index", $data);
         }
+
+        /**
+         *  start: About Us
+         */
+        if ($page_url == "about-us") {
+            $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+        
+            return view('front.aboutus.index', $data);
+        }
         
         return view('front.pagebuilder.pagehandler', $data);
     }
@@ -124,17 +134,18 @@ class FrontPageController extends Controller
         return view('welcome', $data);
     }
 
-    public function aboutus()
-    {
+    // public function aboutus()
+    // {
 
-        $page_url = basename(request()->path());
+    //     $page_url = basename(request()->path());
 
 
-        $data['page'] = $this->pageBuilderRepo->findByField('url', $page_url);
-        return view('front.pagebuilder.aboutus', $data);
-        // $data['page'] = $this->staticRepo->findByField('page_id', 2);
-        // return view('front.aboutus', $data);
-    }
+    //     $data['page'] = $this->pageBuilderRepo->findByField('url', $page_url);
+    //     $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+    //     return view('front.pagebuilder.aboutus', $data);
+    //     // $data['page'] = $this->staticRepo->findByField('page_id', 2);
+    //     // return view('front.aboutus', $data);
+    // }
 
     // public function loadAboutUs($id)
     // {
