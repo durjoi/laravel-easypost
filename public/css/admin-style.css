@@ -75,11 +75,35 @@ body {
 .modal-header {
     color: #fff;
 }
+
+.aboutus-badge {
+    background: #e8e8e8; 
+    border: 1px solid #aaa; 
+    padding: 15px 15px 0 15px;
+}
+
+/**
+*   Theme Color
+*/
+.fontColorThemeGreen {
+    color: #72ab27;
+}
+
 /**
 *   Fonts
 */
+.font-bold {
+    font-weight: bold;
+}
 .font1rem {
     font-size: 1rem !important;
+}
+.font12px {
+    font-size: 12px !important;
+}
+
+.font14px {
+    font-size: 14px !important;
 }
 
 /**
@@ -101,6 +125,9 @@ body {
 /**
 *   Margins
 */
+.ml10 {
+    margin-left: 10px;
+}
 .mt10 {
     margin-top: 10px;
 }

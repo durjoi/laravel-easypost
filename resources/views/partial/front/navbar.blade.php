@@ -10,7 +10,7 @@
 
     <div class="collapse navbar-collapse" id="navbar4">
       <ul class="navbar-nav mr-auto pl-lg-4">
-        <li class="nav-item px-lg-2 active"> 
+        <li class="nav-item px-lg-2 "> 
         
             <a href="{{ url('/') }}" aria-current="page" class="{{ navactive('/') }}" target="_self">Home</a>
         </li>
@@ -30,8 +30,12 @@
         <li class="nav-item"> 
             <form class="form-inline">
             
-              @if(isset($isValidAuthentication) && $isValidAuthentication == false)
-              <a href="{{ url('customer/auth/login') }}" target="_self" class="btn btn-warning btn-md my-2 my-sm-0">Member Login</a>
+              @if(isset($isValidAuthentication)) 
+                  @if(isset($isValidAuthentication) && $isValidAuthentication == false)
+                      <a href="{{ url('customer/auth/login') }}" target="_self" class="btn btn-warning btn-md my-2 my-sm-0">Member Login</a>
+                  @elseif(isset($isValidAuthentication) && $isValidAuthentication == true)
+                      <a href="{{ url('customer/dashboard') }}" target="_self" class="btn btn-warning btn-md my-2 my-sm-0">Back to Dashboard</a>
+                  @endif
               @endif
               <a href="{{ url('cart') }}" style="text-decoration: none; color: #000">
                 <div style="margin-left: 20px" id="cart-counter">

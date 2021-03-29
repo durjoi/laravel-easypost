@@ -27,11 +27,11 @@
                                 <thead>
                                     <tr>
                                         <th></th>
+                                        <th class="text-center">Tracking Code</th>
                                         <th class="text-center">Transaction ID</th>
                                         <th>Customer</th>
                                         <th class="text-center">Status</th>
-                                        <th class="text-center">Transaction Date</th>
-                                        <th class="text-center">Delivery Due</th>
+                                        <th class="text-center"><center>Transaction Date</center></th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -82,12 +82,12 @@
                         return meta.row + meta.settings._iDisplayStart + 1;
                         }, className: "text-center align-top"
                     },
-                    { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'15%' },
-                    { data: 'seller_name', name: 'seller_name', searchable: false, orderable: false, width:'20%' },
-                    { data: 'status', name: 'status', searchable: true, orderable: false, width:'15%', className: "text-center align-top" },
-                    { data: 'transaction_date', name: 'transaction_date', searchable: true, orderable: false, width:'15%', className: "text-right align-top" },
-                    { data: 'delivery_due', name: 'delivery_due', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
+                    { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: true, width:'22%' },
+                    { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'20%' },
+                    { data: 'seller_name', name: 'seller_name', searchable: false, orderable: false, width:'22%' },
+                    { data: 'status', name: 'status', searchable: true, orderable: false, width:'14%', className: "text-center align-top" },
+                    { data: 'transaction_date', name: 'transaction_date', searchable: true, orderable: false, width:'8%', className: "text-right align-top" },
+                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'12%', className: "text-center" },
                 ]
             });
         });

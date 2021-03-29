@@ -78,10 +78,18 @@
 @section('page-js')
 <script>
     $(function () {
-        GenerateCartDetails();
+        if (localStorage.getItem("sessionCart")) {
+            GenerateCartDetails();
+        } else {
+            $('#empty-cart').removeClass('hideme');
+            $('#empty-cart').html('<div class="form-group"><img src="/assets/images/empty-cart.png" class="img-fluid"></div>');
+            $('#preloader, .addOnPreloader').addClass('hideme');
+            
+        }
         function GenerateCartDetails() 
         {
             var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
+            if (!sessionCart) return false;
             $.ajax({
                 type: "POST",
                 url: "{{ url('api/web/cart') }}",

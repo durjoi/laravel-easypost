@@ -1,5 +1,5 @@
 <?php
-    $shippingFee = 10;
+    $shippingFee = ($order['shipping_fee']) ? $order['shipping_fee']  : 0;
     $overallSubTotal = 0;
 ?>
 <div class="row">
@@ -39,8 +39,8 @@
                         <div class="col-sm-4 invoice-col">
                             <b>Transaction #{{ $order['order_no'] }}</b><br />
                             <br />
-                            <b>Tracking Code:</b> {{ $order['tracking_code'] }}<br />
-                            <b>Status:</b> {{ $order['status']['name'] }}<br />
+                            <b>Tracking No:</b> {{ $order['tracking_code'] }}<br />
+                            <b>Status:</b> {{ strtoupper(str_replace("_", " ", $order['shipping_status'])) }}<br />
                             <b>Delivery Due:</b> {{ $order['display_delivery_due'] }}<br />
                         </div>
                     </div>
@@ -192,6 +192,11 @@
                                     <a href="{{ url('admin/orders/'.$hashedId.'/generatePDF') }}" class="btn btn-primary btn-sm pull-right">
                                         <i class="fas fa-pencil-alt"></i> Change Status
                                     </a>
+                                    @if($order['shipping_label'] != '')
+                                    <a href="{{ $order['shipping_label'] }}" class="btn btn-success btn-sm pull-right" target="_blank">
+                                        <i class="fa fa-eye"></i> Shipping Label
+                                    </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

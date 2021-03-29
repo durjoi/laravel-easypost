@@ -44,17 +44,17 @@
                                                     <div class="form-row">
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">First Name</label>
-                                                            <input type="text" name="fname" class="form-control form-control-sm">
+                                                            <input type="text" name="fname" class="form-control form-control-sm"> <!-- Juan -->
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Last Name</label>
-                                                            <input type="text" name="lname" class="form-control form-control-sm">
+                                                            <input type="text" name="lname" class="form-control form-control-sm"> <!-- Dela Cruz -->
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Address Line 1</label>
-                                                            <input type="text" name="address1" class="form-control form-control-sm">
+                                                            <input type="text" name="address1" class="form-control form-control-sm"> <!-- 179 N Harbor Dr -->
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Address Line 2 (Optional)</label>
@@ -64,15 +64,15 @@
                                                     <div class="form-row">
                                                         <div class="form-group col-md-4">
                                                             <label class="col-form-label col-form-label-sm">City</label>
-                                                            <input type="text" name="city" class="form-control form-control-sm">
+                                                            <input type="text" name="city" class="form-control form-control-sm"> <!-- Redondo Beach -->
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label class="col-form-label col-form-label-sm">State</label>
-                                                            {!! Form::select('state_id', $stateList, '', ['class'=>'custom-select select-sm']) !!}
+                                                            {!! Form::select('state_id', $stateList, '', ['class'=>'custom-select select-sm']) !!}  <!-- CA -->
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label class="col-form-label col-form-label-sm">Zip Code</label>
-                                                            <input type="text" name="zip_code" class="form-control form-control-sm">
+                                                            <input type="text" name="zip_code" class="form-control form-control-sm"> <!-- 90277 -->
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
@@ -82,7 +82,7 @@
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label class="col-form-label col-form-label-sm">Phone</label>
-                                                            <input type="text" name="phone" class="form-control form-control-sm">
+                                                            <input type="text" name="phone" class="form-control form-control-sm"> <!-- 310-808-5243 -->
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
@@ -249,55 +249,6 @@
     function has(object, key) {
         return object ? hasOwnProperty.call(object, key) : false;
     }
-    // $(function () {
-    //     GenerateCartDetails();
-    //     function GenerateCartDetails() 
-    //     {
-    //         var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-    //         $.ajax({
-    //             type: "POST",
-    //             url: "{{ url('api/web/cart') }}",
-    //             data : { 'sessionCart' : sessionCart },
-    //             dataType: "json",
-    //             success: function (response) {
-    //                 $('#preloader, .addOnPreloader').addClass('hideme');
-    //                 if (response.hasCart == false) {
-    //                     $('#empty-cart').html(response.cartHtml);
-    //                     $('#empty-cart').removeClass('hideme');
-    //                     $('#cart-total-summary, #cart-checkout').addClass('hideme');
-    //                 } else {
-    //                     $('#my-cart-details').html(response.cartHtml);
-    //                     $('#my-cart-details, #cart-total-summary, #cart-checkout').removeClass('hideme');
-    //                     $('.cart-subtotal, .cart-total').html(response.subTotal);
-                        
-    //                     $('.cart-item-quantity').on('change, click', function () {
-    //                         $('#preloader, .addOnPreloader').removeClass('hideme');
-    //                         $('#my-cart-details').html('');
-    //                         var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-    //                         var cart_key = $(this).attr('data-attr-id');
-    //                         sessionCart[cart_key]['quantity'] = $(this).val();
-    //                         localStorage.setItem("sessionCart", encryptData(JSON.stringify(sessionCart)));
-    //                         GenerateCartDetails();
-    //                     });
-
-    //                     $('.removeItem').on('click', function () {
-    //                         var newSessionCart = [];
-    //                         var cartId = $(this).attr('data-attr-id');
-    //                         var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-    //                         $.each( sessionCart, function( key, value ) {
-    //                             if (key != cartId) {
-    //                                 newSessionCart.push(value);
-    //                             }
-    //                         });
-    //                         localStorage.setItem("sessionCart", encryptData(JSON.stringify(newSessionCart)));
-    //                         GenerateCartDetails();
-                            
-    //                     });
-    //                 }
-    //             }
-    //         });
-    //     }
-    // });
     
 </script>
 @endsection

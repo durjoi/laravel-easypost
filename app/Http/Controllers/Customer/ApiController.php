@@ -106,4 +106,5 @@ class ApiController extends Controller
         $data['productDetails']['storages'] = $data['productDetails']->storagesForBuying()->get();
         return $data;
     } 
+    
 }

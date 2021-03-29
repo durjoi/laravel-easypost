@@ -10,6 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Http\Requests\Admin\ProductDupRequest;
 use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
+use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Admin\ProductPhotoRepositoryEloquent as ProductPhoto;
@@ -25,6 +26,7 @@ use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategor
 class DatatableController extends Controller
 {
     protected $brandRepo;
+    protected $customerRepo;
     protected $productRepo;
     protected $productPhotoRepo;
     protected $configRepo;
@@ -39,6 +41,7 @@ class DatatableController extends Controller
 
     function __construct(
                         Brand $brandRepo, 
+                        Customer $customerRepo,
                         Product $productRepo, 
                         ProductPhoto $productPhotoRepo, 
                         Config $configRepo, 
@@ -53,6 +56,7 @@ class DatatableController extends Controller
                         )
     {
         $this->brandRepo = $brandRepo;
+        $this->customerRepo = $customerRepo;
         $this->productRepo = $productRepo;
         $this->productPhotoRepo = $productPhotoRepo;
         $this->configRepo = $configRepo;
@@ -120,16 +124,16 @@ class DatatableController extends Controller
     public function getOrders (Request $request) 
     {
         $orders = $this->orderRepo->rawWith([
-                                                            'customer',
-                                                            'order_item', 
-                                                            'order_item.customer',
-                                                            'order_item.product', 
-                                                            'order_item.product.brand', 
-                                                            'order_item.product.photo', 
-                                                            'order_item.network', 
-                                                        ], 
-                                                        "1 = ?", 
-                                                        [1]);
+                                                'customer',
+                                                'order_item', 
+                                                'order_item.customer',
+                                                'order_item.product', 
+                                                'order_item.product.brand', 
+                                                'order_item.product.photo', 
+                                                'order_item.network', 
+                                            ], 
+                                            "1 = ?", 
+                                            [1]);
                                                         
         return Datatables::of($orders)
         ->editColumn('seller_name', function($orders) {
@@ -187,4 +191,33 @@ class DatatableController extends Controller
     }
     
     
+
+    public function GetCustomers()
+    {
+        $customers = $this->customerRepo->rawWith(['bill'], "status = ?", ['Active']);
+        return Datatables::of($customers)
+        ->editColumn('fullname', function($customers) {
+            return $customers->fname.' '.$customers->lname;
+        })
+        ->editColumn('address', function($customers) {
+            if(!empty($customers->bill)){
+                return $customers->bill->street.' '.$customers->bill->city.' '.$customers->bill->state;
+            }
+            return '';
+        })
+        ->addColumn('action', function ($customers) {
+            $html_out  = '';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu" aria-labelledby="action-btn">';
+                    $html_out .= '<a href="javascript:void(0);" class="dropdown-item font14px customer-change-password" data-attr-id="'.$customers->hashedid.'" onclick="changepasswordcustomer(\''.$customers->hashedid.'\')"><i class="fa fa-lock fa-fw"></i> Change Password</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="updatecustomer(\''.$customers->hashedid.'\')"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deletecustomer(\''.$customers->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
+            return $html_out;
+        })
+        ->rawColumns(['photo', 'action'])
+        ->make(true);
+    }
 }
