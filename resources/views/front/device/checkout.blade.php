@@ -281,7 +281,6 @@
             });
             
             $('#addToCart').on('click', function () {
-                // alert('asd');return false;
                 var sessionCart = [];
 
                 if (localStorage.getItem("sessionCart") != null) {
@@ -367,8 +366,6 @@
 
 
         function network(name){
-            // $('#row-network').slideUp();
-            // $('#row-devices').fadeIn();
             var brand = $('#device-content').attr('data-brand');
             $('#device-content').attr('data-network', name);
             $('#header').html(brand+' / '+name);
@@ -387,7 +384,6 @@
         }
 
         function getoffer(id){
-            // $('#row-network').slideUp();
             $('#row-devices').fadeOut();
             var brand = $('#device-content').attr('data-brand');
             var network = $('#device-content').attr('data-network');
@@ -425,12 +421,6 @@
             var brand = $('#device-content').attr('data-brand');
             var network = $('#device-content').attr('data-network');
             var id = $('#device-content').attr('data-id');
-            //     console.log('---------------------------');
-            //     console.log($('input[name=storage]:checked').val());
-            //     console.log($('.radio-device:checked').val());
-            //     console.log(id);
-            //     console.log('---------------------------');
-            // return false;
             $.ajax({
                 type: "POST",
                 url: "{{ url('products/model/filter') }}",
@@ -445,28 +435,6 @@
                 success: function (response) {
                     $('#condition').html(response.condition);
                     $('#device-amount').html('<b>$'+response.amount+'</b>');
-                    // console.log(response);
-                        // $('#header').html(brand+' / '+ response.selectedProduct.model);
-                        // $('#row-devices').slideUp();
-                        // $('#row-checkout').fadeIn();
-                        // $('#device-storage').html(response.storagelist);
-                        // $('#device-image').attr('src', '../../'+response.selectedProduct.photo.photo);
-                        // $('#condition').html(response.condition);
-                        // $('#device-amount').html('<b>$'+response.amount+'</b>');
-                        // $('#input-device_type').val($('input[name=device_type]:checked').val());
-                        // $('#input-storage').val($('input[name=storage]:checked').val());
-                    // $('#header').html(brand+' / '+network+' / '+response.product.model);
-                    // $('#row-devices').slideUp();
-                    // $('#row-checkout').fadeIn();
-                    // $('#device-image').attr('src', response.photo);
-                    // $('#condition').html(response.condition);
-                    // $('#device-amount').html('<b>$'+response.amount+'</b>');
-                    // $('#input-amount').val(response.amount);
-                    // $('#input-storage').val($('input[name=storage]:checked').val());
-                    // $('#input-network').val(network);
-                    // $('#input-brand').val(brand);
-                    // $('#input-device_type').val($('input[name=device_type]:checked').val());
-                    // $('#input-model').val(response.product.model);
                 }
             });
         }

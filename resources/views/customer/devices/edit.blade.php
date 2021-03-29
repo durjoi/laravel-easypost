@@ -37,13 +37,6 @@
                         <div class="col-12" align="center">
                             <img src="{{ url('/'.$data['product']['photo']['full_size']) }}" class="product-image " alt="Product Image" style="max-width: 250px;">
                         </div>
-                        <!-- <div class="col-12 product-image-thumbs">
-                            <div class="product-image-thumb active"><img src="../../dist/img/prod-1.jpg" alt="Product Image"></div>
-                            <div class="product-image-thumb"><img src="../../dist/img/prod-2.jpg" alt="Product Image"></div>
-                            <div class="product-image-thumb"><img src="../../dist/img/prod-3.jpg" alt="Product Image"></div>
-                            <div class="product-image-thumb"><img src="../../dist/img/prod-4.jpg" alt="Product Image"></div>
-                            <div class="product-image-thumb"><img src="../../dist/img/prod-5.jpg" alt="Product Image"></div>
-                        </div> -->
                     </div>
                     <div class="col-12 col-sm-7">
                         <h3 class="my-3">{{ $data['product']['model'] }} Review</h3>
@@ -328,8 +321,8 @@
                                     <thead>
                                         <tr>
                                             <th>Tracking #</th>
-                                            <th>Shipping Label</th>
-                                            <th>Delivery Duration</th>
+                                            <th>Shipping Status</th>
+                                            <th>Track Order</th>
                                             <th>Transaction Date</th>
                                             <th>Delivery Due Date</th>
                                         </tr>
@@ -337,8 +330,8 @@
                                     <tbody>
                                         <tr>
                                             <td>{{ $data['order']['tracking_code'] }}</td>
-                                            <td>{{ $data['order']['shipping_label'] }}</td>
-                                            <td>{{ $data['order']['delivery_days'] }}</td>
+                                            <td>{{ strtoupper(str_replace("_", " ", $data['order']['shipping_status'])) }}</td>
+                                            <td><a href="{{ $data['order']['shipping_tracker'] }}" target="_blank"><i class="nav-icon fas fa-file-alt fa-fw"></i></a></td>
                                             <td>{{ $data['order']['display_transaction_date'] }}</td>
                                             <td>{{ $data['order']['display_delivery_due'] }}</td>
                                         </tr>

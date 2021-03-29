@@ -47,7 +47,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     Route::get('products/storage/{hashedId}/find', [\App\Http\Controllers\Admin\ProductController::class, 'findProductStorage']);
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
 
-    Route::post('customers/getcustomer', [\App\Http\Controllers\Admin\CustomerController::class, 'getcustomer']);
+    // Route::post('customers/getcustomer', [\App\Http\Controllers\Admin\CustomerController::class, 'getcustomer']);
     Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class);
 
     
@@ -91,6 +91,9 @@ Route::group(['prefix' => 'api'], function() {
         Route::get('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@GetCategoryDetails']);
         Route::delete('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteCategory']);
 
+        
+        Route::post('admin/customers', [App\Http\Controllers\Api\DatatableController::class, 'GetCustomers']);
+        Route::patch('admin/customers/changepassword', [\App\Http\Controllers\Customer\ApiController::class, 'ChangePassword']);
     });
     Route::group(['prefix' => 'cron'], function () {
         Route::get('notifyday7', ['as' => 'api.cron.notifyday7', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay7']);

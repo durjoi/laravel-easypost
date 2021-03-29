@@ -25,6 +25,7 @@ use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
 use App\Models\Admin\Product as ModelProduct;
+use Illuminate\Support\Facades\Auth;
 
 class DeviceController extends Controller
 {
@@ -85,6 +86,7 @@ class DeviceController extends Controller
 
     public function checkout($brand)
     {
+        $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
         $data['brand'] = $brand;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['paymentList'] = [
@@ -458,23 +460,81 @@ class DeviceController extends Controller
             
             if ($request['cart'] != null) 
             {
+                /**
+                 * start: easy post integration
+                 */
+
+                EasyPost::setApiKey(config('account.easypost_apikey'));
+                $config = $this->configRepo->find(1);
+                
+                $to_address = Address::create([
+                    // "company" => "", // $config->company_name,
+                    "name" => $config->company_name, // "Dr. Steve Brule",
+                    "street1" => $config->address1, //"179 N Harbor Dr", //$config->address1,
+                    // "street2" => $config->address2,
+                    "city"    => $config->city, // "Redondo Beach", // $config->city,
+                    "state"   => $config->state, // "CA", // $config->state,
+                    "zip"     => $config->zip_code, // "90277",  // $config->zip_code,
+                    "phone"   => $config->phone, // "310-808-5243", // $config->phone,
+                ]);
+        
+                $from_address = Address::create([
+                    "company" => "EasyPost",
+                    "street1" => "118 2nd Street", // $address->address1,
+                    "street2" => "4th Floor", // $address->address2,
+                    "city"    => "San Francisco", // $address->city,
+                    "state"   => "CA", // $address->state,
+                    "zip"     => "94105", // $address->zip,
+                    "phone"   => "415-456-7890", // $address->phone
+                ]);
+        
+                // EasyPost::setApiKey(config('account.easypost_apikey'));
+                $parcel = Parcel::create([
+                    // 'predefined_package' => $this->package($product->height, $product->width),
+                    'predefined_package' => 'LargeFlatRateBox',
+                    'weight' => 76.9, // $product->height,
+                ]);
+                
+                $shipment = Shipment::create([
+                    'to_address'   => $to_address,
+                    'from_address' => $from_address,
+                    'parcel'       => $parcel
+                ]);
+                $shipment->buy($shipment->lowest_rate());
+                $shipment->insure(array('amount' => 100));
+                // echo '<pre>';
+                // print_r($shipment->get_rates());
+                // echo '</pre>';
+                // exit;
+                // return $shipment;
+                 /**
+                  * end: easy post integration
+                  */
+
+
                 $makeOrderRequest = [
                     'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
                     'order_no' => strtoupper(app('App\Http\Controllers\GlobalFunctionController')->generateUUID()),
                     'status_id' => 1, 
                     'transaction_date' => date("Y-m-d h:i:s"),
-                    'delivery_due' => date("Y-m-d", strtotime("+30 day")),
+                    'delivery_due' => $shipment->tracker->est_delivery_date, // date("Y-m-d", strtotime("+30 day")),
                     'payment_method' => $request['payment_method'],
                     'account_username' => $request['account_username'],
                     'account_name' => $request['account_name'],
                     'account_number' => $request['account_number'],
                     'account_bank' => $request['bank'],
-                    'shipping_label' => 'For Approval',
-                    'shipping_fee' => '10',
-                    'tracking_code' => '1029282812891',
-                    'delivery_days' => '5', 
+                    'shipping_label' => $shipment->postage_label->label_url,
+                    'shipping_status' => $shipment->tracker->status,
+                    'shipping_fee' => $shipment->rates[0]->retail_rate,
+                    'tracking_code' => $shipment->tracking_code,
+                    'carrier' => $shipment->rates[0]->carrier,
+                    'delivery_days' => $shipment->rates[0]->delivery_days, 
+                    'shipping_tracker' => $shipment->tracker->public_url
+
                 ];
+                
                 $order = $this->orderRepo->create($makeOrderRequest);
+
 
                 foreach ($request['cart'] as $key => $value) 
                 {
@@ -482,9 +542,9 @@ class DeviceController extends Controller
                     // $product = $this->productRepo->rawByField("brand_id = ? and network = ? and storage = ? and model = ?", [$brand->id, $value['network'], $value['storage'], $value['model']]);
                     $product = $this->productRepo->rawByField("brand_id = ? and model = ?", [$brand->id, $value['model']]);
                     
-                    $parcel = $this->parcel($product);
+                    // $parcel = $this->parcel($product);
 
-                    $shipment = $this->shipping($address, $parcel);
+                    // $shipment = $this->shipping($address, $parcel);
                     // // $shipment->buy($shipment->lowest_rate());
                     // // $shipment->buy($shipment->lowest_rate(array('USPS'), array('First')));
                     // return $shipment;
@@ -492,26 +552,9 @@ class DeviceController extends Controller
                     
                     // $shipment->insure(array('amount' => 100));
                     
-                    // $shipment->postage_label->label_url;
                     // return $shipment;
-                    $ship = $shipment->buy($shipment->lowest_rate());
-            
-                    $makeRequest = [
-                        'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
-                        'product_id' => $product->id,
-                        'amount' => $value['amount'],
-                        'payment_method' => $value['payment_method'],
-                        'account_username' => $value['account_username'],
-                        'account_bank' => $value['bank'],
-                        'account_name' => $value['account_name'],
-                        'account_number' => $value['account_number'],
-                        'shipping_label' => $ship->postage_label->label_url,
-                        'shipping_fee' => $ship->rates[0]->retail_rate,
-                        'tracking_code' => $ship->tracking_code,
-                        'carrier' => $ship->rates[0]->carrier,
-                        'delivery_days' => $ship->rates[0]->delivery_days
-                    ];
-                    return $makeRequest;
+                    // $ship = $shipment->buy($shipment->lowest_rate());
+
                     $productStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$product->id, $value['storage']]);
 
 
@@ -779,6 +822,7 @@ class DeviceController extends Controller
     {
         EasyPost::setApiKey(config('account.easypost_apikey'));
         $config = $this->configRepo->find(1);
+        
         $to_address = Address::create([
             'company' => $config->company_name,
             'street1' => $config->address1,

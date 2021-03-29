@@ -28,7 +28,6 @@
                   <th></th>
                   <th>Fullname</th>
                   <th>Email</th>
-                  <th>Username</th>
                   <th>Billing Address</th>
                   <th class="text-center">Action</th>
                 </tr>
@@ -49,20 +48,23 @@
 @endsection
 
 @section('page-js')
+  @include('admin.modals.customers.changepassword.modal')
 <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
+<script src="{{ url('library/js/admin/customer/components.js') }}"></script>
 <script>
 var customerTable;
 $(document).ready(function () {
+  var baseUrl = $('body').attr('data-url');
   customerTable = $('#customer-table').DataTable({
     processing: true,
     serverSide: true,
     "pagingType": "input",
     ajax: {
-      url: "{{ url('admin/customers/getcustomer') }}",
+      url: baseUrl+'/api/admin/customers',
       type:'POST'
     },
     columns: [
@@ -74,7 +76,6 @@ $(document).ready(function () {
       },
       { data: 'fullname', name: 'fullname', searchable: true, orderable: true, width:'15%' },
       { data: 'email', name: 'email', searchable: false, orderable: false, width:'15%' },
-      { data: 'username', name: 'username', searchable: false, orderable: false, width:'15%' },
       { data: 'address', name: 'address', searchable: true, orderable: true, width:'30%' },
       { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
     ]

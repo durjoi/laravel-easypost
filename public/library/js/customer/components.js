@@ -117,8 +117,8 @@ $(function () {
                     }, className: "text-center"
                 },
                 { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'20%' },
-                { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: false, width:'20%' },
-                { data: 'shipping_label', name: 'shipping_label', searchable: true, orderable: false, width:'20%', className: "text-center" },
+                // { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: false, width:'20%' },
+                { data: 'shipping_status', name: 'shipping_status', searchable: true, orderable: false, width:'20%', className: "text-center" },
                 { data: 'action', name: 'action', searchable: false, orderable: false, width:'18%', className: "text-center" }
             ]
         });
@@ -143,7 +143,7 @@ $(function () {
                 },
                 { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'17%' },
                 { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: false, width:'17%' },
-                { data: 'shipping_label', name: 'shipping_label', searchable: true, orderable: true, width:'16%' },
+                { data: 'shipping_status', name: 'shipping_status', searchable: true, orderable: true, width:'16%' },
                 { data: 'transaction_date', name: 'transaction_date', searchable: true, orderable: false, width:'16%' },
                 { data: 'delivery_due', name: 'delivery_due', searchable: true, orderable: false, width:'16%' },
                 { data: 'action', name: 'action', searchable: false, orderable: false, width:'16%', className: "text-center" },
