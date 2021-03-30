@@ -47,12 +47,6 @@
                         <p>Products</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ url('admin/settings/users') }}" class="nav-link {{ (isset($module) && $module == 'user') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-user-friends"></i>
-                        <p>Users</p>
-                    </a>
-                </li>
                 <li class="nav-item has-treeview {{ (isset($tvsettings) && $tvsettings == true) ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvsettings) && $tvsettings == true) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cogs"></i>
@@ -66,15 +60,21 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('admin/settings/menus') }}" class="nav-link {{ (isset($module) && $module == 'menu') ? 'active' : '' }}">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Manage Menus</p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{{ url('admin/settings/brands') }}" class="nav-link {{ (isset($module) && $module == 'brand') ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Manage Brands</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('admin/settings/categories') }}" class="nav-link {{ (isset($module) && $module == 'category') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage Categories</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('admin/settings/menus') }}" class="nav-link {{ (isset($module) && $module == 'menu') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage Menus</p>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -84,9 +84,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('admin/settings/categories') }}" class="nav-link {{ (isset($module) && $module == 'category') ? 'active' : '' }}">
+                    <a href="{{ url('admin/settings/users') }}" class="nav-link {{ (isset($module) && $module == 'user') ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>
-                        <p>Manage Categories</p>
+                        <p>Manage Users</p>
                     </a>
                 </li>
             </ul>

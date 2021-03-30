@@ -118,62 +118,6 @@ class ProductController extends Controller
             return redirect()->to('admin/products')->with('msg', 'New device has been added!');
         }
         return redirect()->back()->with('errormsg', 'This device is already exists!');
-        // return redirect()->to('admin/products/create')->with('errormsg', 'This device is already exists!');
-
-
-
-        // $device_type = $request['device_type'];
-        // $user_id = Auth::user()->id;
-        // $chkdup = $this->productRepo->rawCount("brand_id = ? and network = ? and storage = ? and model = ?", [$request['brand_id'], $request['network'], $request['storage'], $request['name']]);
-        // $makeRequest = [
-        //     'brand_id' => $request['brand_id'],
-        //     'model' => $request['name'],
-        //     'color' => $request['color'],
-        //     'height' => $request['height'],
-        //     'width' => $request['width'],
-        //     'weight' => $request['weight'],
-        //     'length' => $request['length'],
-        //     'status' => 'Active',
-        //     'device_type' => $device_type,
-        //     'amount' => $request['amount'],
-        //     'excellent_offer' => $request['excellent_offer'],
-        //     'good_offer' => $request['good_offer'],
-        //     'fair_offer' => $request['fair_offer'],
-        //     'poor_offer' => $request['poor_offer'],
-        //     'offer_type' => $request['offer_type'],
-        //     'sku' => ($request['device_type'] != 'Buy') ? $request['sku'] : '',
-        //     'description' => $request['description'],
-        //     'storage' => $request['storage'],
-        //     'network' => $request['network'],
-        //     'user_create' => $user_id,
-        //     'user_update' => $user_id
-        // ];
-        // if($chkdup == 0){
-        //     $hasfile = $request->hasFile('photo');    
-        //     if ($hasfile) 
-        //     {
-        //         $product = $this->productRepo->create($makeRequest);
-        //         // $hashedProductId = app('App\Http\Controllers\GlobalFunctionController')->encodeHashid($product->id);
-        //         $hashedProductId = $product->hashedid;
-        //         $path = 'uploads/products/'.$hashedProductId;
-        //         $pathThumb = 'uploads/products/'.$hashedProductId.'/thumb';
-        //         File::makeDirectory($path, 0777, true, true);
-        //         File::makeDirectory($pathThumb, 0777, true, true);
-        //         $field = $request->file('photo');    
-        //         $photo = productFileUpload($path, $field, $hasfile, 250);
-        //         $makeRequest = [
-        //             'product_id' => $product->id,
-        //             'photo' => $photo['small'],
-        //             'full_size' => $photo['full'],
-        //             'user_create' => $user_id,
-        //             'user_update' => $user_id
-        //         ];
-        //         $this->productPhotoRepo->create($makeRequest);
-        //     }
-        //     $data['response'] = 1;
-        //     return redirect()->to('admin/products')->with('msg', 'New device has been added!');
-        // }
-        // return redirect()->back()->with('errormsg', 'This device is already exists!');
     }
 
     public function create()
@@ -181,7 +125,6 @@ class ProductController extends Controller
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
-        // $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
         $data['storageList'] = $this->tablelist->storageList;
         $data['categoryList'] = $this->settingsCategoryRepo->all();
         $data['networkList'] = $this->networkRepo->all();
@@ -189,8 +132,6 @@ class ProductController extends Controller
         $data['module'] = 'product';
         return view('admin.products.create', $data);
     }
-
-    // ProductRequest
 
     public function update(Request $request, $hashedId)
     {
@@ -205,8 +146,6 @@ class ProductController extends Controller
             }
         }
         $makeRequest = $this->makeProductRequest($request);
-        // return $request['network'];
-        // return $this->productNetworkRepo->findByFieldAll('product_id', $id);
         if($chkdup == 0){
 
             if(isset($request['network']) && $request['network'] != null) {
@@ -229,11 +168,6 @@ class ProductController extends Controller
                 $this->createProductStorageList($request, $product->id);
             }
 
-            // foreach ($this->productStorageRepo->findByFieldAll('product_id', $id) as $psrKey => $psrVal) {
-            //     if (!in_array($psrVal['title'], $request['storage'])) {
-            //         $this->productStorageRepo->delete($psrVal['id']);
-            //     }
-            // }
             foreach ($this->productNetworkRepo->findByFieldAll('product_id', $id) as $pnrKey => $pnrVal) {
                 if (!in_array($pnrVal['network_id'], $request['network'])) {
                     $this->productNetworkRepo->delete($pnrVal['id']);
@@ -266,57 +200,6 @@ class ProductController extends Controller
             return redirect()->back()->with('msg', 'Device has been updated!');
         }
         return redirect()->back()->with('errormsg', 'This device is already exists!');
-        
-        // return $request->all();
-        // $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
-        // $device_type = $request['device_type'];
-        // $user_id = Auth::user()->id;
-        // $chkdup = $this->productRepo->rawCount("brand_id = ? and network = ? and storage = ? and model = ? and id != ?", [$request['brand_id'], $request['network'], $request['storage'], $request['name'], $id]);
-        // $makeRequest = [
-        //     'brand_id' => $request['brand_id'],
-        //     'model' => $request['name'],
-        //     'color' => $request['color'],
-        //     'height' => $request['height'],
-        //     'width' => $request['width'],
-        //     'weight' => $request['weight'],
-        //     'length' => $request['length'],
-        //     'status' => 'Active',
-        //     'device_type' => $device_type,
-        //     'amount' => ($request['device_type'] == 'Buy') ? $request['amount'] : $request['amount'],
-        //     'excellent_offer' => ($request['device_type'] == 'Buy') ? $request['excellent_offer'] : '',
-        //     'good_offer' => ($request['device_type'] == 'Buy') ? $request['good_offer'] : '',
-        //     'fair_offer' => ($request['device_type'] == 'Buy') ? $request['fair_offer'] : '',
-        //     'poor_offer' => ($request['device_type'] == 'Buy') ? $request['poor_offer'] : '',
-        //     'offer_type' => $request['offer_type'],
-        //     'sku' => ($request['device_type'] != 'Buy') ? $request['sku'] : '',
-        //     'description' => $request['description'],
-        //     'storage' => $request['storage'],
-        //     'network' => $request['network'],
-        //     'user_update' => $user_id
-        // ];
-        
-        // if($chkdup == 0){
-        //     $this->productRepo->update($makeRequest, $id);
-        //     $path = 'uploads/products/'.$hashedId;
-        //     $pathThumb = 'uploads/products/'.$hashedId.'/thumb';
-        //     File::makeDirectory($path, 0777, true, true);
-        //     File::makeDirectory($pathThumb, 0777, true, true);
-        //     $field = $request->file('photo');
-        //     $hasfile = $request->hasFile('photo');  
-        //     if($hasfile){      
-        //         $photo = productFileUpload($path, $field, $hasfile, 250);
-        //         $makeRequest = [
-        //             'product_id' => $id,
-        //             'photo' => $photo['small'],
-        //             'full_size' => $photo['full'],
-        //             'user_create' => $user_id,
-        //             'user_update' => $user_id
-        //         ];
-        //         $this->productPhotoRepo->create($makeRequest);
-        //     }
-        //     return redirect()->back()->with('msg', 'Device has been updated!');
-        // }
-        // return redirect()->back()->with('errormsg', 'This device is already exists!');
     }
 
     public function edit($hashedId)
@@ -326,15 +209,12 @@ class ProductController extends Controller
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
-        // $data['storageList'] = $this->tablelist->storageList;
-        // $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
         $data['storageList'] = $this->tablelist->storageList;
         $data['categoryList'] = $this->settingsCategoryRepo->all();
         $data['networkList'] = $this->networkRepo->all();
         $data['config'] = $this->configRepo->find(1);
         $data['hashedId'] = $hashedId;
         $data['module'] = 'product';
-        // return $data['assignedNetworks'] = $data['product']['networks'];
         return view('admin.products.edit', $data);
     }
 
@@ -345,102 +225,6 @@ class ProductController extends Controller
         $data['response'] = 1;
         $data['status'] = 200;
         return response()->json($data);
-    }
-
-    public function getproduct()
-    {
-        $products = $this->productRepo->rawWith(['brand','photo','networks.network','storages'], "status = ?", ['Active']);
-        $products;
-        return Datatables::of($products)
-        ->editColumn('photo', function($products) {
-            if(!empty($products->photo)){
-                return '<img src="'.url($products->photo->photo).'" style="width: auto; height: 80px">';
-            }
-            return '';
-        })
-        ->editColumn('model', function($products) {
-            $html  = $products->model;
-            return $html;
-        })
-        ->editColumn('brand', function($products) {
-            $html = '';
-            if($products->brand_id){
-                $html .= (!empty($products->brand)) ? $products->brand->name.'<br>' : '';
-            }
-            
-            if($products->device_type == 'Buy' || $products->device_type == 'Both'){
-                $storages = '';
-            // if($products->device_type == 'Buy'){
-            //     $storages = '';
-            //     $networks = '';
-            //     if ($products->storages != null) {
-            //         foreach ($products->storages as $psKey => $psVal) {
-            //             $storages .= $psVal['title'].', ';
-            //         }
-            //         $storages = substr($storages, 0, -2);
-            //     }
-            //     if ($products->networks != null) {
-            //         foreach ($products->networks as $pnKey => $pnVal) {
-            //             $networks .= $pnVal['network']['title'].', ';
-            //         }
-            //         $networks = substr($networks, 0, -2);
-            //     }
-                // if ($products->storages != null) {
-                //     foreach ($products->storages as $psKey => $psVal) {
-                //         $storages .= $psVal['title'].', ';
-                //     }
-                //     $storages = substr($storages, 0, -2);
-                // }
-                // $html .= '<small><b>Storage:</b> <br />'.$storages.'</small><br>';
-            //     $html .= '<small><b>Carrier:</b> '.$networks.'</small>';
-            }
-            if($products->sku) $html .= '<small><b>SKU:</b> '.$products->sku.'</small>';
-            return $html;
-        })
-        ->editColumn('color', function ($products) {
-            return $products->color;
-        })
-        ->editColumn('otherInfo', function ($products) {
-            // if($products->device_type == 'Sell'){
-            //     return number_format($products->amount, 2).' USD';
-            // } else if($products->device_type == 'Buy'){
-            //     return number_format($products->excellent_offer, 2).' USD';
-            // } else {
-            //     $html  = '<b>Price: </b>'.number_format($products->amount, 2).' USD<br>';
-            //     $html .= '<b>Offer: </b>'.number_format($products->excellent_offer, 2).' USD';
-            //     return $html;
-            // }
-            
-            $html = '<small><b>Dimensions:</b> '.$products->height.' in x '.$products->width.' in x '.$products->length.' in</small><br>';
-            $html .= '<small><b>Weight:</b> '.$products->weight.' ounces</small><br>'; 
-            if($products->device_type == 'Buy' || $products->device_type == 'Both'){
-                $storages = '';
-                $networks = '';
-                if ($products->networks != null) {
-                    foreach ($products->networks as $pnKey => $pnVal) {
-                        $networks .= $pnVal['network']['title'].', ';
-                    }
-                    $networks = substr($networks, 0, -2);
-                }
-                $html .= '<small><b>Carrier:</b> '.$networks.'</small>';
-            }
-            return $html;
-        })
-        ->addColumn('action', function ($products) {
-            $html_out  = '';
-            $html_out .= '<div class="dropdown">';
-                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
-                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
-                    $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="duplicate(\''.$products->hashedid.'\')">Create Duplicate</a>';
-                    $html_out .= '<a class="dropdown-item" href="'.url('admin/products', $products->hashedid).'/edit">Edit</a>';
-                    $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="deleteproduct(\''.$products->hashedid.'\')">Delete</a>';
-                $html_out .= '</div>';
-            $html_out .= '</div>';
-            return $html_out;
-        })
-        // ->rawColumns(['photo', 'action', 'model','brand','amount'])
-        ->rawColumns(['photo', 'action', 'model', 'brand', 'color', 'otherInfo'])
-        ->make(true);
     }
 
     public function storephoto(Request $request)

@@ -34,68 +34,6 @@ class OrderController extends Controller
         return view('admin.orders.index', $data);
     }
 
-    public function getOrders (Request $request) 
-    {
-        $orders = $this->orderRepo->rawWith([
-                                                'customer',
-                                                'order_item', 
-                                                'order_item.customer',
-                                                'order_item.product', 
-                                                'order_item.product.brand', 
-                                                'order_item.product.photo', 
-                                                'order_item.network', 
-                                            ], 
-                                            "1 = ?", 
-                                            [1], 
-                                            'id', 'desc');
-                                                        
-        return Datatables::of($orders)
-        ->editColumn('tracking_code', function($orders) {
-            $html  = $orders['tracking_code'];
-            return $html;
-        })
-        ->editColumn('seller_name', function($orders) {
-            $html  = $orders['customer']['fullname'];
-            return $html;
-        })
-        ->editColumn('order_no', function($orders) {
-            $html  = $orders['order_no'];
-            return $html;
-        })
-        ->editColumn('status', function($orders) {
-            $html  = strtoupper(str_replace("_", " ", $orders['shipping_status']));
-            return $html;
-        })
-        ->editColumn('transaction_date', function($orders) {
-            $html  = '<center>'.$orders['display_transaction_date'].'</center>';
-            return $html;
-        })
-        ->editColumn('delivery_due', function($orders) {
-            $html  = $orders['display_delivery_due'];
-            return $html;
-        })
-        ->addColumn('action', function ($orders) {
-            $html_out  = '';
-            $html_out .= '<div class="dropdown">';
-                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
-                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
-                if ($orders['shipping_label'] != '') {
-                    $html_out .= '<a class="dropdown-item" href="'.$orders['shipping_label'].'" target="_blank">Shipping Label</a>';
-                }
-                if ($orders['shipping_tracker'] != '') {
-                    $html_out .= '<a class="dropdown-item" href="'.$orders['shipping_tracker'].'" target="_blank">Track Order</a>';
-                }
-                    $html_out .= '<a class="dropdown-item" href="'.url('admin/orders/'.$orders['hashedid']).'/edit">Edit</a>';
-                    $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="deleteproduct(\''.$orders['hashedid'].'\')">Delete</a>';
-                $html_out .= '</div>';
-            $html_out .= '</div>';
-            return $html_out;
-        })
-        // ->rawColumns(['photo', 'action', 'model','brand','amount'])
-        ->rawColumns(['tracking_code', 'order_no', 'seller_name', 'status', 'transaction_date', 'delivery_due', 'action'])
-        ->make(true);
-    }
-
 
     public function edit ($hashedId) 
     {

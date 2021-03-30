@@ -75,7 +75,7 @@ $(document).ready(function () {
         }, className: "text-center"
       },
       { data: 'fullname', name: 'fullname', searchable: true, orderable: true, width:'15%' },
-      { data: 'email', name: 'email', searchable: false, orderable: false, width:'15%' },
+      { data: 'email', name: 'email', searchable: true, orderable: true, width:'15%' },
       { data: 'address', name: 'address', searchable: true, orderable: true, width:'30%' },
       { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
     ]

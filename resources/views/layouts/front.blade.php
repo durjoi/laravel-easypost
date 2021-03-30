@@ -110,6 +110,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 	<script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
 	<script src="{{ url('assets/dist/js/functions.js') }}"></script>
+	<script src="{{ url('library/js/jsfunctions.js') }}"></script>
 	<script type="text/javascript" src="{{ url('library/plugins/sweetalert/sweetalert_old.min.js')}}"></script>
 	<script>
 	$.ajaxSetup({

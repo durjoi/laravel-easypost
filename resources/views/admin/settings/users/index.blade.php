@@ -60,13 +60,14 @@
 <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
 <script type="text/javascript">
 var userTable;
+  var baseUrl = $('body').attr('data-url');
 $(document).ready(function() {
   userTable = $('#user-table').DataTable({
     processing: true,
     serverSide: true,
     "pagingType": "input",
     ajax: {
-      url: "{{ url('admin/settings/users/getuser') }}",
+      url: "{{ url('api/settings/users') }}",
       type:'POST'
     },
     columns: [
@@ -87,17 +88,20 @@ $(document).ready(function() {
 });
 
 function deleteuser(id){
-  if(confirm('Are you sure you want to delete this?')){
-    $.ajax({
-      type: "DELETE",
-      url: "{{ url('admin/settings/users') }}/"+id,
-      dataType: "json",
-      success: function (response) {
-        alert('User has been deleted');
-        userTable.draw();
-      }
-    });
-  }
+    var form_url = baseUrl+'/admin/settings/users/'+id;
+  doAjaxConfirmProcessing ('DELETE', '', {}, form_url)
+  // if(confirm('Are you sure you want to delete this?')){
+  //   $.ajax({
+  //     type: "DELETE",
+  //     url: "{{ url('admin/settings/users') }}/"+id,
+  //     dataType: "json",
+  //     success: function (response) {
+  //         swalWarning ("Congratulations!", "User has been successfully deleted", "success", "Done");
+  //         // return false;
+  //       userTable.draw();
+  //     }
+  //   });
+  // }
 }
 </script>
 @endsection

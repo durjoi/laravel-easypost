@@ -27,16 +27,22 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::delete('pages/section/{id}', [\App\Http\Controllers\Admin\PageController::class, 'removesection']);
         Route::resource('pages', \App\Http\Controllers\Admin\PageController::class);
 
-        Route::post('users/getuser', [\App\Http\Controllers\Admin\UserController::class, 'getuser']);
-        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+        Route::group(['prefix' => 'users'], function () {
+           Route::get('/', [\App\Http\Controllers\Admin\SettingsController::class, 'Users']);
+           Route::get('/create', [\App\Http\Controllers\Admin\SettingsController::class, 'CreateUser']);
+           Route::post('/store', [\App\Http\Controllers\Api\ApiController::class, 'StoreUser']);
+           Route::get('/{hashedid}/edit', [\App\Http\Controllers\Admin\SettingsController::class, 'EditUser']);
+           Route::put('/{hashedid}', [\App\Http\Controllers\Api\ApiController::class, 'UpdateUser']);
+           Route::delete('/{hashedid}', [\App\Http\Controllers\Api\ApiController::class, 'DestroyUser']);
+        });
         Route::resource('config', \App\Http\Controllers\Admin\ConfigController::class);
         Route::post('brands/getbrand', [\App\Http\Controllers\Api\DatatableController::class, 'GetBrands']);
         Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class);
-        Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class);
+        Route::get('menus', [\App\Http\Controllers\Admin\SettingsController::class, 'Menus']);
     });
 
     Route::get('products/list-all/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'listfile']);
-    Route::post('products/getproduct', [\App\Http\Controllers\Admin\ProductController::class, 'getproduct']);
+    Route::post('products/getproduct', [\App\Http\Controllers\Api\DatatableController::class, 'GetProduct']);
     Route::post('products/postproduct', [\App\Http\Controllers\Admin\ProductController::class, 'postproduct']);
     Route::post('products/storephoto', [\App\Http\Controllers\Admin\ProductController::class, 'storephoto']);
     Route::post('products/deletephoto', [\App\Http\Controllers\Admin\ProductController::class, 'deletephoto']);
@@ -77,7 +83,7 @@ Route::group(['prefix' => 'api'], function() {
         Route::patch('settings/status', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchStatus']);
         Route::delete('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteStatus']);
 
-        Route::post('orders/getorders', [\App\Http\Controllers\Admin\OrderController::class, 'getOrders']);
+        Route::post('orders/getorders', [\App\Http\Controllers\Api\DatatableController::class, 'getOrders']);
         Route::delete('order/{hashedId}/orderitem', ['as' => 'api.order.orderitem', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderItem']);
 
         Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
@@ -86,12 +92,18 @@ Route::group(['prefix' => 'api'], function() {
         Route::get('modules', ['as' => 'api.modules', 'uses' => 'App\Http\Controllers\Api\ApiController@GetModules']);
         Route::get('enableoptions', ['as' => 'api.enableoptions', 'uses' => 'App\Http\Controllers\Api\ApiController@GetEnableOptions']);
 
+
+
+        Route::post('settings/users', [\App\Http\Controllers\Api\DatatableController::class, 'GetUsers']);
+
+
         Route::post('settings/categories', [App\Http\Controllers\Api\DatatableController::class, 'GetCategories']);
         Route::patch('settings/categories', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchCategories']);
         Route::get('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@GetCategoryDetails']);
         Route::delete('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteCategory']);
 
         
+
         Route::post('admin/customers', [App\Http\Controllers\Api\DatatableController::class, 'GetCustomers']);
         Route::patch('admin/customers/changepassword', [\App\Http\Controllers\Customer\ApiController::class, 'ChangePassword']);
     });

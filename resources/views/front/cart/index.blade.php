@@ -59,10 +59,22 @@
                         </div>
                     </div>
 
-                    <div class="row pt-50 hideme" id="cart-checkout">
+                    <div class="row pt15 hideme" id="cart-checkout">
                         <div class="offset-md-6 col-md-6">
                             <div class="form-group">
-                                <a href="{{ url('/cart/checkout') }}" id="checkout" class="btn btn-warning btn-md btn-block">Proceed to Checkout</a>
+                                                
+                                @if(isset($isValidAuthentication))
+                                    @if(isset($isValidAuthentication) && $isValidAuthentication == false)
+                                        <a href="{{ url('/cart/checkout') }}" id="checkout" class="btn btn-warning btn-md btn-block">Proceed to Checkout</a>
+                                    @elseif(isset($isValidAuthentication) && $isValidAuthentication == true)
+                                        <form id="form-auth-checkout">
+                                            <button type="submit" class="btn btn-warning btn-md btn-block" id="form-button-checkout">
+                                                Proceed to Checkout
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endif
+                                
                             </div>
                         </div>
                     </div>
@@ -78,6 +90,7 @@
 @section('page-js')
 <script>
     $(function () {
+        var baseUrl = $('body').attr('data-url');
         if (localStorage.getItem("sessionCart")) {
             GenerateCartDetails();
         } else {
@@ -86,56 +99,66 @@
             $('#preloader, .addOnPreloader').addClass('hideme');
             
         }
-        function GenerateCartDetails() 
-        {
-            var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-            if (!sessionCart) return false;
-            $.ajax({
-                type: "POST",
-                url: "{{ url('api/web/cart') }}",
-                data : { 'sessionCart' : sessionCart },
-                dataType: "json",
-                success: function (response) {
-                    $('#preloader, .addOnPreloader').addClass('hideme');
-                    if (response.hasCart == false) {
-                        $('#empty-cart').html(response.cartHtml);
-                        $('#empty-cart').removeClass('hideme');
-                        $('#cart-total-summary, #cart-checkout, #my-cart-details').addClass('hideme');
-                        $('#my-cart-details').html('');
-                        localStorage.clear();
-                    } else {
-                        $('#my-cart-details').html(response.cartHtml);
-                        $('#my-cart-details, #cart-total-summary, #cart-checkout').removeClass('hideme');
-                        $('.cart-subtotal, .cart-total').html(response.subTotal);
-                        
-                        $('.cart-item-quantity').on('change', function () {
-                            $('#preloader, .addOnPreloader').removeClass('hideme');
-                            $('#cart-total-summary, #cart-checkout').addClass('hideme');
-                            $('#my-cart-details').html('');
-                            var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-                            var cart_key = $(this).attr('data-attr-id');
-                            sessionCart[cart_key]['quantity'] = $(this).val();
-                            localStorage.setItem("sessionCart", encryptData(JSON.stringify(sessionCart)));
-                            GenerateCartDetails();
-                        });
-
-                        $('.removeItem').on('click', function () {
-                            var newSessionCart = [];
-                            var cartId = $(this).attr('data-attr-id');
-                            var sessionCart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-                            $.each( sessionCart, function( key, value ) {
-                                if (key != cartId) {
-                                    newSessionCart.push(value);
-                                }
-                            });
-                            localStorage.setItem("sessionCart", encryptData(JSON.stringify(newSessionCart)));
-                            GenerateCartDetails();
-                            
-                        });
-                    }
+        $('#form-auth-checkout').on('submit', function () {
+            $('#form-button-checkout').addClass('disabled');
+            $('#form-button-checkout').html('<i class="fas fa-spinner fa-spin"></i> Please wait...');
+            var obj = {
+                '_token' : '',
+                'fname' : '',
+                'lname' : '',
+                'address1' : '',
+                'address2' : '',
+                'city' : '',
+                'state_id' : '',
+                'zip_code' : '',
+                'email' : '',
+                'phone' : '',
+                'payment_method' : '',
+                'account_username' : '',
+                'bank' : '',
+                'account_name' : '',
+                'account_number' : '',
+                'cart' : null
+            };
+            jQuery.each( $(this).serializeArray(), function( i, field ) {
+                if (has(obj, field.name)) {
+                    var propVal = field.value;
+                    obj[field.name] = propVal;
                 }
             });
-        }
+            obj['cart'] = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
+            $.ajax({
+                type: "POST",
+                url: "{{ url('device/authStore') }}",
+                data: obj,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status == 200) {
+                        $('#checkoutCompleted').html(response.message);
+                        $('#checkoutInProgress').html('');
+                        $('#checkoutCompletedSection').removeClass('hideme');
+                        $('#form-button-checkout').removeClass('disabled');
+                        localStorage.clear();
+                    } else if (response.status == 301) {
+                        swalWarning ("Congratulations!", response.message, "success", "Done");
+                        setTimeout(function(){
+                            window.location.href = baseUrl + '/' + response.redirectTo;
+                         }, 3000);
+                        
+                        localStorage.clear();
+                    } else {
+                        swalWarning ("Oops!", response.message, "warning", "Close");
+                        $('#form-button-checkout').removeClass('disabled');
+                        $('#btn-checkout').removeClass('hideme');
+                    }
+                    
+                    $('#form-button-checkout').html('Proceed to checkout');
+                    $('#btn-checkout-loader').addClass('hideme');
+                }
+            });
+            return false;
+            return false;
+        })
     });
     
 </script>

@@ -117,7 +117,9 @@ body {
 /**
 *   Paddings
 */
-
+.pt15 {
+    padding-top: 15px;
+}
 .ptb20px {
     padding: 20px 0 20px 0;
 }

@@ -387,40 +387,53 @@ class DeviceController extends Controller
     public function store(Request $request)
     {
         $response['status'] = 200;
-        if ($request['fname'] == null) {
-            $response['status'] = 400;
-            $response['message'] = "First name field is required";
-        } else if ($request['lname'] == null) {
-            $response['status'] = 400;
-            $response['message'] = "Last name field is required";
-        } else if ($request['address1'] == null) {
-            $response['status'] = 400;
-            $response['message'] = "Address field is required";
-        } else if ($request['state_id'] == null) {
-            $response['status'] = 400;
-            $response['message'] = "State field is required";
-        } else if ($request['payment_method'] == null) {
-            $response['status'] = 400;
-            $response['message'] = "Payment method field is required";
-        } else if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL)) {
-            $response['status'] = 400;
-            $response['message'] = "Invalid Email Address Format";
-        } else if ($request['account_username'] != null && !filter_var($request['account_username'], FILTER_VALIDATE_EMAIL)) {
-            $response['status'] = 400;
-            $response['message'] = "Invalid Payment Email Address format";
-        }
-
-        if ($request['payment_method'] == "Bank Transfer") 
-        {
-            if (!$request['bank']) {
+        if (Auth::guard('customer')->check() != null) {
+            $customer = Auth::guard('customer')->user();
+            $request['fname'] = $customer['fname'];
+            $request['lname'] = $customer['lname'];
+            $request['address1'] = $customer['address1'];
+            $request['payment_method'] = $customer['payment_method'];
+            $request['email'] = $customer['email'];
+            $request['account_username'] = $customer['account_username'];
+            $request['account_name'] = $customer['account_name'];
+            $request['account_number'] = $customer['account_number'];
+            $request['bank'] = $customer['bank'];
+        } else {
+            if ($request['fname'] == null) {
                 $response['status'] = 400;
-                $response['message'] = "Bank is required";
-            } else if (!$request['account_name']) {
+                $response['message'] = "First name field is required";
+            } else if ($request['lname'] == null) {
                 $response['status'] = 400;
-                $response['message'] = "Account name is required";
-            } else if (!$request['account_number']) {
+                $response['message'] = "Last name field is required";
+            } else if ($request['address1'] == null) {
                 $response['status'] = 400;
-                $response['message'] = "Account number is required";
+                $response['message'] = "Address field is required";
+            } else if ($request['state_id'] == null) {
+                $response['status'] = 400;
+                $response['message'] = "State field is required";
+            } else if ($request['payment_method'] == null) {
+                $response['status'] = 400;
+                $response['message'] = "Payment method field is required";
+            } else if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL)) {
+                $response['status'] = 400;
+                $response['message'] = "Invalid Email Address Format";
+            } else if ($request['account_username'] != null && !filter_var($request['account_username'], FILTER_VALIDATE_EMAIL)) {
+                $response['status'] = 400;
+                $response['message'] = "Invalid Payment Email Address format";
+            }
+    
+            if ($request['payment_method'] == "Bank Transfer") 
+            {
+                if (!$request['bank']) {
+                    $response['status'] = 400;
+                    $response['message'] = "Bank is required";
+                } else if (!$request['account_name']) {
+                    $response['status'] = 400;
+                    $response['message'] = "Account name is required";
+                } else if (!$request['account_number']) {
+                    $response['status'] = 400;
+                    $response['message'] = "Account number is required";
+                }
             }
         }
 
@@ -502,11 +515,7 @@ class DeviceController extends Controller
                 ]);
                 $shipment->buy($shipment->lowest_rate());
                 $shipment->insure(array('amount' => 100));
-                // echo '<pre>';
-                // print_r($shipment->get_rates());
-                // echo '</pre>';
-                // exit;
-                // return $shipment;
+                
                  /**
                   * end: easy post integration
                   */
@@ -542,19 +551,6 @@ class DeviceController extends Controller
                     // $product = $this->productRepo->rawByField("brand_id = ? and network = ? and storage = ? and model = ?", [$brand->id, $value['network'], $value['storage'], $value['model']]);
                     $product = $this->productRepo->rawByField("brand_id = ? and model = ?", [$brand->id, $value['model']]);
                     
-                    // $parcel = $this->parcel($product);
-
-                    // $shipment = $this->shipping($address, $parcel);
-                    // // $shipment->buy($shipment->lowest_rate());
-                    // // $shipment->buy($shipment->lowest_rate(array('USPS'), array('First')));
-                    // return $shipment;
-                    
-                    
-                    // $shipment->insure(array('amount' => 100));
-                    
-                    // return $shipment;
-                    // $ship = $shipment->buy($shipment->lowest_rate());
-
                     $productStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$product->id, $value['storage']]);
 
 
@@ -570,47 +566,57 @@ class DeviceController extends Controller
                     ];
                     
                     $this->orderItemRepo->create($makeRequest);
-                    // $this->deviceRepo->create($makeRequest);
                 }
             }
             $email = $request['email'];
-            $subject = "TronicsPay Email Confirmation";
-            $data['header'] = "TronicsPay Email Confirmation";
             $data['fname'] = $request['fname'];
             $data['email'] = $request['email'];
             $data['password'] = $password;
             $data['company_email'] = $config->company_email;
             $data['model'] = $product->model;
-            $content = view('mail.customer', $data)->render();
-            Mailer::sendEmail($email, $subject, $content);
             $result = [
                 'model' => $product->model,
                 'fname' => $request['fname']
             ];
-    
-            $htmlResult = '<div class="container">
-                                <div class="row">
-                                    <div class="form-group col-md-12" align="center">
-                                        <img src="'.url("./assets/images/logo.png").'" class="img-fluid">
+            if (Auth::guard('customer')->check() != null) 
+            {
+                $subject = "TronicsPay Order Confirmation";
+                $data['header'] = "TronicsPay Order Confirmation";
+                $content = view('mail.customerAddBundle', $data)->render();
+                $response['status'] = 301;
+                $response['message'] = 'Cart has been added to your bundles';
+                $response['redirectTo'] = 'customer/my-bundles';
+            }
+            else 
+            {
+                $subject = "TronicsPay Email Confirmation";
+                $data['header'] = "TronicsPay Email Confirmation";
+                $content = view('mail.customer', $data)->render();
+                $response['status'] = 200;
+                $htmlResult = '<div class="container">
+                                    <div class="row">
+                                        <div class="form-group col-md-12" align="center">
+                                            <img src="'.url("./assets/images/logo.png").'" class="img-fluid">
+                                        </div>
                                     </div>
-                                </div>
-                                <br />
-                                <br />
-                                <div class="row">
-                                    <div class="col-md-12">
-                                    <div class="text-center">
-                                        <h3>Thank you '.$result['fname'].' for selling '.$result['model'].'!</h3>
-                                        <p>
-                                        We are currently reviewing the device, we send a confirmation email.<br>
-                                        Please check your email and login at <a href="../customer/auth/login">Member Login</a>.
-                                        </p>
+                                    <br />
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                        <div class="text-center">
+                                            <h3>Thank you '.$result['fname'].' for selling '.$result['model'].'!</h3>
+                                            <p>
+                                            We are currently reviewing the device, we send a confirmation email.<br>
+                                            Please check your email and login at <a href="../customer/auth/login">Member Login</a>.
+                                            </p>
+                                        </div>
+                                        </div>
                                     </div>
-                                    </div>
-                                </div>
-                            </div>';
-    
-            $response['status'] = 200;
-            $response['message'] = $htmlResult;
+                                </div>';
+        
+                $response['message'] = $htmlResult;
+            }
+            Mailer::sendEmail($email, $subject, $content);
         }
         return $response;
         // $chkcustomer = $this->customerRepo->findByField('email', $request['email']);

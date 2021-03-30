@@ -20,6 +20,8 @@ use App\Repositories\Admin\ProductStorageEloquentRepository as ProductStorage;
 use App\Repositories\Customer\CustomerSellRepositoryEloquent as CustomerSell;
 use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
 use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
+use App\Repositories\Admin\UserRepositoryEloquent as User;
+use App\Repositories\Admin\MenuRepositoryEloquent as Menu;
 
 class SettingsController extends Controller
 {
@@ -34,6 +36,8 @@ class SettingsController extends Controller
     protected $customerRepo;
     protected $customerTransactionRepo;
     protected $stateRepo;
+    protected $userRepo;
+    protected $menuRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -46,7 +50,9 @@ class SettingsController extends Controller
                         CustomerSell $customerSellRepo, 
                         Customer $customerRepo, 
                         CustomerTransaction $customerTransactionRepo, 
-                        State $stateRepo
+                        State $stateRepo, 
+                        User $userRepo, 
+                        Menu $menuRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -60,6 +66,8 @@ class SettingsController extends Controller
         $this->customerRepo = $customerRepo;
         $this->customerTransactionRepo = $customerTransactionRepo;
         $this->stateRepo = $stateRepo;
+        $this->userRepo = $userRepo;
+        $this->menuRepo = $menuRepo;
     }
 
     public function config()
@@ -85,5 +93,36 @@ class SettingsController extends Controller
         $data['tvsettings'] = true;
         $data['config'] = $this->configRepo->find(1);
         return view('admin.settings.categories.index', $data);
+    }
+
+    public function Menus()
+    {
+        $data['menus'] = $this->menuRepo->all();
+        $data['module'] = 'menu';
+        $data['tvsettings'] = true;
+        return view('admin.settings.menus.index', $data);
+    }
+    
+    public function Users () 
+    {
+        $data['module'] = 'user';
+        $data['tvsettings'] = true;
+        return view('admin.settings.users.index', $data);
+    }
+
+    public function CreateUser()
+    {
+        $data['module'] = 'user';
+        $data['tvsettings'] = true;
+        return view('admin.settings.users.create', $data);
+    }
+
+    public function EditUser($hashedId)
+    {
+        $data['module'] = 'user';
+        $data['tvsettings'] = true;
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data['user'] = $this->userRepo->find($id);
+        return view('admin.settings.users.edit', $data);
     }
 }

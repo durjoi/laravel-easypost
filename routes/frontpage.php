@@ -37,6 +37,7 @@ Route::post('products/model', [App\Http\Controllers\DeviceController::class, 'mo
 Route::post('products/model/filter', [App\Http\Controllers\DeviceController::class, 'filterByStorageCondition']);
 Route::post('products/network', [App\Http\Controllers\DeviceController::class, 'network']);
 Route::resource('device', App\Http\Controllers\DeviceController::class);
+Route::post('device/authStore', [App\Http\Controllers\DeviceController::class, 'store']);
 
 Route::get('paypal/success', [App\Http\Controllers\PaypalController::class, 'success'])->name('paypal.success');
 Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'cancel'])->name('paypal.cancel');

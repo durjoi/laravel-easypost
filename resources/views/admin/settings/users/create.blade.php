@@ -22,7 +22,7 @@
       <div class="col-md-8 offset-md-2">
         <div class="card">
           <div class="card-body">
-            <form action="{{ url('admin/settings/users') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url('admin/settings/users/store') }}" method="POST" enctype="multipart/form-data">
               @csrf
               @include('admin.settings.users.form')
             </form>

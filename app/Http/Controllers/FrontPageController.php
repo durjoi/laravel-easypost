@@ -101,6 +101,7 @@ class FrontPageController extends Controller
          */
         if ($page_url == "cart") {
             $data['brands'] = $this->brandRepo->all();
+            $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
             return view("front.cart.index", $data);
         }
 

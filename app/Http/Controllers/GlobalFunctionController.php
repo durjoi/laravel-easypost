@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use Vinkla\Hashids\HashidsManager;
+use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
 
 class GlobalFunctionController extends Controller 
 {
     protected $hashids;
+    protected $customerRepo;
 
-    public function __construct (HashidsManager $hashids) 
+    public function __construct (HashidsManager $hashids, Customer $customerRepo) 
     {
         $this->hashids = $hashids;
+        $this->customerRepo = $customerRepo;
     }
 
 

@@ -21,6 +21,7 @@ class BrandController extends Controller
     public function index()
     {
         $data['module'] = 'brand';
+        $data['tvsettings'] = true;
         $data['types'] = [''=>'Choose Device', 'Mobile'=>'Mobile Device', 'Other'=>'Other Devices'];
         $data['featureList'] = [''=>'No', 1=>'Yes at Row 1', 2=>'Yes at Row 2', 3=>'Yes at Row 3'];
         return view('admin.settings.brands.index', $data);
@@ -70,28 +71,5 @@ class BrandController extends Controller
     {
         $data['brand'] = $this->brandRepo->find($id);
         return response()->json($data);
-    }
-
-    public function getbrand()
-    {
-        $brands = $this->brandRepo->all();
-        return Datatables::of($brands)
-        ->editColumn('photo', function($brands) {
-            if($brands->photo){
-                return '<img src="'.url($brands->photo).'" style="width: 80px; height: auto">';
-            }
-            return '';
-        })
-        ->editColumn('updated_at', function($brands) {
-            return $brands->updated_at_display;
-        })
-        ->addColumn('action', function ($brands) {
-            $html_out  = '';
-            $html_out .= '<a href="javascript:void(0)" onclick="updatebrand(\''.$brands->id.'\')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-pencil-alt fa-fw"></i> &nbsp;Edit</a>&nbsp;&nbsp;';
-            $html_out .= '<a href="javascript:void(0)" onclick="deletebrand(\''.$brands->id.'\')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-trash-alt fa-fw"></i> &nbsp;Delete</a>';
-            return $html_out;
-        })
-        ->rawColumns(['photo', 'action'])
-        ->make(true);
     }
 }

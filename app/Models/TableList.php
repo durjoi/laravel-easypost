@@ -29,7 +29,9 @@ class Tablelist extends Model
         'MAIL_PORT' => '2525',
         'MAIL_USERNAME' => 'a4ffd99e367b89',
         'MAIL_PASSWORD' => '1ec74409545e9b',
-        'MAIL_ENCRYPTION' => 'tls'
+        'MAIL_ENCRYPTION' => 'tls',
+        'MAIL_FROM_ADDRESS' => 'aen00100@gmail.com',
+        'MAIL_FROM_NAME' => 'TronicsPay',
     ];
 
 	/**************************************************************/

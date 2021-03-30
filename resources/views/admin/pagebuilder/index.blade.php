@@ -23,14 +23,14 @@
                         <a href="javascript:void(0);" id="create-page" class="btn btn-primary btn-sm">Create Page</a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body table-responsive">
                     <table class="table table-hover text-nowrap table-sm">
                         <thead>
                             <tr>
                                 <th style="width: 3%;">#</th>
-                                <th style="width: 40%;">Title</th>
-                                <th style="width: 40%;">URL/LINK</th>
-                                <th style="width: 15%;">Action</th>
+                                <th style="width: 42%;">Title</th>
+                                <th style="width: 45%;">URL/LINK</th>
+                                <th style="width: 10%;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,18 +42,13 @@
                                         <td>{{ $page->url }}</td>
                                         <td>
                                             <div class="dropdown">
-                                                <a href="{{ '../'.$page->url }}" target="_blank" class="btn btn-light btn-sm">
-                                                    <span>View</span> <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="javascript:void(0);" class="btn btn-primary btn-sm edit-page" data-attr-identification="{{ $page->id }}" data-attr-id="{{ $page->hashedid }}">
-                                                    <span>Edit</span> <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="{{ url('admin/pagebuilder/'.$page->hashedid.'/build') }}" class="btn btn-secondary btn-sm">
-                                                    <span>Settings</span> <i class="fas fa-cog"></i>
-                                                </a>
-                                                <!-- <a href="javascript:void(0);" class="btn btn-danger btn-sm">
-                                                <span>Delete</span> <i class="fas fa-trash"></i>
-                                                </a> -->
+                                                <button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                                                <div class="dropdown-menu" aria-labelledby="action-btn">
+                                                    <a class="dropdown-item font14px" href="{{ '../'.$page->url }}" target="_blank"><i class="fa fa-eye fa-fw"></i> View</a>
+                                                    <a class="dropdown-item font14px edit-page" data-attr-identification="{{ $page->id }}" data-attr-id="{{ $page->hashedid }}" href="javascript:void(0);"><i class="fa fa-edit fa-fw"></i> Edit</a>
+                                                    <a class="dropdown-item font14px"href="{{ url('admin/pagebuilder/'.$page->hashedid.'/build') }}"><i class="fa fa-cog fa-fw"></i> Settings</a>
+                                                    <a class="dropdown-item font14px" href="javascript:void(0)"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>

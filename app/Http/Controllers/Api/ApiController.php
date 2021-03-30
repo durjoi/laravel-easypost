@@ -22,8 +22,11 @@ use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Admin\SettingsStatusEloquentRepository as Status;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
+use App\Repositories\Admin\UserRepositoryEloquent as User;
 use App\Models\TableList;
 use Saperemarketing\Phpmailer\Facades\Mailer;
+use App\Http\Requests\Admin\UserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 
 class ApiController extends Controller
 {
@@ -41,6 +44,7 @@ class ApiController extends Controller
     protected $tablelist;
     protected $settingsCategoryRepo;
     protected $productCategoryRepo;
+    protected $userRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -56,7 +60,8 @@ class ApiController extends Controller
                         Status $statusRepo,
                         TableList $tablelist, 
                         SettingsCategory $settingsCategoryRepo, 
-                        ProductCategory $productCategoryRepo
+                        ProductCategory $productCategoryRepo, 
+                        User $userRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -73,6 +78,7 @@ class ApiController extends Controller
         $this->tablelist = $tablelist;
         $this->settingsCategoryRepo = $settingsCategoryRepo;
         $this->productCategoryRepo = $productCategoryRepo;
+        $this->userRepo = $userRepo;
     }
 
     public function GetProduct ($id) 
@@ -468,5 +474,49 @@ class ApiController extends Controller
         }
         
         return true;
+    }
+
+
+    public function StoreUser(UserRequest $request)
+    {
+        $makeRequest = [
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => bcrypt($request['password']),
+            'status' => 'Active'
+        ];
+        $this->userRepo->create($makeRequest);
+        return redirect()->to('admin/settings/users');
+    }
+
+    public function UpdateUser(UpdateUserRequest $request, $hashedId)
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        if($request['password']){
+            $makeRequest = [
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => bcrypt($request['password']),
+                'status' => 'Active'
+            ];
+        } else {
+            $makeRequest = [
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'status' => 'Active'
+            ];
+        }
+        $this->userRepo->update($makeRequest, $id);
+        return redirect()->to('admin/settings/users');
+    }
+    
+    public function DestroyUser($hashedId)
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $this->userRepo->update(['status' => 'Inactive'], $id);
+        $data['response'] = 1;
+        $data['status'] = 200;
+        $data['message'] = 'User has been successfully deleted';
+        return response()->json($data);
     }
 }

@@ -29,8 +29,8 @@
       <ul class="navbar-nav ml-auto mt-3 mt-lg-0">
         <li class="nav-item"> 
             <form class="form-inline">
-            
-              @if(isset($isValidAuthentication)) 
+             
+              @if(isset($isValidAuthentication))
                   @if(isset($isValidAuthentication) && $isValidAuthentication == false)
                       <a href="{{ url('customer/auth/login') }}" target="_self" class="btn btn-warning btn-md my-2 my-sm-0">Member Login</a>
                   @elseif(isset($isValidAuthentication) && $isValidAuthentication == true)
