@@ -9,6 +9,7 @@ use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
+use App\Models\TableList as Tablelist;
 
 class OrderController extends Controller
 {
@@ -16,20 +17,24 @@ class OrderController extends Controller
     protected $orderItemRepo;
     protected $configRepo;
     protected $productRepo;
+    protected $tablelist;
 
     function __construct(Order $orderRepo, 
                          OrderItem $orderItemRepo, 
                          Config $configRepo, 
-                         Product $productRepo)
+                         Product $productRepo,
+                         Tablelist $tablelist)
     {
         $this->orderRepo = $orderRepo;
         $this->orderItemRepo = $orderItemRepo;
         $this->configRepo = $configRepo;
         $this->productRepo = $productRepo;
+        $this->tablelist = $tablelist;
     }
 
     public function index()
     {
+        $data['paypal'] = $this->tablelist->paypal_account;
         $data['module'] = 'order';
         return view('admin.orders.index', $data);
     }

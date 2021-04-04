@@ -111,6 +111,7 @@ class DatatableController extends Controller
         $orders = $this->orderRepo->rawWith([
                                                 'customer',
                                                 'order_item', 
+                                                'status_details', 
                                                 'order_item.customer',
                                                 'order_item.product', 
                                                 'order_item.product.brand', 
@@ -135,7 +136,8 @@ class DatatableController extends Controller
             return $html;
         })
         ->editColumn('status', function($orders) {
-            $html  = strtoupper(str_replace("_", " ", $orders['shipping_status']));
+            // $html  = strtoupper(str_replace("_", " ", $orders['shipping_status']));
+            $html  = strtoupper(str_replace("_", " ", $orders['status_details']['name']));
             return $html;
         })
         ->editColumn('transaction_date', function($orders) {
@@ -151,13 +153,19 @@ class DatatableController extends Controller
             $html_out .= '<div class="dropdown">';
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                
+                $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="fa fa-id-card fa-fw"></i> Shipping Label</a>';
                 if ($orders['shipping_label'] != '') {
                     $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="fa fa-id-card fa-fw"></i> Shipping Label</a>';
                 }
-                if ($orders['shipping_tracker'] != '') {
-                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="fa fa-truck fa-fw"></i> Track Order</a>';
+                if ($orders['status_id'] != 1) {
+                    if ($orders['shipping_tracker'] != '') {
+                        $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="fa fa-truck fa-fw"></i> Track Order</a>';
+                    }
+                } else {
+                    $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-thumbs-up fa-fw"></i> Approve & Pay Order</a>'; 
                 }
-                    $html_out .= '<a class="dropdown-item font14px" href="'.url('admin/orders/'.$orders['hashedid']).'/edit"><i class="fa fa-edit fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="'.url('admin/orders/'.$orders['hashedid']).'/edit"><i class="fa fa-edit fa-fw"></i> Review Order</a>';
                     $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteproduct(\''.$orders['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
                 $html_out .= '</div>';
             $html_out .= '</div>';

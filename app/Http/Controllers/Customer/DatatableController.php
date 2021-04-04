@@ -79,6 +79,7 @@ class DatatableController extends Controller
         $devices = $this->orderItemRepo->rawByWithFieldWhereIn(
                                     [
                                         'order',
+                                        'order.status_details',
                                         'order.customer',
                                         'order.customer.bill',
                                         'product',
@@ -100,7 +101,8 @@ class DatatableController extends Controller
             return $order_items->quantity;
         })
         ->editColumn('status', function ($order_items) {
-            return '<center><small class="badge badge-warning">'.strtoupper(str_replace("_", " ", $order_items['order']['shipping_status'])).'</small></center>';
+            return '<center><small class="badge badge-warning">'.strtoupper($order_items['order']['status_details']['name']).'</small></center>';
+            // return '<center><small class="badge badge-warning">'.strtoupper(str_replace("_", " ", $order_items['order']['shipping_status'])).'</small></center>';
         })
         ->addColumn('action', function ($order_items) {
             $html_out  = '';
@@ -131,6 +133,7 @@ class DatatableController extends Controller
         $devices = $this->orderItemRepo->rawByWithFieldWhereIn(
                                     [
                                         'order',
+                                        'order.status_details',
                                         'order.customer',
                                         'order.customer.bill',
                                         'product',
@@ -158,7 +161,7 @@ class DatatableController extends Controller
             return '<div class="pull-right">$'.number_format($order_items->amount, 2, '.', ',').'</div>';
         })
         ->editColumn('status', function ($order_items) {
-            return '<center><small class="badge badge-warning">'.strtoupper(str_replace("_", " ", $order_items['order']['shipping_status'])).'</small></center>';
+            return '<center><small class="badge badge-warning">'.strtoupper($order_items['order']['status_details']['name']).'</small></center>';
         })
         ->addColumn('action', function ($order_items) {
             $html_out  = '';
@@ -185,13 +188,8 @@ class DatatableController extends Controller
         ->editColumn('order_no', function($orders) {
             return $orders->order_no;
         })
-        // ->editColumn('tracking_code', function($orders) {
-        //     $html_out  = '';
-        //     $html_out .= '<center>'.$orders->tracking_code.'</center>';
-        //     return $html_out;
-        // })
         ->editColumn('shipping_status', function($orders) {
-            return '<center>'.strtoupper(str_replace("_", " ", $orders['shipping_status'])).'</center>';
+            return '<center><small class="badge badge-warning">'.strtoupper($orders['status_details']['name']).'</small></center>';
         })
         ->addColumn('action', function ($orders) {
             $html_out  = '';
@@ -230,7 +228,8 @@ class DatatableController extends Controller
             return $html_out;
         })
         ->editColumn('shipping_status', function($orders) {
-            return '<center>'.strtoupper(str_replace("_", "", $orders->shipping_status)).'</center>';
+            return '<center><small class="badge badge-warning">'.strtoupper($orders['status_details']['name']).'</small></center>';
+            // return '<center>'.strtoupper(str_replace("_", "", $orders->shipping_status)).'</center>';
         })
         ->editColumn('transaction_date', function($orders) {
             return '<center>'.$orders->display_transaction_date.'</center>';
@@ -243,9 +242,11 @@ class DatatableController extends Controller
             $html_out .= '<div class="dropdown">';
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+
                 if ($orders['shipping_label'] != '') {
                     $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
                 }
+                    
                 if ($orders['shipping_tracker'] != '') {
                     $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="nav-icon fas fa-file-alt fa-fw"></i> Track Order</a>';
                 }

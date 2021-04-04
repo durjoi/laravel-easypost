@@ -21,7 +21,7 @@
         "laravelcollective/html": "^6.2",
         "phpmailer/phpmailer": "^6.2",
         "proengsoft/laravel-jsvalidation": "^4.4",
-        "srmklive/paypal": "~1.0",
+        "srmklive/paypal": "^3.0",
         "vinkla/hashids": "^9.1",
         "yajra/laravel-datatables-oracle": "~9.0"
     },

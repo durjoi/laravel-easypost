@@ -38,7 +38,7 @@
                                 <th></th>
                                 <th><center>Order No</center></th>
                                 <th><center>Tracking Code</center></th>
-                                <th><center>Shipping Status</center></th>
+                                <th><center>Status</center></th>
                                 <th><center>Transaction Date</center></th>
                                 <th><center>Delivery Due Date</center></th>
                                 <th><center>Action</center></th>

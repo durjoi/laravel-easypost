@@ -78,3 +78,16 @@ password: 123456
 ```
 Added develop branch
 ```
+
+## For Paypal Integration
+
+---
+Create Paypal account
+
+Get API Credentials from Paypal
+
+Go to TronicsPay Root
+
+Go to `app\Models` and open `TableList.php`
+
+Search for `$paypal_account` and insert your paypal credentials

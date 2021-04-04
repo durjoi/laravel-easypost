@@ -59,11 +59,13 @@
 @endsection
 
 @section('page-js')
+    @include('admin.modals.order.modal-approve')
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
+    <script src="{{ url('library/js/admin/order/components.js') }}"></script>
     <script>
         var orderTable;
         $(document).ready(function () {
@@ -84,8 +86,8 @@
                     },
                     { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: true, width:'22%' },
                     { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'20%' },
-                    { data: 'seller_name', name: 'seller_name', searchable: false, orderable: false, width:'22%' },
-                    { data: 'status', name: 'status', searchable: true, orderable: false, width:'14%', className: "text-center align-top" },
+                    { data: 'seller_name', name: 'seller_name', searchable: true, orderable: true, width:'22%' },
+                    { data: 'status', name: 'status', searchable: true, orderable: true, width:'14%', className: "text-center align-top" },
                     { data: 'transaction_date', name: 'transaction_date', searchable: true, orderable: false, width:'8%', className: "text-right align-top" },
                     { data: 'action', name: 'action', searchable: false, orderable: false, width:'12%', className: "text-center" },
                 ]

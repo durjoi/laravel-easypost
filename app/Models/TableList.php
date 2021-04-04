@@ -10,9 +10,23 @@ class Tablelist extends Model
 
     public $paypal_admin = [
                     'sandbox_account' => 'sb-jcj7x5459425@business.example.com', 
-                    'client_id' => 'AZzP0992muG3HjX47WcmQ2slRRV5AjOBp5Lf2_BEStDtS5sZyMCFkoOOwnEDFhEwi_mtoNWa7DW2Fwrm',
+                    'client_id' => 'ATchzVJN5IS1NvWOCkOwXTIj58wFXPqCT1GVHh1yRmE1NSrKREdIO4UcBMWzCSGav-Hmry9e-twxcE6q',
                     'secret' => 'EO6wqntzqUb5aajIv1l4xNWmJ0p5ZLbLrJJB9E3clGjfbJUEL485ks9f_g2vQjk4VYInnO5e7sJSMfQJ'
     ];
+
+    // Sandbox credentials
+    public $paypal_account = [
+        'paypal_account_client_id' => 'ATchzVJN5IS1NvWOCkOwXTIj58wFXPqCT1GVHh1yRmE1NSrKREdIO4UcBMWzCSGav-Hmry9e-twxcE6q',
+        'paypal_account_username' => 'sb-g47lww5767188@personal.example.com', 
+        'paypal_account_password' => 'qF_7uZ0#'
+    ];
+
+
+    // public $paypal_account = [
+    //     'paypal_account_client_id' => '',
+    //     'paypal_account_username' => '', 
+    //     'paypal_account_password' => ''
+    // ];
 
     public $email_support = [
                                 'email' => 'support@lawsheroes.com',

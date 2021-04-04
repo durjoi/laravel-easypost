@@ -654,3 +654,65 @@ function swalWarning (header, message, icon, confirmButton) {
     //     buttons: "Done",
     // })
 }
+
+function initPayPalButton(valueAmount) {
+	// function initPayPalButton(valueAmount, valueItemTotal, valueShipping) {
+	paypal.Buttons({
+		style: {
+			shape: 'rect',
+			color: 'gold',
+			layout: 'vertical',
+			label: 'paypal',
+			
+		},
+
+
+        createOrder: function(data, actions) {
+			// var orderId = $('#selectedForApproveOrderId').val();
+			// var form_url = base_url + '/api/orders/'+orderId+'/paymentsuccess';
+			// doAjaxProcess('GET', '', {}, form_url); 
+			return actions.order.create({
+			  	purchase_units: [{"amount":{"currency_code":"USD","value":valueAmount}}]
+			});
+		},
+		// createOrder: function(data, actions) {
+		// 	return actions.order.create({
+		// 		purchase_units: [
+		// 			{
+		// 				"description" : "TronicsPay Payment",
+		// 				"amount" : {
+		// 					"currency_code" : "USD",
+		// 					"value" : 51, // valueAmount, 
+		// 					"breakdown" : { 
+		// 						"item_total" : {
+		// 							"currency_code" : "USD",
+		// 							"value" : 1 // valueItemTotal,
+		// 						},
+		// 						"shipping" : {
+		// 							"currency_code" : "USD",
+		// 							"value" : 50 // valueShipping, // 50
+		// 						},
+		// 						"tax_total" : {
+		// 							"currency_code" : "USD", 
+		// 							"value" : 0
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		]
+		// 	});
+		// },
+
+		onApprove: function(data, actions) {
+			return actions.order.capture().then(function(details) {
+				var orderId = $('#selectedForApproveOrderId').val();
+				var form_url = base_url + '/api/orders/'+orderId+'/paymentsuccess';
+				doAjaxProcess('GET', '', {}, form_url); 
+			});
+		},
+
+		onError: function(err) {
+		console.log(err);
+		}
+	}).render('#paypal-button-container');
+}

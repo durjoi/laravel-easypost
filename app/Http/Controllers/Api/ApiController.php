@@ -519,4 +519,52 @@ class ApiController extends Controller
         $data['message'] = 'User has been successfully deleted';
         return response()->json($data);
     }
+
+    public function GetOrder ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data['status'] = 200;
+        $data['order'] = $this->orderRepo->with(['order_item'])->find($id);
+        
+        if ($data['order']['payment_method'] == "Bank Transfer" || $data['order']['payment_method'] == "Paypal") {
+            $data['payment'] = 'Paypal';
+            $data['paypal_credentials'] = $this->tablelist->paypal_sandbox_account;
+        } else if ($data['order']['payment_method'] == "Apple Pay") {
+            $data['payment'] = 'Apple Pay';
+            $data['payment_image'] = '<img src="'.url('/assets/images/payments/1.png').'" alt="Apple Pay">';
+        } else if ($data['order']['payment_method'] == "Google Pay") {
+            $data['payment'] = 'Google Pay';
+            $data['payment_image'] = '<img src="'.url('/assets/images/payments/2.png').'" alt="Google Pay">';
+        } else if ($data['order']['payment_method'] == "Venmo") {
+            $data['payment'] = 'Venmo';
+            $data['payment_image'] = '<img src="'.url('/assets/images/payments/3.png').'" alt="Venmo">';
+        } else if ($data['order']['payment_method'] == "Cash App") {
+            $data['payment'] = 'Cash App';
+            $data['payment_image'] = '<img src="'.url('/assets/images/payments/4.png').'" alt="Cash App">';
+        // } else if ($data['order']['payment_method'] == "Paypal") {
+        //     $data['payment'] = '<img src="'.url('/assets/images/payments/5.png').'" alt="Paypal">';
+        }
+        return response()->json($data);
+    }
+
+    public function OrderPaymentSuccess ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $status = $this->statusRepo->rawByField("name = ?", ['Payment sent']);
+        $data['order'] = $this->orderRepo->with(['customer'])->find($id);
+        
+        $email = $data['order']['customer']['email'];
+        $subject = 'TronicsPay | Payment Order #'.$data['order']['order_no'];
+        $content = view('mail.paymentOrder', $data)->render();
+        Mailer::sendEmail($email, $subject, $content);
+        $output['status'] = 200;
+        $output['message'] = 'Order # '.$data['order']['order_no'].' has been successfully paid';
+        
+        $makeRequest = [
+            'status_id' => $status['id']
+        ];
+        $this->orderRepo->update($makeRequest, $id);
+
+        return response()->json($output);
+    }
 }

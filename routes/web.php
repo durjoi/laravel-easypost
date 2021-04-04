@@ -83,7 +83,9 @@ Route::group(['prefix' => 'api'], function() {
         Route::patch('settings/status', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchStatus']);
         Route::delete('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteStatus']);
 
+        Route::get('orders/{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'GetOrder']);
         Route::post('orders/getorders', [\App\Http\Controllers\Api\DatatableController::class, 'getOrders']);
+        Route::get('orders/{hashedId}/paymentsuccess', [\App\Http\Controllers\Api\ApiController::class, 'OrderPaymentSuccess']);
         Route::delete('order/{hashedId}/orderitem', ['as' => 'api.order.orderitem', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderItem']);
 
         Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
@@ -106,6 +108,12 @@ Route::group(['prefix' => 'api'], function() {
 
         Route::post('admin/customers', [App\Http\Controllers\Api\DatatableController::class, 'GetCustomers']);
         Route::patch('admin/customers/changepassword', [\App\Http\Controllers\Customer\ApiController::class, 'ChangePassword']);
+
+        Route::get('admin/payment', [App\Http\Controllers\Admin\PaymentPaypalController::class, 'Payment']);
+        Route::get('admin/payment/status', [App\Http\Controllers\Admin\PaymentPaypalController::class, 'GetPaymentStatus']);
+        // Route::get('payment', 'PayPalController@payment')->name('payment');
+        Route::get('admin/payment/cancel', 'PayPalController@cancel')->name('api.admin.payment.cancel');
+        Route::get('admin/payment/success', 'PayPalController@success')->name('api.admin.payment.success');
     });
     Route::group(['prefix' => 'cron'], function () {
         Route::get('notifyday7', ['as' => 'api.cron.notifyday7', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay7']);

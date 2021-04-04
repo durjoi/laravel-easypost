@@ -38,6 +38,8 @@ Route::post('products/model/filter', [App\Http\Controllers\DeviceController::cla
 Route::post('products/network', [App\Http\Controllers\DeviceController::class, 'network']);
 Route::resource('device', App\Http\Controllers\DeviceController::class);
 Route::post('device/authStore', [App\Http\Controllers\DeviceController::class, 'store']);
+Route::get('product/storegettings', [App\Http\Controllers\DeviceController::class, 'storeget']);
+// Route::get('order/{hashedId}/shippinglabel', [App\Http\Controllers\DeviceController::class, 'shippingLabelPDF']);
 
 Route::get('paypal/success', [App\Http\Controllers\PaypalController::class, 'success'])->name('paypal.success');
 Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'cancel'])->name('paypal.cancel');

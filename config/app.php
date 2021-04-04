@@ -180,6 +180,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+
+        Srmklive\PayPal\Providers\PayPalServiceProvider::class
     ],
 
     /*

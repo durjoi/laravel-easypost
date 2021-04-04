@@ -17,7 +17,7 @@ class Order extends Model
         return $this->belongsTo(\App\Models\Customer::class, 'customer_id');
     }
 
-    public function status()
+    public function status_details()
     {
         return $this->belongsTo(\App\Models\Admin\SettingsStatus::class, 'status_id');
     }

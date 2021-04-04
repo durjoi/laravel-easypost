@@ -1,3 +1,5 @@
+// const { ajax } = require("jquery");
+
 var baseUrl = $('body').attr('data-url');
 
 $(function () {
@@ -94,5 +96,56 @@ $(function () {
         var form_url = baseUrl+'/api/order/'+hashedId+'/orderitem';
         doAjaxConfirmProcessing('DELETE', '', {}, form_url);
     });
+    $('.approve-order').on('click', function () {
+        var id = $(this).attr('data-attr-id');
+        alert(id);
+    });
+    $('.confirm-pay-approval').on('click', function () {
+        $.ajax({
+            type: "GET",
+            url: baseUrl+"/api/admin/payment",
+            dataType: "json",
+            success: function (response) {
+                // $('#modal-approve-order').modal();
+                // if (response.status == 200) {
+                //     $('#approve-payment-image').html(response.payment);
+                //     $('#selectedForApproveOrderId').val(id);
+                // }
+            }
+        });
+    });
 });
+function ApproveOrder (id) {
+    var baseUrl = $('body').attr('data-url');
+    $('#approve-payment-image').html('');
+    $('#selectedForApproveOrderId').val('');
+    $('#paypal-payment').addClass('hideme');
+    var qtyItem = 0;
+    var overallTotalAmount = 0;
+    $.ajax({
+        type: "GET",
+        url: baseUrl+"/api/orders/"+id,
+        dataType: "json",
+        success: function (response) {
+            $('#modal-approve-order').modal();
+            if (response.status == 200) {
+                $('#selectedForApproveOrderId').val(id);
+                if (response.payment == 'Paypal') {
+                    $('.paypal-payment').removeClass('hideme');
+                    $('#approve-payment-image').html('');
+                    $.each(response.order.order_item, function( index, value ) {
+                        var total = value.amount * value.quantity;
+                        overallTotalAmount = overallTotalAmount + total;
+                        qtyItem = qtyItem + value.quantity;
+                    });
+                    initPayPalButton(overallTotalAmount);
+                    // initPayPalButton(overallTotalAmount, qtyItem, response.order.shipping_fee);
+                } else {
+                    $('.paypal-payment').addClass('hideme');
+                    $('#approve-payment-image').html(response.payment_image);
+                }
+            }
+        }
+    });
+}
 

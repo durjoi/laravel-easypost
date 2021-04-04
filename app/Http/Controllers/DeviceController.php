@@ -26,6 +26,7 @@ use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
 use App\Models\Admin\Product as ModelProduct;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class DeviceController extends Controller
 {
@@ -383,6 +384,34 @@ class DeviceController extends Controller
         return response()->json($data);
     }
 
+    // public function storeget () 
+    // {
+        
+    //     $data['fname'] = 'fname';
+    //     $data['email'] = 'email';
+    //     $data['password'] = 'password';
+    //     $data['company_email'] = 'company email';
+    //     $data['model'] = 'product model';
+    //     $data['header'] = "TronicsPay Order Confirmation";
+    //     $data['order'] = $order = $this->orderRepo->findWith(30, [
+    //                                                         'customer', 
+    //                                                         'customer.bill',
+    //                                                         'order_item',
+    //                                                         'order_item.product',
+    //                                                         'order_item.product.brand',
+    //                                                         'order_item.network',
+    //                                                         'order_item.product_storage'
+    //                                                         ]);
+    //     $data['config'] = $this->configRepo->find(1);
+        
+    //     $data['shippingFee'] = 10;
+    //     $data['overallSubTotal'] = 0;
+    //     $data['counter'] = 1;
+    //     return view('mail.customer', $data);
+    //     $content = view('mail.customer', $data)->render();
+    //     return $content;
+    // }
+
     // public function store(SellRequest $request)
     public function store(Request $request)
     {
@@ -578,17 +607,38 @@ class DeviceController extends Controller
                 'model' => $product->model,
                 'fname' => $request['fname']
             ];
-            if (Auth::guard('customer')->check() != null) 
+
+                
+            $data['order'] = $this->orderRepo->findWith($order->id, [
+                'customer', 
+                'customer.bill',
+                'order_item',
+                'order_item.product',
+                'order_item.product.brand',
+                'order_item.network',
+                'order_item.product_storage'
+                ]);
+            $data['config'] = $this->configRepo->find(1);
+
+            $data['shippingFee'] = 10;
+            $data['overallSubTotal'] = 0;
+            $data['counter'] = 1;
+
+            if ($chkcustomer) 
             {
+                $data['isRegistered'] = true;
                 $subject = "TronicsPay Order Confirmation";
                 $data['header'] = "TronicsPay Order Confirmation";
-                $content = view('mail.customerAddBundle', $data)->render();
+
+                $content = view('mail.customer', $data)->render();
+                // $content = view('mail.customerAddBundle', $data)->render();
                 $response['status'] = 301;
                 $response['message'] = 'Cart has been added to your bundles';
                 $response['redirectTo'] = 'customer/my-bundles';
             }
             else 
             {
+                $data['isRegistered'] = false;
                 $subject = "TronicsPay Email Confirmation";
                 $data['header'] = "TronicsPay Email Confirmation";
                 $content = view('mail.customer', $data)->render();
@@ -616,6 +666,9 @@ class DeviceController extends Controller
         
                 $response['message'] = $htmlResult;
             }
+
+
+            
             Mailer::sendEmail($email, $subject, $content);
         }
         return $response;
@@ -824,6 +877,16 @@ class DeviceController extends Controller
         // return redirect()->to('device')->with('result', json_encode($result));
     }
 
+
+    public function shippingLabelPDF ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data['order'] = $order = $this->orderRepo->find($id);
+        $pdf = PDF::loadView('partial.documents.shippinglabel.index', $data);
+        
+        return $pdf->download('tronicspay-shipping-label.pdf');
+    }
+    
     private function shipping($address, $parcel)
     {
         EasyPost::setApiKey(config('account.easypost_apikey'));
