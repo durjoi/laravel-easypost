@@ -47,6 +47,82 @@ $(function () {
     });
 
 
+    if($("#category-table").length)
+    {
+        var categoryTable;
+        categoryTable = $('#category-table').DataTable({
+            processing: true,
+            serverSide: true,
+            "pagingType": "input",
+            ajax: {
+                url: baseUrl+'/api/settings/categories',
+                type:'POST'
+            },
+            columns: [
+                {
+                    width:'5%', searchable: false, orderable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }, className: "text-center"
+                },
+                { data: 'name', name: 'name', searchable: true, orderable: true, width:'85%' },
+                { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center"},
+            ]
+        });
+    }
+
+    
+    if($("#user-table").length)
+    {
+        $('#user-table').DataTable({
+            processing: true,
+            serverSide: true,
+            "pagingType": "input",
+            ajax: {
+                url: baseUrl+'/api/settings/users',
+                type:'POST'
+            },
+            columns: [
+                {
+                    width:'2%', searchable: false, orderable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                { data: 'name', name: 'name', searchable: true, orderable: true, width:'25%' },
+                { data: 'email', name: 'email', searchable: true, orderable: true, width:'25%' },
+                { data: 'status', name: 'status', searchable: false, orderable: false, width:'15%' },
+                { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center"},
+            ],
+            "order": [[1, "asc"]],
+        });
+    }
+
+    if($("#status-table").length)
+    {
+        var statusTable = $('#status-table').DataTable({
+            processing: true,
+            serverSide: true,
+            "pagingType": "input",
+            ajax: {
+                url: baseUrl+'/api/settings/statuses',
+                type:'POST'
+            },
+            columns: [
+                {
+                    width:'2%', searchable: false, orderable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }, className: "text-center"
+                },
+                { data: 'name', name: 'name', searchable: true, orderable: true, width:'10%' },
+                { data: 'module', name: 'module', searchable: true, orderable: true, width:'25%', className: "text-center" },
+                { data: 'email_sending', name: 'email_sending', searchable: false, orderable: false, width:'15%', className: "text-center" },
+                { data: 'default', name: 'default', searchable: false, orderable: false, width:'15%', className: "text-center" },
+                { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center"},
+            ]
+        });
+    }
 });
 
 function editStatus (hashedId) 
@@ -119,4 +195,9 @@ function deleteCategory (hashedId)
 {
     var form_url = baseUrl+'/api/settings/categories/'+hashedId;
     doAjaxConfirmProcessing('DELETE', '', {}, form_url);
+}
+
+function deleteuser(id){
+    var form_url = baseUrl+'/admin/settings/users/'+id;
+    doAjaxConfirmProcessing ('DELETE', '', {}, form_url)
 }

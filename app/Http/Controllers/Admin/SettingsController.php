@@ -76,6 +76,7 @@ class SettingsController extends Controller
         $data['tvsettings'] = true;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['module'] = 'config';
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.config.index', $data);
     }
     
@@ -84,6 +85,7 @@ class SettingsController extends Controller
         $data['module'] = 'status';
         $data['tvsettings'] = true;
         $data['config'] = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.status.index', $data);
     }
     
@@ -92,6 +94,7 @@ class SettingsController extends Controller
         $data['module'] = 'category';
         $data['tvsettings'] = true;
         $data['config'] = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.categories.index', $data);
     }
 
@@ -100,6 +103,8 @@ class SettingsController extends Controller
         $data['menus'] = $this->menuRepo->all();
         $data['module'] = 'menu';
         $data['tvsettings'] = true;
+        $config = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.menus.index', $data);
     }
     
@@ -107,6 +112,8 @@ class SettingsController extends Controller
     {
         $data['module'] = 'user';
         $data['tvsettings'] = true;
+        $config = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.users.index', $data);
     }
 
@@ -114,6 +121,8 @@ class SettingsController extends Controller
     {
         $data['module'] = 'user';
         $data['tvsettings'] = true;
+        $config = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.users.create', $data);
     }
 
@@ -123,6 +132,8 @@ class SettingsController extends Controller
         $data['tvsettings'] = true;
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $data['user'] = $this->userRepo->find($id);
+        $config = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.users.edit', $data);
     }
 }

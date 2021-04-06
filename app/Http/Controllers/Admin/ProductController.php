@@ -66,6 +66,7 @@ class ProductController extends Controller
         $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.products.index', $data);
     }
 
@@ -130,6 +131,7 @@ class ProductController extends Controller
         $data['networkList'] = $this->networkRepo->all();
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.products.create', $data);
     }
 
@@ -215,6 +217,7 @@ class ProductController extends Controller
         $data['config'] = $this->configRepo->find(1);
         $data['hashedId'] = $hashedId;
         $data['module'] = 'product';
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.products.edit', $data);
     }
 

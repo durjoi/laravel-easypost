@@ -121,7 +121,7 @@ class DatatableController extends Controller
                                             "1 = ?", 
                                             [1], 
                                             'id', 'desc');
-                                                        
+        
         return Datatables::of($orders)
         ->editColumn('tracking_code', function($orders) {
             $html  = $orders['tracking_code'];
@@ -154,7 +154,7 @@ class DatatableController extends Controller
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
                 
-                $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="fa fa-id-card fa-fw"></i> Shipping Label</a>';
+                
                 if ($orders['shipping_label'] != '') {
                     $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="fa fa-id-card fa-fw"></i> Shipping Label</a>';
                 }
@@ -163,7 +163,25 @@ class DatatableController extends Controller
                         $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="fa fa-truck fa-fw"></i> Track Order</a>';
                     }
                 } else {
-                    $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-thumbs-up fa-fw"></i> Approve & Pay Order</a>'; 
+                    $payment_url = '';
+                    if ($orders['customer']['payment_method'] == "Paypal") {
+                        $payment_url = 'https://www.paypal.com/myaccount/transfer/homepage?from=SUM-QuickLink';
+                    } else if ($orders['customer']['payment_method'] == "Bank Transfer") {
+                        $payment_url = 'https://stripe.com/';
+                    } else if ($orders['customer']['payment_method'] == "Venmo") {
+                        $payment_url = 'https://venmo.com/';
+                    } else if ($orders['customer']['payment_method'] == "Apple Pay") {
+                        $payment_url = 'https://support.apple.com/en-us/HT207875';
+                    } else if ($orders['customer']['payment_method'] == "Google Pay") {
+                        $payment_url = 'https://pay.google.com/gp/w/u/0/home/sendrequestmoney';
+                    } else {
+                        $payment_url = 'https://stripe.com/';
+                    }
+                    $html_out .= '<a class="dropdown-item font14px" href="'.$payment_url.'" target="_blank"><i class="fa fa-credit-card fa-fw"></i> Send Payment</a>'; 
+                    
+                    // $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-thumbs-up fa-fw"></i> Approve & Pay Order</a>'; 
+                    $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-pencil-alt fa-fw"></i> Update Status</a>'; 
+                    
                 }
                     $html_out .= '<a class="dropdown-item font14px" href="'.url('admin/orders/'.$orders['hashedid']).'/edit"><i class="fa fa-edit fa-fw"></i> Review Order</a>';
                     $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteproduct(\''.$orders['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
@@ -301,7 +319,7 @@ class DatatableController extends Controller
             $html_out .= '<div class="dropdown">';
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
-                    $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="duplicate(\''.$products->hashedid.'\')"><i class="fa fa-clone fa-fw"></i> Create Duplicate</a>';
+                    // $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="duplicate(\''.$products->hashedid.'\')"><i class="fa fa-clone fa-fw"></i> Create Duplicate</a>';
                     $html_out .= '<a class="dropdown-item" href="'.url('admin/products', $products->hashedid).'/edit"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
                     $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="deleteproduct(\''.$products->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
                 $html_out .= '</div>';

@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\SettingsBrandRequest;
 use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
+use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 
 class BrandController extends Controller
 {
     protected $brandRepo;
+    protected $configRepo;
 
-    function __construct(Brand $brandRepo)
+    function __construct(Brand $brandRepo, Config $configRepo)
     {
         $this->brandRepo = $brandRepo;
+        $this->configRepo = $configRepo;
     }
 
     public function index()
@@ -24,6 +27,8 @@ class BrandController extends Controller
         $data['tvsettings'] = true;
         $data['types'] = [''=>'Choose Device', 'Mobile'=>'Mobile Device', 'Other'=>'Other Devices'];
         $data['featureList'] = [''=>'No', 1=>'Yes at Row 1', 2=>'Yes at Row 2', 3=>'Yes at Row 3'];
+        $data['config'] = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.brands.index', $data);
     }
 

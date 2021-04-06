@@ -5,13 +5,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h2>Manage Orders</h2>
+                        <h2><i class="nav-icon fas fa-people-carry"></i> Manage Orders</h2>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                           
-                            <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item">Manage Orders</li>
+                            <li class="breadcrumb-item"><a href="{{ url('/home') }}" class="{{ (isset($is_dark_mode) && $is_dark_mode == true ) ? 'fontWhite' : 'fontGray1' }}"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <li class="breadcrumb-item"><i class="nav-icon fas fa-people-carry"></i> Manage Orders</li>
                             <li class="breadcrumb-item active">List</li>
                         </ol>
                     </div>

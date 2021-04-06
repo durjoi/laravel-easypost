@@ -5,13 +5,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h2>Manage Categories</h2>
+                        <h2><i class="nav-icon fas fa-th"></i> Manage Categories</h2>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item">Settings</li>
-                            <li class="breadcrumb-item active">Manage Categories</li>
+                            <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}" class="{{ (isset($is_dark_mode) && $is_dark_mode == true ) ? 'fontWhite' : 'fontGray1' }}"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <li class="breadcrumb-item"><i class="nav-icon fas fa-cogs"></i> Settings</li>
+                            <li class="breadcrumb-item active">Category List</li>
                         </ol>
                     </div>
                 </div>
@@ -61,64 +61,10 @@
     <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
+    <script src="{{ url('library/js/admin/settings/components.js') }}"></script>
     <script type="text/javascript">
-        var categoryTable;
         $(document).ready(function() {
             $('#summernote').summernote();
-            categoryTable = $('#category-table').DataTable({
-                processing: true,
-                serverSide: true,
-                "pagingType": "input",
-                ajax: {
-                    url: "{{ url('api/settings/categories') }}",
-                    type:'POST'
-                },
-                columns: [
-                    {
-                        width:'5%', searchable: false, orderable: false,
-                        render: function (data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }, className: "text-center"
-                    },
-                    { data: 'name', name: 'name', searchable: true, orderable: true, width:'85%' },
-                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center"},
-                ]
-            });
-
         });
-
-        function updatebrand(id){
-            $.ajax({
-                type: "GET",
-                url: "{{ url('admin/settings/brands') }}/"+id+"/edit",
-                dataType: "json",
-                success: function (response) {
-                    $('#brand-name').val(response.brand.name);
-                    $('#brand_id').val(response.brand.id);
-                    $('#device_type').val(response.brand.device_type);
-                    $('#feature').val(response.brand.feature);
-                    if(response.brand.photo){
-                        $('#div-image').show();
-                        $('#image-file').hide();
-                        $('#image-val').val(response.brand.photo_display)
-                    }
-                    $('#modal-brand').modal();
-                }
-            });
-        }
-
-        function deletebrand(id){
-            if(confirm('Are you sure you want to delete this?')){
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ url('admin/settings/brands') }}/"+id,
-                    dataType: "json",
-                    success: function (response) {
-                        alert('Brand has been deleted!');
-                        categoryTable.draw();
-                    }
-                });
-            }
-        }
     </script>
 @endsection

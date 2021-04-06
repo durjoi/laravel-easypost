@@ -9,7 +9,8 @@
 .paginate_input {
     width: 40px;
 }
-.paginate_of, .paginate_page {
+.paginate_of,
+.paginate_page {
     padding: 0 5px;
 }
 .hideme {
@@ -18,15 +19,20 @@
 body {
     font-size: 14px;
 }
-.bg-red, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body {
+.bg-red,
+.callout.callout-danger,
+.alert-danger,
+.alert-error,
+.label-danger,
+.modal-danger .modal-body {
     background-color: #dd4b39 !important;
     color: #fff !important;
     text-align: left;
 }
 .label {
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: inline;
-    padding: .2em .6em .3em;
+    padding: 0.2em 0.6em 0.3em;
     font-size: 75%;
     font-weight: 700;
     line-height: 1;
@@ -34,7 +40,7 @@ body {
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
-    border-radius: .25em;
+    border-radius: 0.25em;
 }
 .label-default {
     background-color: #777;
@@ -63,11 +69,11 @@ body {
 .customer-sidebar {
     background: #745702;
 }
-.nav-theme, 
-.bg-theme, 
-.btn-warning, 
+.nav-theme,
+.bg-theme,
+.btn-warning,
 .modal-header,
-.customer-sidebar > .sidebar > nav > ul > li > a.active, 
+.customer-sidebar > .sidebar > nav > ul > li > a.active,
 .nav-pills .nav-link.active {
     background: #cd9901 !important;
 }
@@ -77,8 +83,8 @@ body {
 }
 
 .aboutus-badge {
-    background: #e8e8e8; 
-    border: 1px solid #aaa; 
+    background: #e8e8e8;
+    border: 1px solid #aaa;
     padding: 15px 15px 0 15px;
 }
 
@@ -87,6 +93,15 @@ body {
 */
 .fontColorThemeGreen {
     color: #72ab27;
+}
+.fontWhite {
+    color: #fff !important;
+}
+.fontGray1 {
+    color: #a3b5bd !important;
+}
+.dark-mode-nav {
+    background: #343a40 !important;
 }
 
 /**
@@ -112,7 +127,6 @@ body {
 .border0 {
     border: 0 !important;
 }
-
 
 /**
 *   Paddings

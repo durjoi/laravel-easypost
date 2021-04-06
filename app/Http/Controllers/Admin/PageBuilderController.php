@@ -5,33 +5,28 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-// use PHPageBuilder\PHPageBuilder;
-// use PHPageBuilder\Theme;
-// use PHPageBuilder\Modules\GrapesJS\PageRenderer;
-// use PHPageBuilder\Repositories\PageRepository;
-
-// use PHPageBuilder\Contracts\PageContract;
-// use PHPageBuilder\Contracts\WebsiteManagerContract;
-// // use PHPageBuilder\Repositories\PageRepository;
-// use PHPageBuilder\Repositories\SettingRepository;
-// // use App\Models\PageBuilder;
 
 use App\Repositories\Admin\PageBuilderRepositoryEloquent as PageBuilder;
+use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 
 
 class PageBuilderController extends Controller 
 {
     protected $pageBuilderRepo;
+    protected $configRepo;
 
-    function __construct(PageBuilder $pageBuilderRepo)
+    function __construct(PageBuilder $pageBuilderRepo, Config $configRepo)
     {
         $this->pageBuilderRepo = $pageBuilderRepo;
+        $this->configRepo = $configRepo;
     }
 
     public function index () 
     {
         $data['module'] = 'page';
         $data['pageBuilder'] = $this->pageBuilderRepo->all();
+        $config = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.pagebuilder.index', $data);
     }
 

@@ -466,9 +466,9 @@ class DeviceController extends Controller
             }
         }
 
+        $chkcustomer = $this->customerRepo->findByField('email', $request['email']);
         if ($response['status'] == 200) 
         {
-            $chkcustomer = $this->customerRepo->findByField('email', $request['email']);
             $config = $this->configRepo->find(1);
             if (!$chkcustomer) 
             {
@@ -624,7 +624,7 @@ class DeviceController extends Controller
             $data['overallSubTotal'] = 0;
             $data['counter'] = 1;
 
-            if ($chkcustomer) 
+            if ($chkcustomer != null) 
             {
                 $data['isRegistered'] = true;
                 $subject = "TronicsPay Order Confirmation";

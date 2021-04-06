@@ -1,8 +1,10 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ url('home') }}" class="brand-link">
-        <img src="{{ url('assets/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ config('app.name') }}</span>
+        <img src="{{ url('assets/images/logo-bordered.png') }}" alt="TronicsPay Logo" class="brand-image" style="opacity: .8;">
+        <span>&nbsp;</span>
+        <!-- <img src="{{ url('assets/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">TronicsPay</span> -->
     </a>
 
     <div class="sidebar">
@@ -18,7 +20,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item has-treeview">
-                    <a href="{{ url('home') }}" class="nav-link {{ (isset($module) && $module == 'dashboard') ? 'active' : '' }}">
+                    <a href="{{ url('admin/dashboard') }}" class="nav-link {{ (isset($module) && $module == 'dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>

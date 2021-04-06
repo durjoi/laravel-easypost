@@ -28,6 +28,7 @@ class CreateConfigsTable extends Migration
             $table->integer('good')->nullable();
             $table->integer('fair')->nullable();
             $table->integer('poor')->nullable();
+            $table->tinyInteger('is_dark_mode');
             $table->timestamps();
         });
 

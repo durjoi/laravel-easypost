@@ -39,4 +39,31 @@ $(function () {
         return false;
     });
 
+
+    if($("#customer-table").length)
+    {
+        customerTable = $('#customer-table').DataTable({
+            processing: true,
+            serverSide: true,
+            "pagingType": "input",
+            ajax: {
+                url: baseUrl+'/api/admin/customers',
+                type:'POST'
+            },
+            columns: [
+                {
+                    width:'2%', searchable: false, orderable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }, 
+                    className: "text-center"
+                },
+                { data: 'fullname', name: 'fullname', searchable: true, orderable: true, width:'15%' },
+                { data: 'email', name: 'email', searchable: true, orderable: true, width:'15%' },
+                { data: 'address', name: 'address', searchable: true, orderable: true, width:'30%' },
+                { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
+            ]
+        });
+    }
+
 });

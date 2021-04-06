@@ -1,8 +1,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4 customer-sidebar">
     <!-- Brand Logo -->
     <a href="{{ url('home') }}" class="brand-link">
-        <img src="{{ url('assets/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ config('app.name') }}</span>
+        <img src="{{ url('assets/images/logo-bordered.png') }}" alt="TronicsPay Logo" class="brand-image" style="opacity: .8;">
+        <span>&nbsp;</span>
     </a>
 
     <div class="sidebar">

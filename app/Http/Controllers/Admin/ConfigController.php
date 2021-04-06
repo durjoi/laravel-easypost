@@ -24,6 +24,7 @@ class ConfigController extends Controller
         $data['tvsettings'] = true;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['module'] = 'config';
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.config.index', $data);
     }
 
@@ -41,7 +42,8 @@ class ConfigController extends Controller
             'company_schedule' => $request['company_schedule'],
             'good' => $request['good'],
             'fair' => $request['fair'],
-            'poor' => $request['poor']
+            'poor' => $request['poor'],
+            'is_dark_mode' => $request['is_dark_mode']
         ];
 
         $this->configRepo->update($makeRequest, $id);

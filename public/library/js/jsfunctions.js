@@ -716,3 +716,19 @@ function initPayPalButton(valueAmount) {
 		}
 	}).render('#paypal-button-container');
 }
+
+function percent(amount, offer) {
+	goodPrice = parseFloat($('#good').val());
+	fairPrice = parseFloat($('#fair').val());
+	poorPrice = parseFloat($('#poor').val());
+	amount = parseFloat(amount);
+	if(offer == 'good'){
+		return amount - (goodPrice / 100 * amount);
+	}
+	if(offer == 'fair'){
+		return amount - (fairPrice / 100 * amount);
+	}
+	if(offer == 'poor'){
+		return amount - (poorPrice / 100 * amount);
+	}
+}

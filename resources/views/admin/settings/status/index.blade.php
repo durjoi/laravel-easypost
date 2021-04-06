@@ -5,13 +5,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h2>Manage Status</h2>
+                        <h2><i class="nav-icon fas fa-info-circle"></i> Manage Status</h2>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item">Settings</li>
-                            <li class="breadcrumb-item active">Manage Status</li>
+                            <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}" class="{{ (isset($is_dark_mode) && $is_dark_mode == true ) ? 'fontWhite' : 'fontGray1' }}"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <li class="breadcrumb-item"><i class="nav-icon fas fa-cogs"></i> Settings</li>
+                            <li class="breadcrumb-item active">Status List</li>
                         </ol>
                     </div>
                 </div>
@@ -65,91 +65,8 @@
     <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url('assets/plugins/DataTables-1.10.12/extensions/Pagination/input.js') }}"></script>
     <script type="text/javascript">
-        var statusTable;
         $(document).ready(function() {
             $('#summernote').summernote();
-            statusTable = $('#status-table').DataTable({
-                processing: true,
-                serverSide: true,
-                "pagingType": "input",
-                ajax: {
-                    url: "{{ url('api/settings/statuses') }}",
-                    type:'POST'
-                },
-                columns: [
-                    {
-                        width:'2%', searchable: false, orderable: false,
-                        render: function (data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }, className: "text-center"
-                    },
-                    { data: 'name', name: 'name', searchable: true, orderable: true, width:'10%' },
-                    { data: 'module', name: 'module', searchable: true, orderable: true, width:'25%', className: "text-center" },
-                    { data: 'email_sending', name: 'email_sending', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                    { data: 'default', name: 'default', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center"},
-                ]
-            });
-
-
-            $('#brand-form').submit(function(e) {
-                e.preventDefault();
-                if($(this).valid())
-                {
-                    var fdata = new FormData();
-                    var data = $(this).serializeArray();
-                    fdata.append('photo', $("[name='photo']").prop('files')[0]);
-                    $.each(data,function(key,input){
-                        fdata.append(input.name, input.value);
-                    });
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url('admin/settings/brands') }}",
-                        data: fdata,
-                        dataType: "json",
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            $('#modal-brand').modal('hide');
-                            statusTable.draw();
-                        }
-                    });
-                }
-            });
         });
-
-        function updatebrand(id){
-            $.ajax({
-                type: "GET",
-                url: "{{ url('admin/settings/brands') }}/"+id+"/edit",
-                dataType: "json",
-                success: function (response) {
-                    $('#brand-name').val(response.brand.name);
-                    $('#brand_id').val(response.brand.id);
-                    $('#device_type').val(response.brand.device_type);
-                    $('#feature').val(response.brand.feature);
-                    if(response.brand.photo){
-                        $('#div-image').show();
-                        $('#image-file').hide();
-                        $('#image-val').val(response.brand.photo_display)
-                    }
-                    $('#modal-brand').modal();
-                }
-            });
-        }
-
-        function deletebrand(id){
-            if(confirm('Are you sure you want to delete this?')){
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ url('admin/settings/brands') }}/"+id,
-                    dataType: "json",
-                    success: function (response) {
-                        alert('Brand has been deleted!');
-                        statusTable.draw();
-                    }
-                });
-            }
-        }
     </script>
 @endsection
