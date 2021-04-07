@@ -35,6 +35,7 @@
                                         <th>Module</th>
                                         <th>Automatic Email</th>
                                         <th>Default</th>
+                                        <th>Badge</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>

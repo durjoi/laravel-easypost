@@ -114,7 +114,45 @@ $(function () {
             }
         });
     });
+
+    if ($('#modal-status-order-form').length) 
+    {
+        $('#modal-status-order-form').on('submit', function () {
+            var data = $(this).serializeArray();
+            $('.modal-button-order-status-id').addClass('disabled');
+            $('.modal-button-order-status-id').html('<i class="fas fa-spinner fa-spin"></i> Please wait...');
+            form_url = baseUrl+'/api/orders/'+$('#selectedStatusId').val()+'/status';
+            doAjaxProcess('PUT', '.modal-status-order-form', data, form_url);
+            $('.modal-button-order-status-id').removeClass('disabled');
+            return false;
+        })
+    }
 });
+
+function UpdateOrderStatus (id, statusId) {
+    $('.modal-order-status-id').html('');
+    $('#selectedStatusId').val('');
+    $('.modal-button-order-status-id').html('Update');
+    $.ajax({
+        type: "GET",
+        url: baseUrl+"/api/settings/status/filter/order",
+        dataType: "json",
+        success: function (response) {
+            $('#modal-status-order').modal();
+            if (response.status == 200) {
+                $('#selectedStatusId').val(id);
+                $.each(response.model, function( index, value ) {
+                    if (statusId == value.id) {
+                        $('.modal-order-status-id').append('<option value="'+value.id+'" selected="selected">'+value.name+'</option>');
+                    } else {
+                        $('.modal-order-status-id').append('<option value="'+value.id+'">'+value.name+'</option>');
+                    }
+                });
+            }
+        }
+    });
+}
+
 function ApproveOrder (id) {
     var baseUrl = $('body').attr('data-url');
     $('#approve-payment-image').html('');

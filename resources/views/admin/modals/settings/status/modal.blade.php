@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Create Status</h4>
+                <h4 class="modal-title">Status</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -17,6 +17,14 @@
                         <div class="form-group">
                             <label class="">Status Name</label>
                             <input type="text" name="name" id="modal_status" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label class="">Badge Design</label>
+                            <select name="badge" class="custom-select select-sm" id="modal_dropdown_badge">
+                                @foreach($badges as $key => $val)
+                                    <option value="{{ $val }}">{{ $val }} <small class="badge {{ $val }}"><div class="w50px h5px"></div></small></option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group hideme" id="modal_div_emailsending">
                             <label class="col-form-label col-form-label-sm">Enable Send Automatic Emails</label>

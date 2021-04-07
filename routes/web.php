@@ -79,6 +79,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
 Route::group(['prefix' => 'api'], function() {
     Route::group(['middleware' => ['auth:web']], function() {
         Route::get('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@GetStatusDetails']);
+        Route::get('settings/status/filter/{module}', ['as' => 'api.settings.status.filter', 'uses' => 'App\Http\Controllers\Api\ApiController@GetStatusByModule']);
         Route::post('settings/statuses', [App\Http\Controllers\Api\DatatableController::class, 'GetStatuses']);
         Route::patch('settings/status', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchStatus']);
         Route::delete('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteStatus']);
@@ -87,6 +88,7 @@ Route::group(['prefix' => 'api'], function() {
         Route::post('orders/getorders', [\App\Http\Controllers\Api\DatatableController::class, 'getOrders']);
         Route::get('orders/{hashedId}/paymentsuccess', [\App\Http\Controllers\Api\ApiController::class, 'OrderPaymentSuccess']);
         Route::delete('order/{hashedId}/orderitem', ['as' => 'api.order.orderitem', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderItem']);
+        Route::put('orders/{hashedId}/status', [\App\Http\Controllers\Api\ApiController::class, 'UpdateOrderStatus']);
 
         Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
         Route::patch('products/{hashedid}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchProduct']);

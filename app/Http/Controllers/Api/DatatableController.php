@@ -91,6 +91,9 @@ class DatatableController extends Controller
         ->editColumn('default', function($status) {
             return ($status->default == 1) ? '<span class="label label-info">Default</span>' : '';
         })
+        ->editColumn('badge', function($status) {
+            return '<center><small class="badge '.$status->badge.'"><div class="w50px h5px"></div></small></center>';
+        })
         ->addColumn('action', function ($status) {
             $html_out  = '';
             $html_out .= '<div class="dropdown">';
@@ -102,7 +105,7 @@ class DatatableController extends Controller
             $html_out .= '</div>';
             return $html_out;
         })
-        ->rawColumns(['name', 'module', 'email_sending', 'default', 'action'])
+        ->rawColumns(['name', 'module', 'email_sending', 'default', 'badge', 'action'])
         ->make(true);
     }
 
@@ -121,7 +124,6 @@ class DatatableController extends Controller
                                             "1 = ?", 
                                             [1], 
                                             'id', 'desc');
-        
         return Datatables::of($orders)
         ->editColumn('tracking_code', function($orders) {
             $html  = $orders['tracking_code'];
@@ -136,9 +138,7 @@ class DatatableController extends Controller
             return $html;
         })
         ->editColumn('status', function($orders) {
-            // $html  = strtoupper(str_replace("_", " ", $orders['shipping_status']));
-            $html  = strtoupper(str_replace("_", " ", $orders['status_details']['name']));
-            return $html;
+            return '<center><small class="badge '.$orders['status_details']['badge'].'">'.strtoupper(str_replace("_", " ", $orders['status_details']['name'])).'</small></center>';
         })
         ->editColumn('transaction_date', function($orders) {
             $html  = '<center>'.$orders['display_transaction_date'].'</center>';
@@ -179,10 +179,9 @@ class DatatableController extends Controller
                     }
                     $html_out .= '<a class="dropdown-item font14px" href="'.$payment_url.'" target="_blank"><i class="fa fa-credit-card fa-fw"></i> Send Payment</a>'; 
                     
-                    // $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-thumbs-up fa-fw"></i> Approve & Pay Order</a>'; 
-                    $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-pencil-alt fa-fw"></i> Update Status</a>'; 
-                    
-                }
+                    // $html_out .= '<a class="dropdown-item font14px approve-order" onClick="ApproveOrder(\''.$orders['hashedid'].'\')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-thumbs-up fa-fw"></i> Approve & Pay Order</a>';                    
+                } 
+                    $html_out .= '<a class="dropdown-item font14px approve-order" onClick="UpdateOrderStatus(\''.$orders['hashedid'].'\', '.$orders['status_id'].')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-pencil-alt fa-fw"></i> Update Status</a>'; 
                     $html_out .= '<a class="dropdown-item font14px" href="'.url('admin/orders/'.$orders['hashedid']).'/edit"><i class="fa fa-edit fa-fw"></i> Review Order</a>';
                     $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteproduct(\''.$orders['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
                 $html_out .= '</div>';

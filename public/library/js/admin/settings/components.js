@@ -115,11 +115,12 @@ $(function () {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }, className: "text-center"
                 },
-                { data: 'name', name: 'name', searchable: true, orderable: true, width:'10%' },
-                { data: 'module', name: 'module', searchable: true, orderable: true, width:'25%', className: "text-center" },
-                { data: 'email_sending', name: 'email_sending', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                { data: 'default', name: 'default', searchable: false, orderable: false, width:'15%', className: "text-center" },
-                { data: 'action', name: 'action', searchable: false, orderable: false, width:'20%', className: "text-center"},
+                { data: 'name', name: 'name', searchable: true, orderable: true, width:'24%' },
+                { data: 'module', name: 'module', searchable: true, orderable: true, width:'22%', className: "text-center" },
+                { data: 'email_sending', name: 'email_sending', searchable: false, orderable: false, width:'10%', className: "text-center" },
+                { data: 'default', name: 'default', searchable: false, orderable: false, width:'16%', className: "text-center" },
+                { data: 'badge', name: 'badge', searchable: false, orderable: false, width:'16%', className: "text-center" },
+                { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center"},
             ]
         });
     }
@@ -148,6 +149,7 @@ function editStatus (hashedId)
                 if (result.model.email_sending == "Disable" || result.model.module != "Order") {
                     $('#summernote').summernote('reset');
                 }
+                $('select[name="badge"] option[value="' + result.model.badge + '"]').attr('selected','selected');
                 $('select[name="email_sending"] option[value="' + result.model.email_sending + '"]').attr('selected','selected');
                 if (result.model.template != "") {
                     $('#summernote').summernote('pasteHTML', result.model.template);

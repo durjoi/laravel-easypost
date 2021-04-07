@@ -87,6 +87,12 @@ body {
     border: 1px solid #aaa;
     padding: 15px 15px 0 15px;
 }
+.w50px {
+    width: 50px;
+}
+.h5px {
+    height: 5px;
+}
 
 /**
 *   Theme Color

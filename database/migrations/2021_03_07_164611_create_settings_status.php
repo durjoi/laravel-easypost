@@ -19,6 +19,7 @@ class CreateSettingsStatus extends Migration
             $table->string('module');
             $table->string('email_sending')->default('Disable');
             $table->longText('template');
+            $table->string('badge');
             $table->boolean('default')->default(true);
             $table->timestamps();
         });

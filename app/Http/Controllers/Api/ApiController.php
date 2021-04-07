@@ -171,6 +171,7 @@ class ApiController extends Controller
                 $makeRequest = [
                     'name' => $request['name'],
                     'module' => $request['module'],
+                    'badge' => $request['badge'],
                     'email_sending' => ($request['email_sending']) ? $request['email_sending'] : 'Disable',
                     'template' => ($request['template']) ? $request['template'] : ''
                 ];
@@ -202,6 +203,14 @@ class ApiController extends Controller
         return response()->json($response);   
     }
 
+    public function GetStatusByModule ($module) 
+    {
+        $response['status'] = 200;
+        $response['model'] = $this->statusRepo->rawByFieldAll("module = ?", [ucfirst($module)]);
+        return response()->json($response);   
+        return $module;
+    }
+
     public function DeleteStatus ($hashedId) 
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
@@ -223,6 +232,20 @@ class ApiController extends Controller
             $response['status'] = 200;
             $response['message'] = "Record has been successfully deleted";
         }
+        return response()->json($response);  
+    }
+
+    public function UpdateOrderStatus ($hashedId, Request $request) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        
+        $makeRequest = ['status_id' => $request['status_id']];
+        
+        $this->orderRepo->update($makeRequest, $id);
+
+        $response['status'] = 200;
+        $response['message'] = "Record has been successfully updated";
+
         return response()->json($response);  
     }
 
@@ -541,8 +564,6 @@ class ApiController extends Controller
         } else if ($data['order']['payment_method'] == "Cash App") {
             $data['payment'] = 'Cash App';
             $data['payment_image'] = '<img src="'.url('/assets/images/payments/4.png').'" alt="Cash App">';
-        // } else if ($data['order']['payment_method'] == "Paypal") {
-        //     $data['payment'] = '<img src="'.url('/assets/images/payments/5.png').'" alt="Paypal">';
         }
         return response()->json($data);
     }

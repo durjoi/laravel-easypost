@@ -22,6 +22,7 @@ use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
 use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
 use App\Repositories\Admin\MenuRepositoryEloquent as Menu;
+use App\Models\TableList as Tablelist;
 
 class SettingsController extends Controller
 {
@@ -38,6 +39,7 @@ class SettingsController extends Controller
     protected $stateRepo;
     protected $userRepo;
     protected $menuRepo;
+    protected $tablelist;
 
     function __construct(
                         Brand $brandRepo, 
@@ -52,7 +54,8 @@ class SettingsController extends Controller
                         CustomerTransaction $customerTransactionRepo, 
                         State $stateRepo, 
                         User $userRepo, 
-                        Menu $menuRepo
+                        Menu $menuRepo,
+                        Tablelist $tablelist
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -68,6 +71,7 @@ class SettingsController extends Controller
         $this->stateRepo = $stateRepo;
         $this->userRepo = $userRepo;
         $this->menuRepo = $menuRepo;
+        $this->tablelist = $tablelist;
     }
 
     public function config()
@@ -86,6 +90,7 @@ class SettingsController extends Controller
         $data['tvsettings'] = true;
         $data['config'] = $this->configRepo->find(1);
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
+        $data['badges'] = $this->tablelist->badge;
         return view('admin.settings.status.index', $data);
     }
     

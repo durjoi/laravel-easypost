@@ -21,6 +21,16 @@ class Tablelist extends Model
         'paypal_account_password' => 'qF_7uZ0#'
     ];
 
+    public $aws_account = [ 
+        'Account ID' => '144507505489', 
+        'URL' => 'https://144507505489.signin.aws.amazon.com/console', 
+        'User name' => 'glennabalos', 
+        'Password' => '_Mjm=&AyrK&N,NWP,*SP'
+    ];
+
+    public $badge = [
+        'label-sucess', 'label-info', 'label-primary', 'label-warning', 'label-danger'
+    ];
 
     // public $paypal_account = [
     //     'paypal_account_client_id' => '',
