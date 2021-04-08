@@ -19,7 +19,7 @@
                                                     <h3 class="product-name">{{ $val->model }}</h3>
                                                     <div class="tronics-links">
                                                         <a href="{{ url('products/'.$brand.'/'.$val->model.'') }}" class="btn btn-warning btn-sm">Get an Offer</a>
-                                                        <a href="javascript:void(0)" data-attr-id="{{ $val->hashedid }}" data-attr-model="{{ $val->model }}" class="btn btn-warning btn-sm btn-get-offer">Get an Offer</a>
+                                                        <!-- <a href="javascript:void(0)" data-attr-id="{{ $val->hashedid }}" data-attr-model="{{ $val->model }}" class="btn btn-warning btn-sm btn-get-offer">Get an Offer</a> -->
                                                     </div>
                                                 </div>
                                             </div>
