@@ -319,8 +319,8 @@ class DatatableController extends Controller
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
                     // $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="duplicate(\''.$products->hashedid.'\')"><i class="fa fa-clone fa-fw"></i> Create Duplicate</a>';
-                    $html_out .= '<a class="dropdown-item" href="'.url('admin/products', $products->hashedid).'/edit"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
-                    $html_out .= '<a class="dropdown-item" href="javascript:void(0)" onclick="deleteproduct(\''.$products->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="'.url('admin/products', $products->hashedid).'/edit"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteproduct(\''.$products->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
                 $html_out .= '</div>';
             $html_out .= '</div>';
             return $html_out;

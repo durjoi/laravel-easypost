@@ -13,7 +13,7 @@ Route::get('/api/web/getproductlist', ['as' => 'api.web.getproductlist', 'uses' 
 Route::post('/api/web/cart', ['as' => 'api.web.cart', 'uses' => 'App\Http\Controllers\FrontPageController@getCartList']);
 Route::get('/cart/checkout', ['as' => 'cart.checkout', 'uses' => 'App\Http\Controllers\CartController@cartCheckout']);
 // Route::get('/pagecontent/{id}', [App\Http\Controller::class, 'processRequest']);
-Route::get('/', [\App\Http\Controllers\FrontPageController::class, 'welcome']);
+Route::get('/', [\App\Http\Controllers\FrontPageController::class, 'landingPage']);
 // Route::get('/about-us', [App\Http\Controllers\FrontPageController::class, 'aboutus']);
 // Route::get('/how-it-works', [App\Http\Controllers\FrontPageController::class, 'howitworks']);
 
@@ -33,13 +33,14 @@ Route::post('/products/sell/payment-method', [App\Http\Controllers\FrontPageCont
 Route::post('/products', [App\Http\Controllers\FrontPageController::class, 'productsearch']);
 
 Route::get('products/category/{brand}', [App\Http\Controllers\DeviceController::class, 'checkout']);
+Route::get('products/{brand}/{model}', [App\Http\Controllers\DeviceController::class, 'brandModel']);
 Route::post('products/model', [App\Http\Controllers\DeviceController::class, 'model']);
 Route::post('products/model/filter', [App\Http\Controllers\DeviceController::class, 'filterByStorageCondition']);
 Route::post('products/network', [App\Http\Controllers\DeviceController::class, 'network']);
 Route::resource('device', App\Http\Controllers\DeviceController::class);
 Route::post('device/authStore', [App\Http\Controllers\DeviceController::class, 'store']);
 Route::get('product/storegettings', [App\Http\Controllers\DeviceController::class, 'storeget']);
-// Route::get('order/{hashedId}/shippinglabel', [App\Http\Controllers\DeviceController::class, 'shippingLabelPDF']);
+Route::get('order/{hashedId}/shippinglabel', [App\Http\Controllers\DeviceController::class, 'shippingLabelPDF']);
 
 Route::get('paypal/success', [App\Http\Controllers\PaypalController::class, 'success'])->name('paypal.success');
 Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'cancel'])->name('paypal.cancel');

@@ -93,6 +93,10 @@ body {
 .h5px {
     height: 5px;
 }
+.b-image {
+    width: 150px !important;
+    height: 25px !important;
+}
 
 /**
 *   Theme Color
@@ -102,6 +106,9 @@ body {
 }
 .fontWhite {
     color: #fff !important;
+}
+.fontYellow {
+    color: #cd9901 !important;
 }
 .fontGray1 {
     color: #a3b5bd !important;

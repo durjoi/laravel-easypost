@@ -193,7 +193,7 @@
                                         <i class="fas fa-pencil-alt"></i> Change Status
                                     </a>
                                     @if($order['shipping_label'] != '')
-                                    <a href="{{ $order['shipping_label'] }}" class="btn btn-success btn-sm pull-right" target="_blank">
+                                    <a href="{{ url('order/'.$order['hashedId'].'/shippinglabel') }}" class="btn btn-success btn-sm pull-right" target="_blank">
                                         <i class="fa fa-eye"></i> Shipping Label
                                     </a>
                                     @endif

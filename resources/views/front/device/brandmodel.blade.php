@@ -1,44 +1,18 @@
 @extends('layouts.front')
 @section('content')
     <div class="pt-70" id="device-content" data-brand="{{ $brand }}">
-        @if($chkproduct)
+        @if($status == 200)
             <section>
                 <div class="container pb-50">
-                    <div style="padding-top: 15px; display: block;">
-                    <h2 id="header">{{ $brand }}</h2>
-                        <div class="row" id="row-devices">
-                            @if(count($products) > 0)
-                                @foreach($products as $key => $val)
-                                    <div class="col-md-3">
-                                        <div class="card tronics">
-                                            <div class="card-body tronics-wrap">
-                                                <div class="text-center">
-                                                    @if($val->photo != null)
-                                                        <img src="{{ url($val->photo->photo) }}" class="img-fluid product-photo">
-                                                    @endif
-                                                    <h3 class="product-name">{{ $val->model }}</h3>
-                                                    <div class="tronics-links">
-                                                        <a href="{{ url('products/'.$brand.'/'.$val->model.'') }}" class="btn btn-warning btn-sm">Get an Offer</a>
-                                                        <a href="javascript:void(0)" data-attr-id="{{ $val->hashedid }}" data-attr-model="{{ $val->model }}" class="btn btn-warning btn-sm btn-get-offer">Get an Offer</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                            @endif
-                        </div>
-                    </div>
 
-                    <div class="row" id="row-checkout" style="padding-top: 15px; display: none">
+                    <div class="row" id="row-checkout" style="padding-top: 15px;">
                         <div class="col-md-10 offset-md-1">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="medias" id="condition-div">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <img src="" class="mr-3 img-fluid" id="device-image">
+                                                <img src="{{ url($product->photo->photo) }}" class="mr-3 img-fluid" id="device-image">
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="row">
@@ -75,21 +49,22 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <div class="btn-group-toggle" data-toggle="buttons" id="device-storage"></div>
+                                                            <div class="btn-group-toggle" data-toggle="buttons" id="device-storage">
+                                                                {!! $storagelist !!}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-7">
                                                         <div class="form-group">
-                                                            <div class="card" id="condition"></div>
+                                                            <div class="card" id="condition">{!! $condition !!}</div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <h5>Your Cash Offer</h5>
-                                                        <div style="font-size: 40px; padding-bottom: 15px; font-weight: bold;" id="device-amount"></div>
+                                                        <div style="font-size: 40px; padding-bottom: 15px; font-weight: bold;" id="device-amount"><b>${{ $amount }}</b></div>
                                                         <a href="javascript:void(0)" id="addToCart" class="btn btn-warning btn-md btn-block">Add to Cart</a>
-                                                        <!-- <a href="javascript:void(0)" id="checkout" class="btn btn-warning btn-md btn-block">Get Paid</a> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -100,7 +75,14 @@
                                                     <h3>Available Carrier</h3>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
-                                                            <div id="section-networks" class="btn-group-toggle" data-toggle="buttons"></div>
+                                                            <div id="section-networks" class="btn-group-toggle" data-toggle="buttons">
+                                                                @foreach($product['networks'] as $key => $val)
+                                                                    <?php $isActive = ($key == 0) ? 'active' : ''; ?>
+                                                                    <label class="btn btn-outline-warning radio-btn btn-carrier {{ $isActive }}" data-attr-id="{{ $val->network_id }}" id="label-carrier-{{ $val->network_id }}" onClick="selectDeviceCarrier({{ $val->network_id }})">
+                                                                        <img src="{{ url('/assets/images/network/'.$val->network_id.'.png') }}" class="img-fluid">
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -224,46 +206,10 @@
 {!! JsValidator::formRequest('App\Http\Requests\SellRequest') !!}
     <script>
         $(document).ready(function () {
-            $('.btn-get-offer').on('click', function () {
-
-                var id = $(this).attr('data-attr-id');
-                $('#row-devices').fadeOut();
-                var brand = $('#device-content').attr('data-brand');
-                var model = $(this).attr('data-attr-model');
-                $('head').append('<meta property="og:title" content="'+ brand + ' ' + model + ' - TronicsPay" />');
-                
-                
-                $('#device-content').attr('data-id', id);
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('products/model') }}",
-                    data: {
-                        id: id,
-                        brand_id: brand,
-                        device_type: $('input[name=device_type]:checked').val(),
-                        storage: $('input[name=storage]:checked').val()
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        $('#header').html(brand+' / '+ response.selectedProduct.model);
-                        $('#row-devices').slideUp();
-                        $('#row-checkout').fadeIn();
-                        $('#device-storage').html(response.storagelist);
-                        $('#device-image').attr('src', '../../'+response.selectedProduct.photo.photo);
-                        $('#condition').html(response.condition);
-                        $('#device-amount').html('<b>$'+response.amount+'</b>');
-                        
-                        $.each(response.selectedProduct.networks, function( index, value ) {
-                            var isActive = (index === 0) ? 'active' : '';
-                            $('#section-networks').append('<label class="btn btn-outline-warning radio-btn btn-carrier '+isActive+'" data-attr-id="'+value.network_id+'" id="label-carrier-'+value.network_id+'" onClick="selectDeviceCarrier('+value.network_id+')"><img src="'+$('body').attr('data-url')+'/assets/images/network/'+value.network_id+'.png" class="img-fluid"></label>');
-                        });
-                    }
-                });
-            });
             $('.radio-device').change(function(){
-                var brand = $('#device-content').attr('data-brand');
-                var network = $('#device-content').attr('data-network');
-                var id = $('#device-content').attr('data-id');
+                var brand = '<?php echo ($status == 200) ? $brand : '' ?>';
+                var network = '<?php echo ($status == 200) ? $product->hashedid : '' ?>';
+                var id = '<?php echo ($status == 200) ? $product->hashedid : '' ?>';
                 $.ajax({
                     type: "POST",
                     url: "{{ url('products/model/filter') }}",
@@ -271,7 +217,7 @@
                         id: id,
                         brand_id: brand,
                         network: network,
-                        device_type: $(this).val(),
+                        device_type: $('.radio-device:checked').val(), // $(this).val(),
                         storage: $('input[name=storage]:checked').val()
                     },
                     dataType: "json",
@@ -296,7 +242,7 @@
                         && value.carrier_id == $('.btn-carrier.active').attr('data-attr-id')
                         && value.brand == $('#device-content').attr('data-brand') 
                         && value.device_type == $('.radio-device:checked').val() 
-                        && value.model == $('.btn-get-offer').attr('data-attr-model')) 
+                        && value.model == '{{ $model }}') 
                         {
                             validateExists = true;
                             value.quantity = parseFloat(value.quantity) + parseFloat(1);
@@ -310,7 +256,7 @@
                             'network' : $('#input-network').val(), 
                             'brand' : $('#device-content').attr('data-brand'), 
                             'device_type' : $('.radio-device:checked').val(), 
-                            'model' : $('.btn-get-offer').attr('data-attr-model'), 
+                            'model' : '{{ $model }}', 
                             'quantity' : 1, 
                             'carrier_id' : $('.btn-carrier.active').attr('data-attr-id')
                         });
@@ -322,9 +268,9 @@
                         'amount' : $('#device-amount').html().replace("<b>$", "").replace("</b>", "").replace(",", ""), 
                         'storage' : $('input[name=storage]:checked').val(), 
                         'network' : $('#input-network').val(), 
-                        'brand' : $('#device-content').attr('data-brand'), 
+                        'brand' : '<?php echo ($status == 200) ? $brand : '' ?>',
                         'device_type' : $('.radio-device:checked').val(), 
-                        'model' : $('.btn-get-offer').attr('data-attr-model'), 
+                        'model' : '{{ $model }}', 
                         'quantity' : 1, 
                         'carrier_id' : $('.btn-carrier.active').attr('data-attr-id')
                     });
@@ -422,9 +368,9 @@
         }
 
         function storage(id){
-            var brand = $('#device-content').attr('data-brand');
-            var network = $('#device-content').attr('data-network');
-            var id = $('#device-content').attr('data-id');
+            var brand = '<?php echo ($status == 200) ? $brand : '' ?>';
+            var network = '<?php echo ($status == 200) ? $product->hashedid : '' ?>';
+            var id = '<?php echo ($status == 200) ? $product->hashedid : '' ?>';
             $.ajax({
                 type: "POST",
                 url: "{{ url('products/model/filter') }}",
@@ -432,7 +378,7 @@
                     id: id,
                     brand_id: brand,
                     network: network,
-                    device_type: $('.radio-device:checked').val(),
+                    device_type: $('.radio-device:checked').val(), // $('.radio-device:checked').val(),
                     storage: $('input[name=storage]:checked').val()
                 },
                 dataType: "json",

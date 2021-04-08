@@ -60,9 +60,8 @@ class ProductController extends Controller
 
     public function index()
     {
-        // $data['storageList'] = $this->tablelist->storageList;
+        $data['tvproducts'] = true;
         $data['storageList'] = [''=>'--','32GB', '64GB','128GB','256GB','512GB'];
-        // $data['networkList'] = $this->tablelist->networkList;
         $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
@@ -132,6 +131,7 @@ class ProductController extends Controller
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
+        $data['tvproducts'] = true;
         return view('admin.products.create', $data);
     }
 
@@ -218,6 +218,7 @@ class ProductController extends Controller
         $data['hashedId'] = $hashedId;
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
+        $data['tvproducts'] = true;
         return view('admin.products.edit', $data);
     }
 

@@ -5,12 +5,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>My Profile</h1>
+                    <h2><i class="nav-icon fas fa-user-circle"></i> My Profile</h2>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('/customer/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">My Profile</li>
+                        <li class="breadcrumb-item"><a href="{{ url('customer/dashboard') }}" class="fontGray1"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><i class="nav-icon fas fa-user-circle"></i> My Profile</li>
+                        <li class="breadcrumb-item active">Details</li>
                     </ol>
                 </div>
             </div>
@@ -88,20 +89,54 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane" id="paymentdetails">
-                                            <div class="form-group row">
-                                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                                                <div class="col-sm-10">
-                                                    <select class="custom-select select-sm" id="payment_method" name="payment_method">
-                                                        <option value="" selected="selected">--</option>
-                                                        <option value="Apple Pay">Apple Pay</option>
-                                                        <option value="Google Pay">Google Pay</option>
-                                                        <option value="Venmo">Venmo</option>
-                                                        <option value="Cash App">Cash App</option>
-                                                        <option value="Paypal">Paypal</option>
-                                                        <option value="Bank Transfer">Bank Transfer</option>
-                                                    </select>
+                                            @if(isset($user) && $user['payment_method'] != '')
+                                                <div class="form-group row">
+                                                    <label for="" class="col-md-4 col-form-label">Payment Method</label>
+                                                    <div class="col-md-8">
+                                                            @if($user['payment_method'] == "Bank Transfer")
+                                                                <img src="{{ url('assets/images/payments/6.png') }}" alt="Bank Transfer" style="width: 60px;">
+                                                            @elseif($user['payment_method'] == "Apple Pay")
+                                                                <img src="{{ url('assets/images/payments/1.png') }}" alt="Apple Pay" style="width: 60px;">
+                                                            @elseif($user['payment_method'] == "Google Pay")
+                                                                <img src="{{ url('assets/images/payments/2.png') }}" alt="Google Pay" style="width: 60px;">
+                                                            @elseif($user['payment_method'] == "Venmo")
+                                                                <img src="{{ url('assets/images/payments/3.png') }}" alt="Venmo" style="width: 60px;">
+                                                            @elseif($user['payment_method'] == "Cash App")
+                                                                <img src="{{ url('assets/images/payments/4.png') }}" alt="Cash App" style="width: 60px; height: 30px;">
+                                                            @elseif($user['payment_method'] == "Paypal")
+                                                                <img src="{{ url('assets/images/payments/5.png') }}" alt="Paypal" style="width: 60px;">
+                                                            @endif
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                
+                                                @if($user['payment_method'] == "Bank Transfer")
+                                                    <div class="form-group row">
+                                                        <label for="inputEmail" class="col-md-4 col-form-label">Bank Name</label>
+                                                        <div class="col-md-8">
+                                                            <input class="form-control" readonly placeholder="Bank Name" value="{{ $user['bank'] }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="inputEmail" class="col-md-4 col-form-label">Account Name</label>
+                                                        <div class="col-md-8">
+                                                            <input class="form-control" readonly placeholder="Account Name" value="{{ $user['account_username'] }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="inputEmail" class="col-md-4 col-form-label">Account Number</label>
+                                                        <div class="col-md-8">
+                                                            <input class="form-control" readonly placeholder="Account Number" value="{{ $user['account_number'] }}">
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="form-group row">
+                                                        <label for="inputEmail" class="col-md-4 col-form-label">Account Username</label>
+                                                        <div class="col-md-8">
+                                                            <input class="form-control" readonly placeholder="Email" value="{{ $user['account_username'] }}">
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endif
                                             
                                         </div>
                                     </div>

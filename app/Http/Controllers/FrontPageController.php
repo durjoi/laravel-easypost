@@ -19,6 +19,7 @@ use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Admin\PageBuilderRepositoryEloquent as PageBuilder;
 use App\Repositories\Admin\NetworkRepositoryEloquent as NetworkRepo;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 use Illuminate\Routing\UrlGenerator;
 
@@ -102,6 +103,12 @@ class FrontPageController extends Controller
         if ($page_url == "cart") {
             $data['brands'] = $this->brandRepo->all();
             $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+
+            $data['meta'] = ['<meta property="og:title" content="Sell used Cell Phones, Game Consoles and Electronics. Get Paid!" />', 
+                    '<meta property="og:url" content="'.url('/cart').'" />', 
+                    '<meta name="twitter:title" content="Sell used Cell Phones, Game Consoles and Electronics. Get Paid!" />', 
+                    '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />'
+            ];
             return view("front.cart.index", $data);
         }
 
@@ -110,7 +117,12 @@ class FrontPageController extends Controller
          */
         if ($page_url == "about-us") {
             $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-        
+
+            $data['meta'] = ['<meta property="og:title" content="Sell used Cell Phones, Game Consoles and Electronics. Get Paid!" />', 
+                    '<meta property="og:url" content="'.url('/about-us').'" />', 
+                    '<meta name="twitter:title" content="Sell used Cell Phones, Game Consoles and Electronics. Get Paid!" />', 
+                    '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />'
+            ];
             return view('front.aboutus.index', $data);
         }
         
@@ -125,13 +137,19 @@ class FrontPageController extends Controller
     }
 
 
-    public function welcome()
+    public function landingPage()
     {
         $data['page'] = $this->pageBuilderRepo->findByField('url', '/');
         // $data['page'] = $this->pageBuilderRepo->find(1);
         $data['page_id'] = $data['page']->id;
         $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
         $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+
+        $data['meta'] = ['<meta property="og:title" content="Sell used Cell Phones, Game Consoles and Electronics. Get Paid!" />', 
+                '<meta property="og:url" content="'.url('/').'" />', 
+                '<meta name="twitter:title" content="Sell used Cell Phones, Game Consoles and Electronics. Get Paid!" />', 
+                '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />'
+        ];
         return view('welcome', $data);
     }
 

@@ -1,9 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>TronicsPay</title>
+	<title>TronicsPay | Sell used Cell Phones, Game Consoles and Electronics. Get Paid!</title>
+ 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="robots" content="index, follow">
+	<meta name="title" content="TronicsPay">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="keywords" content="Apple,Samsung,LG,HTC,Nokia,Sony,Alcatel,Google,Zte,OnePlus,Motorola,Sell device,Sell used phone,Sell your used phone,Sell electronics,iPad,Tablet,Smart Watches,Game console,">
+	<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />
+	<meta name="language" content="English">
+	<meta name="revisit-after" content="1 days">
+
+	<meta property="og:site_name" content="Tronics Pay" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="website" />
+	<meta property="og:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />
+	
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />
+
+@if(isset($meta) && count($meta) > 0)
+@foreach($meta as $key => $val)
+    {!! $val !!}
+@endforeach
+@endif
+
+	<link rel="canonical" href="https://www.tronicspay.com/" />
 	<link rel="shortcut icon" href="{{ url('./library/images/favicon.ico') }}" />
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,8 +38,8 @@
 </head>
 <body data-url="{{ url('/') }}">>
 	@include('partial.front.navbar')
-  @yield('content')
-  <footer class="section-footer">
+	@yield('content')
+	<footer class="section-footer">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-2 col-md-6 column-1">

@@ -101,7 +101,7 @@ class DatatableController extends Controller
             return $order_items->quantity;
         })
         ->editColumn('status', function ($order_items) {
-            return '<center><small class="badge badge-warning">'.strtoupper($order_items['order']['status_details']['name']).'</small></center>';
+            return '<center><small class="badge '.$order_items['order']['status_details']['badge'].'">'.strtoupper($order_items['order']['status_details']['name']).'</small></center>';
             // return '<center><small class="badge badge-warning">'.strtoupper(str_replace("_", " ", $order_items['order']['shipping_status'])).'</small></center>';
         })
         ->addColumn('action', function ($order_items) {
@@ -161,7 +161,7 @@ class DatatableController extends Controller
             return '<div class="pull-right">$'.number_format($order_items->amount, 2, '.', ',').'</div>';
         })
         ->editColumn('status', function ($order_items) {
-            return '<center><small class="badge badge-warning">'.strtoupper($order_items['order']['status_details']['name']).'</small></center>';
+            return '<center><small class="badge '.$order_items['order']['status_details']['badge'].'">'.strtoupper($order_items['order']['status_details']['name']).'</small></center>';
         })
         ->addColumn('action', function ($order_items) {
             $html_out  = '';
@@ -189,7 +189,7 @@ class DatatableController extends Controller
             return $orders->order_no;
         })
         ->editColumn('shipping_status', function($orders) {
-            return '<center><small class="badge badge-warning">'.strtoupper($orders['status_details']['name']).'</small></center>';
+            return '<center><small class="badge '.$orders['status_details']['badge'].'">'.strtoupper($orders['status_details']['name']).'</small></center>';
         })
         ->addColumn('action', function ($orders) {
             $html_out  = '';
@@ -197,7 +197,7 @@ class DatatableController extends Controller
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
                 if ($orders['shipping_label'] != '') {
-                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="'.url('./order/'.$orders['hashedId'].'/shippinglabel').'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
                 }
                 if ($orders['shipping_tracker'] != '') {
                     $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_tracker'].'" target="_blank"><i class="nav-icon fas fa-file-alt fa-fw"></i> Track Order</a>';
@@ -228,7 +228,7 @@ class DatatableController extends Controller
             return $html_out;
         })
         ->editColumn('shipping_status', function($orders) {
-            return '<center><small class="badge badge-warning">'.strtoupper($orders['status_details']['name']).'</small></center>';
+            return '<center><small class="badge '.$orders['status_details']['badge'].'">'.strtoupper($orders['status_details']['name']).'</small></center>';
             // return '<center>'.strtoupper(str_replace("_", "", $orders->shipping_status)).'</center>';
         })
         ->editColumn('transaction_date', function($orders) {
@@ -244,7 +244,8 @@ class DatatableController extends Controller
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
 
                 if ($orders['shipping_label'] != '') {
-                    $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="'.url('./order/'.$orders['hashedId'].'/shippinglabel').'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
+                    // $html_out .= '<a class="dropdown-item font14px" href="'.$orders['shipping_label'].'" target="_blank"><i class="nav-icon fas fa-file fa-fw"></i> Shipping Label</a>';
                 }
                     
                 if ($orders['shipping_tracker'] != '') {

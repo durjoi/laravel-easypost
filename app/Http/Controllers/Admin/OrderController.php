@@ -257,7 +257,34 @@ class OrderController extends Controller
                                                             <td class="lead">Payment Method:</td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="pad10rem">'.$customer_transaction['payment_method'] .'</td>
+                                                            <td class="pad10rem">
+                                                                <table width="100%">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td width="20%">';
+                                                                                                                
+                                                                                if(isset($customer_transaction) && $customer_transaction['payment_method'] != '') {
+                                                                                    if($customer_transaction['payment_method'] == "Bank Transfer") {
+                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/6.png" alt="Bank Transfer" style="width: 60px;">';
+                                                                                    } else if ($customer_transaction['payment_method'] == "Apple Pay") {
+                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/1.png" alt="Apple Pay" style="width: 60px;">';
+                                                                                    } else if ($customer_transaction['payment_method'] == "Google Pay") {
+                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/2.png" alt="Google Pay" style="width: 60px;">';
+                                                                                    } else if ($customer_transaction['payment_method'] == "Venmo") {
+                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/3.png" alt="Venmo" style="width: 60px;">';
+                                                                                    } else if ($customer_transaction['payment_method'] == "Cash App") {
+                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/4.png" alt="Cash App" style="width: 60px; height: 30px;">';
+                                                                                    } else if ($customer_transaction['payment_method'] == "Paypal") {
+                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/5.png" alt="Paypal" style="width: 60px;">';
+                                                                                    }
+                                                                                }
+                                                                            
+                                                        $generateHtml .= '</td>
+                                                                            <td width="80%">'.$customer_transaction['payment_method'] .'</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
                                                         </tr>';
                                                 if ($customer_transaction['payment_method'] == "Bank Transfer") {
                                         $generateHtml .= '<tr>

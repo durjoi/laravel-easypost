@@ -76,14 +76,6 @@ class DeviceController extends Controller
         $this->orderItemRepo = $orderItemRepo;
     }
 
-    public function index()
-    {
-        return "111";
-        if(session()->has('result')){
-            return view('front.device.index');
-        }
-        return redirect()->to('/');
-    }
 
     public function checkout($brand)
     {
@@ -112,6 +104,13 @@ class DeviceController extends Controller
                 $data['products'][$key]['storages'] = $this->product->find($val['id'])->storagesForBuying()->get();
             }
         }
+
+        $data['meta'] = ['<meta property="og:title" content="'.$brand.' - TronicsPay" />', 
+                '<meta property="og:url" content="'.url('/products/category/'.$brand.'/').'" />', 
+                '<meta name="twitter:title" content="'.$brand.' - TronicsPay" />', 
+                '<meta name="twitter:image" content="'.url('/'.$brandDetails->full_size).'" />'
+        ];
+
         return view('front.device.checkout', $data);
     }
 
@@ -222,6 +221,285 @@ class DeviceController extends Controller
         return $data;
         return $request->all();
     }
+    
+    public function brandModel($brand, $model)
+    {
+        $brandData = $this->brandRepo->findByField('name', $brand);
+        $result = $this->productRepo->rawByWithField(['photo', 'networks.network'], 'model = ? and brand_id = ?', [$model, $brandData->id]);
+        if ($result) 
+        {
+            $id = $result['id'];
+            $device_type = 1;
+            $storagelist = '';
+            $condition = '';
+            $amount = '';
+            $data['product'] = $result;
+            $data['status'] = 200;
+            $data['brand'] = $brand;
+            $data['model'] = $model;
+            $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$result->id]);
+            $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
+            $data['paymentList'] = [
+                '' => '--',
+                'Apple Pay' => 'Apple Pay',
+                'Google Pay' => 'Google Pay',
+                'Venmo' => 'Venmo',
+                'Cash App' => 'Cash App',
+                'Paypal' => 'Paypal',
+                'Bank Transfer' => 'Bank Transfer'
+            ];
+            
+            $getProductStorage = $data['productStorage'][0];
+
+            foreach ($data['productStorage'] as $psKey => $psVal) 
+            {
+                $active = ($psKey == 0) ? ' active' : '';
+                $checked = ($psKey == 0) ? ' checked' : '';
+                $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
+                $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$psVal->title.'" onchange="storage(\''.$psVal->title.'\')" autocomplete="off"'.$checked.'> '.$psVal->title;
+                $storagelist .= '</label>';
+            }
+            $data['storagelist'] = $storagelist;
+            if($device_type == 1){
+                $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
+                $condition .= '<div class="card-body" style="font-size: 14px;">';
+                $condition .= 'If ALL of the following are true:';
+                $condition .= '<ul>';
+                $condition .= '<li>Fully functional</li>';
+                $condition .= '<li>Appears to be brand new</li>';
+                $condition .= '<li>No scratches, scuffs or marks</li>';
+                $condition .= '<li>Phone has a good ESN /IMEI</li>';
+                $condition .= '</ul>';
+                $condition .= '</div>';
+            }
+            if($device_type == 2){
+                $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
+                $condition .= '<div class="card-body" style="font-size: 14px;">';
+                $condition .= 'If ALL of the following are true:';
+                $condition .= '<ul>';
+                $condition .= '<li>Fully functional</li>';
+                $condition .= '<li>No major scratches, scuffs or nicks</li>';
+                $condition .= '<li>No cracks or broken hardware</li>';
+                $condition .= '<li>Phone has a good ESN / IMEI</li>';
+                $condition .= '</ul>';
+                $condition .= '</div>';
+            }
+            if($device_type == 3){
+                $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
+                $condition .= '<div class="card-body" style="font-size: 14px;">';
+                $condition .= 'If ANY of the following are true:';
+                $condition .= '<ul>';
+                $condition .= '<li>Cracked back</li>';
+                $condition .= '<li>Defective buttons</li>';
+                $condition .= '<li>Significant wear and tear</li>';
+                $condition .= '<li>Housing damage</li>';
+                $condition .= '</ul>';
+                $condition .= '</div>';
+            }
+            if($device_type == 4){
+                $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
+                $condition .= '<div class="card-body" style="font-size: 14px;">';
+                $condition .= 'If ANY of the following are true:';
+                $condition .= '<ul>';
+                $condition .= '<li>Does NOT power on</li>';
+                $condition .= '<li>Damaged LCD</li>';
+                $condition .= '<li>Missing parts or bent frame</li>';
+                $condition .= '<li>Any Password lock</li>';
+                $condition .= '</ul>';
+                $condition .= '</div>';
+            }
+            $data['condition'] = $condition;
+            $data['amount'] = $amount;
+
+            $data['meta'] = ['<meta property="og:title" content="'.$brand.' '.$model.' - TronicsPay" />', 
+                        '<meta property="og:url" content="'.url('/products/'.$brand.'/'.$model).'" />', 
+                        '<meta name="twitter:title" content="'.$brand.' '.$model.' - TronicsPay" />', 
+                        '<meta name="twitter:image" content="'.url('/'.$result->photo->photo).'" />'
+            ];
+        }
+        else 
+        {
+            $data['status'] = 404;
+            $data['error'] = $brand.' - '.$model.' not found';
+        }
+        return view('front.device.brandmodel', $data);
+        
+        // $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
+        // $device_type = $request['device_type'];
+        // $result = $this->productRepo->findWith($id, ['photo', 'networks.network']);
+        // $storagelist = '';
+        // $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$id]);
+        
+        // if (isset($request['storage']) && $request['storage'] != null) {
+        //     $getProductStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$id, $request['storage']]);
+        // } else {
+        //     $getProductStorage = $data['productStorage'][0];
+        // }
+        // $data['selectedProduct'] = $result;
+        // foreach ($data['productStorage'] as $psKey => $psVal) {
+        //     $active = ($psKey == 0) ? ' active' : '';
+        //     $checked = ($psKey == 0) ? ' checked' : '';
+        //     $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
+        //     $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$psVal->title.'" onchange="storage(\''.$psVal->title.'\')" autocomplete="off"'.$checked.'> '.$psVal->title;
+        //     $storagelist .= '</label>';
+        // }
+        // $data['storagelist'] = $storagelist;
+        // $condition = '';
+        // $amount = '';
+        // if($device_type == 1){
+        //     $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ALL of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Fully functional</li>';
+        //     $condition .= '<li>Appears to be brand new</li>';
+        //     $condition .= '<li>No scratches, scuffs or marks</li>';
+        //     $condition .= '<li>Phone has a good ESN /IMEI</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // if($device_type == 2){
+        //     $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ALL of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Fully functional</li>';
+        //     $condition .= '<li>No major scratches, scuffs or nicks</li>';
+        //     $condition .= '<li>No cracks or broken hardware</li>';
+        //     $condition .= '<li>Phone has a good ESN / IMEI</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // if($device_type == 3){
+        //     $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ANY of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Cracked back</li>';
+        //     $condition .= '<li>Defective buttons</li>';
+        //     $condition .= '<li>Significant wear and tear</li>';
+        //     $condition .= '<li>Housing damage</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // if($device_type == 4){
+        //     $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ANY of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Does NOT power on</li>';
+        //     $condition .= '<li>Damaged LCD</li>';
+        //     $condition .= '<li>Missing parts or bent frame</li>';
+        //     $condition .= '<li>Any Password lock</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // $data['condition'] = $condition;
+        // $data['amount'] = $amount;
+
+
+        // $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+        // $data['brand'] = $brand;
+        // $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
+        // $data['paymentList'] = [
+        //     '' => '--',
+        //     'Apple Pay' => 'Apple Pay',
+        //     'Google Pay' => 'Google Pay',
+        //     'Venmo' => 'Venmo',
+        //     'Cash App' => 'Cash App',
+        //     'Paypal' => 'Paypal',
+        //     'Bank Transfer' => 'Bank Transfer'
+        // ];
+        // $brandDetails = $this->brandRepo->findByField('name', $brand);
+        // $data['chkproduct'] = $this->productRepo->rawCount("brand_id = ?", [$brandDetails->id]);
+        // $data['networks'] =  $this->productRepo->queryTable()->whereRaw("brand_id = ? and device_type IN ('Buy', 'Both')", [$brandDetails->id])->groupBy('network')->get();
+        // $data['brandDetails'] = $brandDetails;
+        // $allProducts = $this->productRepo->rawByWithFieldAll(['photo'], "brand_id = ?", [$brandDetails->id], 'model');
+        // $data['products'] = [];
+        // foreach ($allProducts as $key => $val) 
+        // {
+        //     if ($this->product->find($val['id'])->storagesForBuying()->count() >= 1) {
+        //         $data['products'][$key] = $val;
+        //         $data['products'][$key]['storages'] = $this->product->find($val['id'])->storagesForBuying()->get();
+        //     }
+        // }
+        return view('front.device.brandmodel', $data);
+        
+        // $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
+        // $device_type = $request['device_type'];
+        // $result = $this->productRepo->findWith($id, ['photo', 'networks.network']);
+        // $storagelist = '';
+        // $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$id]);
+        
+        // if (isset($request['storage']) && $request['storage'] != null) {
+        //     $getProductStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$id, $request['storage']]);
+        // } else {
+        //     $getProductStorage = $data['productStorage'][0];
+        // }
+        // $data['selectedProduct'] = $result;
+        // foreach ($data['productStorage'] as $psKey => $psVal) {
+        //     $active = ($psKey == 0) ? ' active' : '';
+        //     $checked = ($psKey == 0) ? ' checked' : '';
+        //     $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
+        //     $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$psVal->title.'" onchange="storage(\''.$psVal->title.'\')" autocomplete="off"'.$checked.'> '.$psVal->title;
+        //     $storagelist .= '</label>';
+        // }
+        // $data['storagelist'] = $storagelist;
+        // $condition = '';
+        // $amount = '';
+        // if($device_type == 1){
+        //     $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ALL of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Fully functional</li>';
+        //     $condition .= '<li>Appears to be brand new</li>';
+        //     $condition .= '<li>No scratches, scuffs or marks</li>';
+        //     $condition .= '<li>Phone has a good ESN /IMEI</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // if($device_type == 2){
+        //     $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ALL of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Fully functional</li>';
+        //     $condition .= '<li>No major scratches, scuffs or nicks</li>';
+        //     $condition .= '<li>No cracks or broken hardware</li>';
+        //     $condition .= '<li>Phone has a good ESN / IMEI</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // if($device_type == 3){
+        //     $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ANY of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Cracked back</li>';
+        //     $condition .= '<li>Defective buttons</li>';
+        //     $condition .= '<li>Significant wear and tear</li>';
+        //     $condition .= '<li>Housing damage</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // if($device_type == 4){
+        //     $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
+        //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+        //     $condition .= 'If ANY of the following are true:';
+        //     $condition .= '<ul>';
+        //     $condition .= '<li>Does NOT power on</li>';
+        //     $condition .= '<li>Damaged LCD</li>';
+        //     $condition .= '<li>Missing parts or bent frame</li>';
+        //     $condition .= '<li>Any Password lock</li>';
+        //     $condition .= '</ul>';
+        //     $condition .= '</div>';
+        // }
+        // $data['condition'] = $condition;
+        // $data['amount'] = $amount;
+
+        // return $data;
+    }
 
     public function model(Request $request)
     {
@@ -298,119 +576,9 @@ class DeviceController extends Controller
         $data['condition'] = $condition;
         $data['amount'] = $amount;
 
-        // $data['carrier'] = '';
-        // if ($result && Count($result['networks']) >= 1) 
-        // {
-        //     $data['carrier'] .= '<div class="row">';
-        //     foreach ($result['networks'] as $nKey => $nVal) 
-        //     {
-        //         $networkImageUrl = url('/').'&#47;assets&#47;images&#47;network&#47;'.$nVal['network']['id'].'.png';
-        //         $data['carrier'] .= '<div class="col-md-3><img src="'.$networkImageUrl.'" class="img-fluid"></div>';
-        //     }
-        //     $data['carrier'] .= '</div>';
-        // }
-
-        return $data;
-
-
-
-
-        return $products = $this->productRepo->rawAll("brand_id = ? and (device_type = ? OR device_type = ?)", [$result->brand_id, 'Buy', 'Both']);
-        
-        foreach ($products as $key => $product) {
-            $active = ($key == 0) ? ' active' : '';
-            $checked = ($key == 0) ? ' checked' : '';
-            $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
-            $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$product->storage.'" onchange="storage(\''.$product->storage.'\')" autocomplete="off"'.$checked.'> '.$product->storage;
-            $storagelist .= '</label>';
-        }
-        $storage = isset($request['storage']) ? $request['storage'] : $products[0]->storage;
-        // return $request->all();
-        $data['product'] = $product = $this->productRepo->rawByWithField(['photo'], "brand_id = ? and storage = ? and (device_type = ? OR device_type = ?)", [$result->brand_id, $storage, 'Buy', 'Both']);
-        $condition = '';
-        if($device_type == 1){
-            $amount = $data['product']->excellent_offer;
-            $condition .= '<div class="card-body" style="font-size: 14px;">';
-            $condition .= 'If ALL of the following are true:';
-            $condition .= '<ul>';
-            $condition .= '<li>Fully functional</li>';
-            $condition .= '<li>Appears to be brand new</li>';
-            $condition .= '<li>No scratches, scuffs or marks</li>';
-            $condition .= '<li>Phone has a good ESN /IMEI</li>';
-            $condition .= '</ul>';
-            $condition .= '</div>';
-        }
-        if($device_type == 2){
-            $amount = $data['product']->good_offer;
-            $condition .= '<div class="card-body" style="font-size: 14px;">';
-            $condition .= 'If ALL of the following are true:';
-            $condition .= '<ul>';
-            $condition .= '<li>Fully functional</li>';
-            $condition .= '<li>No major scratches, scuffs or nicks</li>';
-            $condition .= '<li>No cracks or broken hardware</li>';
-            $condition .= '<li>Phone has a good ESN / IMEI</li>';
-            $condition .= '</ul>';
-            $condition .= '</div>';
-        }
-        if($device_type == 3){
-            $amount = $data['product']->fair_offer;
-            $condition .= '<div class="card-body" style="font-size: 14px;">';
-            $condition .= 'If ANY of the following are true:';
-            $condition .= '<ul>';
-            $condition .= '<li>Cracked back</li>';
-            $condition .= '<li>Defective buttons</li>';
-            $condition .= '<li>Significant wear and tear</li>';
-            $condition .= '<li>Housing damage</li>';
-            $condition .= '</ul>';
-            $condition .= '</div>';
-        }
-        if($device_type == 4){
-            $amount = $data['product']->poor_offer;
-            $condition .= '<div class="card-body" style="font-size: 14px;">';
-            $condition .= 'If ANY of the following are true:';
-            $condition .= '<ul>';
-            $condition .= '<li>Does NOT power on</li>';
-            $condition .= '<li>Damaged LCD</li>';
-            $condition .= '<li>Missing parts or bent frame</li>';
-            $condition .= '<li>Any Password lock</li>';
-            $condition .= '</ul>';
-            $condition .= '</div>';
-        }
-        $data['storagelist'] = $storagelist;
-        $data['condition'] = $condition;
-        $data['amount'] = $amount;
-        $data['photo'] = url($result->photo->photo);
-        // return $request->all();
         return response()->json($data);
     }
-
-    // public function storeget () 
-    // {
-        
-    //     $data['fname'] = 'fname';
-    //     $data['email'] = 'email';
-    //     $data['password'] = 'password';
-    //     $data['company_email'] = 'company email';
-    //     $data['model'] = 'product model';
-    //     $data['header'] = "TronicsPay Order Confirmation";
-    //     $data['order'] = $order = $this->orderRepo->findWith(30, [
-    //                                                         'customer', 
-    //                                                         'customer.bill',
-    //                                                         'order_item',
-    //                                                         'order_item.product',
-    //                                                         'order_item.product.brand',
-    //                                                         'order_item.network',
-    //                                                         'order_item.product_storage'
-    //                                                         ]);
-    //     $data['config'] = $this->configRepo->find(1);
-        
-    //     $data['shippingFee'] = 10;
-    //     $data['overallSubTotal'] = 0;
-    //     $data['counter'] = 1;
-    //     return view('mail.customer', $data);
-    //     $content = view('mail.customer', $data)->render();
-    //     return $content;
-    // }
+    
 
     // public function store(SellRequest $request)
     public function store(Request $request)
@@ -884,7 +1052,7 @@ class DeviceController extends Controller
         $data['order'] = $order = $this->orderRepo->find($id);
         $pdf = PDF::loadView('partial.documents.shippinglabel.index', $data);
         
-        return $pdf->download('tronicspay-shipping-label.pdf');
+        return $pdf->download('Tronicspay_Shipping_Label.pdf');
     }
     
     private function shipping($address, $parcel)

@@ -5,14 +5,14 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                <h1>My Devices</h1>
+                    <h2><i class="nav-icon fas fa-mobile-alt"></i> My Devices</h2>
                 </div>
                 <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ url ('customer/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url ('customer/my-devices') }}">My Devices</a></li>
-                    <li class="breadcrumb-item active">Details<x/li>
-                </ol>
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ url('customer/dashboard') }}" class="fontGray1"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('customer/my-devic') }}" class="fontGray1"><i class="nav-icon fas fa-mobile-alt"></i> My Devices</a></li>
+                        <li class="breadcrumb-item active">Details</li>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -25,8 +25,8 @@
                 <h3 class="card-title">Order #: <b>{{ $data['order']['order_no'] }}</b></h3>
 
                 <div class="card-tools">
-                    <span class="label label-warning">
-                        {{ $data['order']['status']['name'] }}
+                    <span class="label {{ $data['order']['status_details']['badge'] }}">
+                        {{ $data['order']['status_details']['name'] }}
                     </span>
                 </div>
             </div>
@@ -44,7 +44,7 @@
 
                         <hr>
 
-                        <h4 class="mt-3">Storage Size <small>Please select one</small></h4>
+                        <h4 class="mt-3">Storage Size <small>(Please select one)</small></h4>
                         <div class="table table-responsive">
                             <table>
                                 <tbody>
@@ -91,7 +91,7 @@
 
                         <hr>
 
-                        <h4 class="mt-3">Available Carrier <small>Please select one</small></h4>
+                        <h4 class="mt-3">Available Carrier <small>(Please select one)</small></h4>
                         <div class="table table-responsive">
                             <table>
                                 <tbody>
@@ -147,7 +147,7 @@
 
                         <hr>
 
-                        <h4 class="mt-3">Device Condition <small>Please select one</small></h4>
+                        <h4 class="mt-3">Device Condition <small>(Please select one)</small></h4>
                         <div class="table table-responsive">
                             <table>
                                 <tbody>
@@ -187,7 +187,7 @@
 
                         <hr>
 
-                        <h4 class="mt-3">Quantity <small>Please select one</small></h4>
+                        <h4 class="mt-3">Quantity <small>(Please select one)</small></h4>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
                             <div class="row">
                                 <div class="col-md-6">
@@ -218,7 +218,7 @@
                             </h4>
                         </div>
 
-                        <div class="mt-4">
+                        <!-- <div class="mt-4">
                             <div class="btn btn-primary btn-lg btn-flat font1rem">
                                 <i class="fas fa-cart-plus fa-lg mr-2"></i> 
                                 <span>Update Device Details</span>
@@ -228,7 +228,7 @@
                                 <i class="fas fa-trash fa-lg mr-2"></i> 
                                 Remove From List
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="row mt-4">
@@ -331,7 +331,8 @@
                                         <tr>
                                             <td>{{ $data['order']['tracking_code'] }}</td>
                                             <td>{{ strtoupper(str_replace("_", " ", $data['order']['shipping_status'])) }}</td>
-                                            <td><a href="{{ $data['order']['shipping_tracker'] }}" target="_blank"><i class="nav-icon fas fa-file-alt fa-fw"></i></a></td>
+                                            <td><a href="{{ $data['order']['shipping_tracker'] }}" target="_blank">[Click here]</i></a></td>
+                                            <!-- <td><a href="javascript:void(0);" onClick="modalTrackShipping('{{ $data['order']['shipping_tracker'] }}')">[Click here]</i></a></td> -->
                                             <td>{{ $data['order']['display_transaction_date'] }}</td>
                                             <td>{{ $data['order']['display_delivery_due'] }}</td>
                                         </tr>

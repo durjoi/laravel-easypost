@@ -75,7 +75,7 @@ class DeviceController extends Controller
         $data['data'] = $this->orderItemRepo->rawByWithField(
                                 [
                                     'order',
-                                    'order.status',
+                                    'order.status_details',
                                     'order.customer',
                                     'order.customer.bill',
                                     'product',

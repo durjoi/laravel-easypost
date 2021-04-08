@@ -53,7 +53,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     Route::get('products/storage/{hashedId}/find', [\App\Http\Controllers\Admin\ProductController::class, 'findProductStorage']);
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
 
-    // Route::post('customers/getcustomer', [\App\Http\Controllers\Admin\CustomerController::class, 'getcustomer']);
+    Route::get('products/map/condition', ['as' => 'admin.products.map.condition', 'uses' => 'App\Http\Controllers\Admin\ProductMappingController@index']);
+
+
     Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class);
 
     

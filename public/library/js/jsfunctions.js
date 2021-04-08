@@ -717,7 +717,8 @@ function initPayPalButton(valueAmount) {
 	}).render('#paypal-button-container');
 }
 
-function percent(amount, offer) {
+function percent(amount, offer) 
+{
 	goodPrice = parseFloat($('#good').val());
 	fairPrice = parseFloat($('#fair').val());
 	poorPrice = parseFloat($('#poor').val());
@@ -732,3 +733,19 @@ function percent(amount, offer) {
 		return amount - (poorPrice / 100 * amount);
 	}
 }
+
+// function modalTrackShipping (shippingTracker) 
+// {
+// 	$('#modal-show-tracker').modal();
+// 	// var myFrame = $("#iframe-order-tracker").contents().find('body');
+// 	$("#iframe-order-tracker").attr("src", 'https://google.com');
+//     // $("#iframe-order-tracker").attr('src', 'https://www.qries.com');;
+// 	// var $('#iframe-order-trackers').attr('src', shippingTracker);
+// 	// var url = $("#iframe-order-tracker").attr ('src');
+// 	// $('#iframe-order-trackers').load(shippingTracker);
+// // 	$('#iframe-order-tracker').attr('src', '');
+// // 	// $('#iframe-order-tracker').attr('src', shippingTracker);
+// // 	$('#iframe-order-tracker').attr('src', 'https://google.com');
+// // 	// shippingTracker
+// // //  onClick="modalTrackShipping('{{ $data['order']['shipping_tracker'] }}')"
+// }

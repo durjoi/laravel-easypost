@@ -22,7 +22,7 @@
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}" class="{{ (isset($is_dark_mode) && $is_dark_mode == true ) ? 'fontWhite' : 'fontGray1' }}"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
                             <li class="breadcrumb-item"><i class="nav-icon fas fa-shopping-basket"></i> Manage Products</li>
-                            <li class="breadcrumb-item active">Create</li>
+                            <li class="breadcrumb-item active">Edit</li>
                         </ol>
                     </div>
                 </div>

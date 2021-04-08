@@ -28,11 +28,3 @@
         </div>
     </div>
 </div>
-
-@if(isset($paypal))
-    <script src="https://www.paypal.com/sdk/js?client-id={{ $paypal['paypal_account_client_id'] }}&currency=USD" data-sdk-integration-source="button-factory"></script>
-@endif
-
-<!-- <script>
-    initPayPalButton();
-</script> -->
