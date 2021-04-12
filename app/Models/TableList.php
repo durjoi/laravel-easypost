@@ -8,6 +8,37 @@ use Illuminate\Database\Eloquent\Model;
 class Tablelist extends Model
 {
 
+    public $plivo_credentials = [
+        'url' => 'https://console.plivo.com/dashboard/',
+        'auth_id' => 'MAMTDJN2Q2Y2Q3NJY5MJ',
+        'auth_token' => 'ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk', 
+        'username' => 'glenn@saperemarketing.com', 
+        'password' => 'P@utangnaman123'
+    ];
+
+    public $twilio_sms_credential = [
+        'link' => 'https://www.twilio.com/console/gate',
+        'console' => 'https://console.twilio.com/',
+
+        // Live Credentials
+        'account_sid' => 'ACa5ed127d286333774ba46e6978b0f80c',
+        'auth_token' => '6db62097c6989d42443f3ab69cc06dd4', 
+        // Test Credentials
+        // 'account_sid' => 'AC18d4ce298105e3dab731421c1dbac077',
+        // 'auth_token' => '6114c3371c24a5431ad0fba7aca1ca72', 
+
+        'twilio_phone_number' => '(334) 721-0661',
+        'phone_number' => '13347210661', 
+        'username' => 'aen00100@gmail.com', 
+        'password' => 'P@utangnaman123'
+    ];
+
+    public $messagebird_sandbox_credential = [
+        'signing_key' => '1o1IAEmdpWievkvgAwbul3T06MELy9xA',
+        'api_token_key' => 'HfIDBYwzbzKvk8obYtMkkKoWo', 
+        'workspace_id' => '8849752'
+    ];
+
     public $paypal_admin = [
                     'sandbox_account' => 'sb-jcj7x5459425@business.example.com', 
                     'client_id' => 'ATchzVJN5IS1NvWOCkOwXTIj58wFXPqCT1GVHh1yRmE1NSrKREdIO4UcBMWzCSGav-Hmry9e-twxcE6q',
@@ -32,11 +63,19 @@ class Tablelist extends Model
         'label-sucess', 'label-info', 'label-primary', 'label-warning', 'label-danger'
     ];
 
-    // public $paypal_account = [
-    //     'paypal_account_client_id' => '',
-    //     'paypal_account_username' => '', 
-    //     'paypal_account_password' => ''
-    // ];
+    public $array_meta_tags = [
+        'title',
+        'description',
+        'og:type',
+        'og:url',
+        'og:title',
+        'og:description',
+        'og:image',
+        'twitter:url',
+        'twitter:title',
+        'twitter:description',
+        'twitter:image'
+    ];
 
     public $email_support = [
                                 'email' => 'support@lawsheroes.com',

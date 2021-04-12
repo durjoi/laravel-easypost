@@ -45,5 +45,5 @@ Route::get('order/{hashedId}/shippinglabel', [App\Http\Controllers\DeviceControl
 Route::get('paypal/success', [App\Http\Controllers\PaypalController::class, 'success'])->name('paypal.success');
 Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'cancel'])->name('paypal.cancel');
 
-
+Route::get('test/sms', [App\Http\Controllers\FrontPageController::class, 'test']);
 // Route::get('/{any}', [App\Http\Controllers\FrontPageController::class, 'custompage']);

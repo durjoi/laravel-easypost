@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ url('home') }}" class="brand-link">
+    <a href="{{ url('admin/dashboard') }}" class="brand-link">
         <img src="{{ url('assets/images/logo-bordered.png') }}" alt="TronicsPay Logo" class="brand-image" style="opacity: .8;">
         <span>&nbsp;</span>
     </a>
@@ -35,11 +35,25 @@
                         <p>Customers</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview">
-                    <a href="{{ url('admin/pagebuilder') }}" class="nav-link {{ (isset($module) && $module == 'page') ? 'active' : '' }}">
+                <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvpage == true) ? 'menu-open' : '' }} ">
+                    <a href="#" class="nav-link {{ (isset($tvproducts) && $tvproducts == 'page') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file"></i>
-                        <p>Pages</p>
+                        <p>Pages<i class="fas fa-angle-left right"></i></p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ url('admin/pagebuilder') }}" class="nav-link {{ (isset($module) && $module == 'page') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Pages Builder</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('admin/page/metatags') }}" class="nav-link {{ (isset($module) && $module == 'config') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Meta Tags</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvproducts == 'product') ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvproducts) && $tvproducts == 'product') ? 'active' : '' }}">

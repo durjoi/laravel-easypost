@@ -105,10 +105,17 @@ class DeviceController extends Controller
             }
         }
 
-        $data['meta'] = ['<meta property="og:title" content="'.$brand.' - TronicsPay" />', 
-                '<meta property="og:url" content="'.url('/products/category/'.$brand.'/').'" />', 
-                '<meta name="twitter:title" content="'.$brand.' - TronicsPay" />', 
-                '<meta name="twitter:image" content="'.url('/'.$brandDetails->full_size).'" />'
+        $data['meta'] = [
+            '<meta name="title" content="'.$brand.' - TronicsPay" />', 
+            '<meta name="description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />', 
+            '<meta property="og:type" content="article" />', 
+            '<meta property="og:title" content="'.$brand.' - TronicsPay" />',
+            '<meta property="og:url" content="'.url('/products/category/'.$brand.'/').'" />', 
+            '<meta property="og:description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />',
+            '<meta name="twitter:title" content="'.$brand.' - TronicsPay" />', 
+            '<meta name="twitter:image" content="'.url('/'.$brandDetails->full_size).'" />', 
+            '<meta name="twitter:url" content="'.url('/products/category/'.$brand.'/').'" />',
+            '<meta name="twitter:description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />'
         ];
 
         return view('front.device.checkout', $data);
@@ -311,10 +318,19 @@ class DeviceController extends Controller
             $data['condition'] = $condition;
             $data['amount'] = $amount;
 
-            $data['meta'] = ['<meta property="og:title" content="'.$brand.' '.$model.' - TronicsPay" />', 
-                        '<meta property="og:url" content="'.url('/products/'.$brand.'/'.$model).'" />', 
-                        '<meta name="twitter:title" content="'.$brand.' '.$model.' - TronicsPay" />', 
-                        '<meta name="twitter:image" content="'.url('/'.$result->photo->photo).'" />'
+
+
+            $data['meta'] = [
+                '<meta name="title" content="'.$brand.' '.$model.' - TronicsPay" />', 
+                '<meta name="description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />', 
+                '<meta property="og:type" content="article" />', 
+                '<meta property="og:title" content="'.$brand.' '.$model.' - TronicsPay" />',
+                '<meta property="og:url" content="'.url('/products/'.$brand.'/'.$model).'" />', 
+                '<meta property="og:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />',
+                '<meta name="twitter:title" content="'.$brand.' '.$model.' - TronicsPay" />', 
+                '<meta name="twitter:image" content="'.url('/'.$result->photo->photo).'" />', 
+                '<meta name="twitter:url" content="'.url('/products/'.$brand.'/'.$model).'" />',
+                '<meta name="twitter:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />'
             ];
         }
         else 

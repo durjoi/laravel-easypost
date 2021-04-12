@@ -23,6 +23,7 @@ use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Admin\SettingsStatusEloquentRepository as SettingsStatus;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
+use App\Repositories\Admin\PageMetaTagRepositoryEloquent as PageMetaTag;
 
 class DatatableController extends Controller
 {
@@ -40,6 +41,7 @@ class DatatableController extends Controller
     protected $settingsStatusRepo;
     protected $settingsCategoryRepo;
     protected $userRepo;
+    protected $pageMetaTagRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -55,7 +57,8 @@ class DatatableController extends Controller
                         OrderItem $orderItemRepo, 
                         SettingsStatus $settingsStatusRepo, 
                         SettingsCategory $settingsCategoryRepo, 
-                        User $userRepo
+                        User $userRepo, 
+                        PageMetaTag $pageMetaTagRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -72,6 +75,7 @@ class DatatableController extends Controller
         $this->settingsStatusRepo = $settingsStatusRepo;
         $this->settingsCategoryRepo = $settingsCategoryRepo;
         $this->userRepo = $userRepo;
+        $this->pageMetaTagRepo = $pageMetaTagRepo;
     }
 
 
@@ -355,6 +359,41 @@ class DatatableController extends Controller
             return $html_out;
         })
         ->rawColumns(['photo', 'action'])
+        ->make(true);
+    }
+
+
+    public function GetMetaTags()
+    {
+        $pageMetaTags = $this->pageMetaTagRepo->rawWith(['page'], '1 = ?', [1], 'page_id', 'asc');
+        return Datatables::of($pageMetaTags)
+        ->editColumn('name', function($pageMetaTags) {
+            return $pageMetaTags->name;
+        })
+        ->editColumn('page', function($pageMetaTags) {
+            return $pageMetaTags->page->title;
+        })
+        ->editColumn('content', function($pageMetaTags) {
+            if ($pageMetaTags->name == 'og:image' || $pageMetaTags->name == 'twitter:image') {
+                return '<img src="'.$pageMetaTags->content.'" style="width: 80px; height: auto">';
+            } else if ($pageMetaTags->name == 'og:url' || $pageMetaTags->name == 'twitter:url') {
+                return '<a href="'.$pageMetaTags->content.'" target="_blank" class="fontWhite"><u>'.$pageMetaTags->content.' <i class="fas fa-external-link-square-alt"></i></u></a>';
+            } else {
+                return strlen($pageMetaTags->content) >= 101 ? substr($pageMetaTags->content,0,100)."..." : $pageMetaTags->content;
+            }
+        })
+        ->addColumn('action', function ($pageMetaTags) {
+            $html_out  = '';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="updatemetatag(\''.$pageMetaTags->hashedid.'\')"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deletemetatag(\''.$pageMetaTags->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
+            return $html_out;
+        })
+        ->rawColumns(['name', 'page', 'content', 'action'])
         ->make(true);
     }
 }

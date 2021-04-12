@@ -98,6 +98,12 @@ body {
     height: 25px !important;
 }
 
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 /**
 *   Theme Color
 */

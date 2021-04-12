@@ -20,8 +20,10 @@
         "laravel/ui": "^3.1",
         "laravelcollective/html": "^6.2",
         "phpmailer/phpmailer": "^6.2",
+        "plivo/plivo-php": "^4.18",
         "proengsoft/laravel-jsvalidation": "^4.4",
         "srmklive/paypal": "^3.0",
+        "twilio/sdk": "^6.21",
         "vinkla/hashids": "^9.1",
         "yajra/laravel-datatables-oracle": "~9.0"
     },

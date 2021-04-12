@@ -27,6 +27,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind('App\Repositories\Admin\SettingsBrandRepository', 'App\Repositories\Admin\SettingsBrandRepositoryEloquent');
         $this->app->bind('App\Repositories\Admin\ProductRepository', 'App\Repositories\Admin\ProductRepositoryEloquent');
         $this->app->bind('App\Repositories\Admin\ProductPhotoRepository', 'App\Repositories\Admin\ProductPhotoRepositoryEloquent');
+        $this->app->bind('App\Repositories\Admin\PageMetaTagRepository', 'App\Repositories\Admin\PageMetaTagRepositoryEloquent');
 
         // Customer
         $this->app->bind('App\Repositories\Customer\CustomerRepository', 'App\Repositories\Customer\CustomerRepositoryEloquent');

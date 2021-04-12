@@ -23,6 +23,8 @@ use App\Repositories\Admin\SettingsStatusEloquentRepository as Status;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
+use App\Repositories\Admin\PageBuilderRepositoryEloquent as PageBuilder;
+use App\Repositories\Admin\PageMetaTagRepositoryEloquent as PageMetaTag;
 use App\Models\TableList;
 use Saperemarketing\Phpmailer\Facades\Mailer;
 use App\Http\Requests\Admin\UserRequest;
@@ -45,6 +47,8 @@ class ApiController extends Controller
     protected $settingsCategoryRepo;
     protected $productCategoryRepo;
     protected $userRepo;
+    protected $pageBuilderRepo;
+    protected $pageMetaTagRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -61,7 +65,9 @@ class ApiController extends Controller
                         TableList $tablelist, 
                         SettingsCategory $settingsCategoryRepo, 
                         ProductCategory $productCategoryRepo, 
-                        User $userRepo
+                        User $userRepo, 
+                        PageBuilder $pageBuilderRepo, 
+                        PageMetaTag $pageMetaTagRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -79,6 +85,8 @@ class ApiController extends Controller
         $this->settingsCategoryRepo = $settingsCategoryRepo;
         $this->productCategoryRepo = $productCategoryRepo;
         $this->userRepo = $userRepo;
+        $this->pageBuilderRepo = $pageBuilderRepo;
+        $this->pageMetaTagRepo = $pageMetaTagRepo;
     }
 
     public function GetProduct ($id) 
@@ -327,9 +335,71 @@ class ApiController extends Controller
         return response()->json($response);  
     }
 
+    public function GetPageBuilderList () 
+    {
+        $response['status'] = 200;
+        $response['model'] = $this->pageBuilderRepo->all();
+        return response()->json($response);  
+    }
 
-
+    public function GetMetaTagNameList () 
+    {
+        $response['status'] = 200;
+        $response['model'] = $this->tablelist->array_meta_tags;
+        return response()->json($response);  
+    }
     
+    public function GetMetaTagDetails ($hashedid) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedid);
+        $response['model'] = $this->pageMetaTagRepo->find($id);
+        $response['status'] = 200;
+        return response()->json($response); 
+    }
+
+    public function PatchMetaTags (Request $request) 
+    {
+        if ($request['id']) {
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
+            $checkDuplicate = $this->pageMetaTagRepo->rawByField("name = ? and page_id = ? and id != ?", [$request['name'], $request['page_id'], $id]);
+        } else {
+            $checkDuplicate = $this->pageMetaTagRepo->rawByField("name = ? and page_id = ?", [$request['name'], $request['page_id']]);
+        }
+        if ($checkDuplicate) 
+        {
+            $response['status'] = 400;
+            $response['error'] = $request['name'].' in page already exists';
+        } 
+        else 
+        {
+            $response['status'] = 200;
+            $response['message'] = 'Status has been successfully saved.';
+            $makeRequest = [
+                'name' => $request['name'], 
+                'page_id' => $request['page_id'], 
+                'meta_type' => (substr($request['name'], 0, 2) == 'og') ? 'property' : 'name',
+                'content' => $request['content']
+            ];
+            if ($request['id']) 
+            {
+                $this->pageMetaTagRepo->update($makeRequest, $id);
+            }
+            else 
+            {
+                $this->pageMetaTagRepo->create($makeRequest);
+            }
+        }
+        return response()->json($response);   
+    }
+    
+    public function DeleteMetaTag ($hashedid) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedid);
+        $this->pageMetaTagRepo->delete($id);
+        $response['status'] = 200;
+        $response['message'] = "Meta tag has been successfully deleted";
+        return response()->json($response); 
+    }
 
     /**
      * CRON JOBS

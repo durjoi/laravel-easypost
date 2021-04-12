@@ -14,11 +14,9 @@
 
 	<meta property="og:site_name" content="Tronics Pay" />
 	<meta property="og:locale" content="en_US" />
-	<meta property="og:type" content="website" />
-	<meta property="og:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />
 	
+	<meta property="article:publisher" content="https://www.facebook.com/recellelectronics816/" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />
 
 @if(isset($meta) && count($meta) > 0)
 @foreach($meta as $key => $val)

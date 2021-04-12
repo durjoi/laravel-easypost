@@ -41,6 +41,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::get('menus', [\App\Http\Controllers\Admin\SettingsController::class, 'Menus']);
     });
 
+    Route::get('page/metatags', [\App\Http\Controllers\Admin\PageViewerController::class, 'MetaTags']);
+
     Route::get('products/list-all/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'listfile']);
     Route::post('products/getproduct', [\App\Http\Controllers\Api\DatatableController::class, 'GetProduct']);
     Route::post('products/postproduct', [\App\Http\Controllers\Admin\ProductController::class, 'postproduct']);
@@ -98,7 +100,10 @@ Route::group(['prefix' => 'api'], function() {
         Route::get('modules', ['as' => 'api.modules', 'uses' => 'App\Http\Controllers\Api\ApiController@GetModules']);
         Route::get('enableoptions', ['as' => 'api.enableoptions', 'uses' => 'App\Http\Controllers\Api\ApiController@GetEnableOptions']);
 
-
+        Route::get('page/metatags/{hashedid}', [\App\Http\Controllers\Api\ApiController::class, 'GetMetaTagDetails']);
+        Route::post('page/metatags', [\App\Http\Controllers\Api\DatatableController::class, 'GetMetaTags']);
+        Route::patch('page/metatags', [\App\Http\Controllers\Api\ApiController::class, 'PatchMetaTags']);
+        Route::delete('page/metatags/{hashedid}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteMetaTag']);
 
         Route::post('settings/users', [\App\Http\Controllers\Api\DatatableController::class, 'GetUsers']);
 
@@ -107,7 +112,10 @@ Route::group(['prefix' => 'api'], function() {
         Route::patch('settings/categories', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchCategories']);
         Route::get('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@GetCategoryDetails']);
         Route::delete('settings/categories/{hashedId}', ['as' => 'api.settings.categories', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteCategory']);
-
+        
+        Route::get('pagebuilders', ['as' => 'api.pagebuilders', 'uses' => 'App\Http\Controllers\Api\ApiController@GetPageBuilderList']);
+        Route::get('metatagnames', ['as' => 'api.metatagnames', 'uses' => 'App\Http\Controllers\Api\ApiController@GetMetaTagNameList']);
+        
         
 
         Route::post('admin/customers', [App\Http\Controllers\Api\DatatableController::class, 'GetCustomers']);

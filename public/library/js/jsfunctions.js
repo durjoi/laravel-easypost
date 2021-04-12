@@ -413,25 +413,27 @@ function getDropdownOptionsStatic(form_url, method, elementId)
 			{
                 $.each(result.model, function( index, value ) {
 					$('#'+elementId).append('<option value="'+value+'">'+value+'</option>');
-					// console.log(value);
-					// $('#order-storage-device').append('<option value="'+value+'">'+value+'</option>');
-                    // if (response.storages.title == value.title) {
-                    //     $('#order-storage-device').append('<option value="'+value.id+'" selected="selected">'+value.title+'</option>');
-                    // } else {
-                    //     $('#order-storage-device').append('<option value="'+value.id+'">'+value.title+'</option>');
-                    // }
                 });
 			}
-			// if (module == 'services') {
-			// 	$('#service_id').val(result.hashid);
-			// 	$('#services-service_name').val(result.service.service_name);
-			// 	$('#services-service_description').val(result.service.service_description);
-			// } else if (module == 'servicetype') {
-			// 	$('#servicetypes-servicetype_id').val(result.hashid);
-			// 	$('#servicetypes-service_id').val(result.servicetype.service_id);
-			// 	$('#servicetypes-servicetype_name').val(result.servicetype.servicetype_name);
-			// }
-			// console.log(result);
+		}
+	});
+}
+
+function getDropdownOptionsTitleId(form_url, method, elementId) 
+{
+	$('#'+elementId).html('');
+	$.ajax({
+		url: form_url,
+		type: method,
+		dataType: 'json',
+		success: function (result)
+		{
+			if (result.status == 200) 
+			{
+                $.each(result.model, function( index, value ) {
+					$('#'+elementId).append('<option value="'+value.id+'">'+value.title+'</option>');
+                });
+			}
 		}
 	});
 }

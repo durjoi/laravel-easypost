@@ -15,6 +15,7 @@
         
         <link rel="stylesheet" href="{{ url('library/plugins/sweetalert/dist/sweetalert.css') }}">
         <script type="text/javascript" src="{{ url('library/plugins/sweetalert/sweetalert_old.min.js')}}"></script>
+	    <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- <script src="//static.filestackapi.com/v3/filestack.js"></script> -->
         <!-- <script src="https://grapesjs.com/js/aviary.js"></script> old //feather.aviary.com/imaging/v3/editor.js -->
