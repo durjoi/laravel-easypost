@@ -261,15 +261,7 @@ class FrontPageController extends Controller
     {
         $data['product'] = $this->productRepo->findWith($id, ['photo']);
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
-        $data['paymentList'] = [
-            '' => '--',
-            'Apple Pay' => 'Apple Pay',
-            'Google Pay' => 'Google Pay',
-            'Venmo' => 'Venmo',
-            'Cash App' => 'Cash App',
-            'Paypal' => 'Paypal',
-            'Bank Transfer' => 'Bank Transfer'
-        ];
+        $data['paymentList'] = $this->tablelist->payment_list;
         return view('front.product-sell-details', $data);
     }
 

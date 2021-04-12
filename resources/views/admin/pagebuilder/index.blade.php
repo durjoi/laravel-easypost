@@ -46,6 +46,7 @@
                                                 <button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                                                 <div class="dropdown-menu" aria-labelledby="action-btn">
                                                     <a class="dropdown-item font14px" href="{{ '../'.$page->url }}" target="_blank"><i class="fa fa-eye fa-fw"></i> View</a>
+                                                    <a class="dropdown-item font14px" href="{{ url('admin/pagebuilder/'.$page->hashedid.'/tags') }}"><i class="fa fa-hashtag fa-fw"></i> Meta Tags</a>
                                                     <a class="dropdown-item font14px edit-page" data-attr-identification="{{ $page->id }}" data-attr-id="{{ $page->hashedid }}" href="javascript:void(0);"><i class="fa fa-edit fa-fw"></i> Edit</a>
                                                     <a class="dropdown-item font14px"href="{{ url('admin/pagebuilder/'.$page->hashedid.'/build') }}"><i class="fa fa-cog fa-fw"></i> Settings</a>
                                                     <a class="dropdown-item font14px" href="javascript:void(0)"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>

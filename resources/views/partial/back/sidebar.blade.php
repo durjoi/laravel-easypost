@@ -35,25 +35,11 @@
                         <p>Customers</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvpage == true) ? 'menu-open' : '' }} ">
-                    <a href="#" class="nav-link {{ (isset($tvproducts) && $tvproducts == 'page') ? 'active' : '' }}">
+                <li class="nav-item has-treeview">
+                    <a href="{{ url('admin/pagebuilder') }}" class="nav-link {{ (isset($module) && $module == 'page') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file"></i>
-                        <p>Pages<i class="fas fa-angle-left right"></i></p>
+                        <p>Pages</p>
                     </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ url('admin/pagebuilder') }}" class="nav-link {{ (isset($module) && $module == 'page') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Pages Builder</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/page/metatags') }}" class="nav-link {{ (isset($module) && $module == 'config') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Meta Tags</p>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvproducts == 'product') ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvproducts) && $tvproducts == 'product') ? 'active' : '' }}">
@@ -68,7 +54,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('admin/products/map/condition') }}" class="nav-link {{ (isset($module) && $module == 'config') ? 'active' : '' }}">
+                            <a href="{{ url('admin/products/map/condition') }}" class="nav-link {{ (isset($module) && $module == 'productmap') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Product Map</p>
                             </a>

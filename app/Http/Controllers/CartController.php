@@ -16,6 +16,7 @@ use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
 use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
+use App\Models\TableList as Tablelist;
 
 class CartController extends Controller
 {
@@ -24,14 +25,16 @@ class CartController extends Controller
     protected $stateRepo;
     protected $configRepo;
     protected $brandRepo;
+    protected $tablelist;
 
-    function __construct(Product $productRepo, Customer $customerRepo, State $stateRepo, Config $configRepo, Brand $brandRepo)
+    function __construct(Product $productRepo, Customer $customerRepo, State $stateRepo, Config $configRepo, Brand $brandRepo, TableList $tablelist)
     {
         $this->productRepo = $productRepo;
         $this->customerRepo = $customerRepo;
         $this->stateRepo = $stateRepo;
         $this->configRepo = $configRepo;
         $this->brandRepo = $brandRepo;
+        $this->tablelist = $tablelist;
     }
 
     public function index()
@@ -96,15 +99,7 @@ class CartController extends Controller
         }
 
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
-        $data['paymentList'] = [
-            '' => '--',
-            'Apple Pay' => 'Apple Pay',
-            'Google Pay' => 'Google Pay',
-            'Venmo' => 'Venmo',
-            'Cash App' => 'Cash App',
-            'Paypal' => 'Paypal',
-            'Bank Transfer' => 'Bank Transfer'
-        ];
+        $data['paymentList'] = $this->tablelist->payment_list;
         return view('front.seller.index', $data);
     }
 
@@ -112,15 +107,7 @@ class CartController extends Controller
     {
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['brands'] = $this->brandRepo->all();
-        $data['paymentList'] = [
-            '' => '--',
-            'Apple Pay' => 'Apple Pay',
-            'Google Pay' => 'Google Pay',
-            'Venmo' => 'Venmo',
-            'Cash App' => 'Cash App',
-            'Paypal' => 'Paypal',
-            'Bank Transfer' => 'Bank Transfer'
-        ];
+        $data['paymentList'] = $this->tablelist->payment_list;
         return view("front.cart.checkout", $data);
     }
 

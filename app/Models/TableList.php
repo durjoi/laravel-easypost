@@ -63,9 +63,14 @@ class Tablelist extends Model
         'label-sucess', 'label-info', 'label-primary', 'label-warning', 'label-danger'
     ];
 
+    public $device_type = [
+        1 => 'Excellent', 2 => 'Good', 3 => 'Fair', 4 => 'Broken'
+    ];
+
     public $array_meta_tags = [
         'title',
         'description',
+        'keywords',
         'og:type',
         'og:url',
         'og:title',
@@ -77,14 +82,22 @@ class Tablelist extends Model
         'twitter:image'
     ];
 
-    public $email_support = [
-                                'email' => 'support@lawsheroes.com',
-                                'password' => 'rpg46jWa@tL('
-                            ];
+    public $email_support = ['email' => 'support@lawsheroes.com', 'password' => 'rpg46jWa@tL('];
     
     public $networkList = ['AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked','Others'=>'Others'];
 
     public $storageList = [''=>'--', '32GB'=>'32GB', '64GB'=>'64GB', '128GB'=>'128GB', '256GB'=>'256GB', '512GB'=>'512GB'];
+
+    public $payment_list = [
+        '' => '--',
+        'Apple Pay' => 'Apple Pay',
+        'Google Pay' => 'Google Pay',
+        'Venmo' => 'Venmo',
+        'Cash App' => 'Cash App',
+        'Paypal' => 'Paypal',
+        'Bank Transfer' => 'Bank Transfer'
+    ];
+
 
     public $smtp = [
         'MAIL_MAILER' => 'smtp',

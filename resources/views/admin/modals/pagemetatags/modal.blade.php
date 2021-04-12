@@ -12,13 +12,8 @@
                     <div class="card-body padding0">
                         <div class="form-group">
                             <label class="col-form-label col-form-label-sm">Page</label>
-                            <select name="page_id" class="custom-select select-sm" id="modal_dropdown_metatag_pageid">
-                                @if(isset($pageBuilder) && count($pageBuilder) > 0)
-                                    @foreach($pageBuilder as $pkey => $pval)
-                                        <option value="{{ $pval->id }}">{{ $pval->title }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
+                            <input type="text" class="custom-select select-sm" id="modal_dropdown_metatag_pagename" value="{{ (isset($page)) ? $page->title : '' }}" readonly>
+                            <input type="hidden" name="page_id" class="custom-select select-sm" id="modal_dropdown_metatag_pageid" value="{{ (isset($page)) ? $page->id : '0' }}">
                         </div>
                         <div class="form-group">
                             <label class="">Meta Tag Name</label>
@@ -31,7 +26,7 @@
                             </select>
                         </div>
                         <div class="form-group" id="modal_div_emailtemplate">
-                            <label class="col-form-label col-form-label-sm">Meta Tag Content</label>
+                            <label class="col-form-label col-form-label-sm"><div id="modal_tag_content"></div></label>
                             <textarea class="form-control form-control-sm" name="content" id="modal_metatag_content"></textarea>
                         </div>
                     </div>

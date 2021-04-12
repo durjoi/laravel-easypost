@@ -29,6 +29,7 @@ use App\Models\TableList;
 use Saperemarketing\Phpmailer\Facades\Mailer;
 use App\Http\Requests\Admin\UserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Requests\Admin\SettingsBrandRequest as BrandRequest;
 
 class ApiController extends Controller
 {
@@ -349,10 +350,12 @@ class ApiController extends Controller
         return response()->json($response);  
     }
     
-    public function GetMetaTagDetails ($hashedid) 
+    public function GetMetaTagDetails ($hashedPageId, $hashedTagId) 
     {
-        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedid);
-        $response['model'] = $this->pageMetaTagRepo->find($id);
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedTagId);
+        
+        $response['model'] = $this->pageMetaTagRepo->rawByWithField(['page'], "id = ?", [$id]);
+        // $response['model'] = $this->pageMetaTagRepo->find($id);
         $response['status'] = 200;
         return response()->json($response); 
     }
@@ -392,14 +395,74 @@ class ApiController extends Controller
         return response()->json($response);   
     }
     
-    public function DeleteMetaTag ($hashedid) 
+    public function DeleteMetaTag ($hashedPageId, $hashedTagId) 
     {
-        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedid);
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedTagId);
         $this->pageMetaTagRepo->delete($id);
         $response['status'] = 200;
         $response['message'] = "Meta tag has been successfully deleted";
         return response()->json($response); 
     }
+
+
+    public function StoreBrands(BrandRequest $request)
+    {
+        $id = $request['id'];
+        $user_id = Auth::user()->id;
+        $path = 'uploads/brands';
+        $field = $request->file('photo');
+        $hasfile = $request->hasFile('photo');
+
+        if($id){
+            $brand = $this->brandRepo->find($id);
+            $photo = resizeFileUpload($path, $field, $hasfile, 250, $brand->photo, $brand->full_size);
+            $makeRequest = [
+                'name' => $request['name'],
+                'device_type' => $request['device_type'],
+                'photo' => $photo['small'],
+                'full_size' => $photo['full'],
+                'feature' => $request['feature'],
+                'user_create' => $user_id,
+                'user_update' => $user_id
+            ];
+            $this->brandRepo->update($makeRequest, $id);
+            $data['response'] = 1;
+            return response()->json($data);
+        }
+
+        $photo = resizeFileUpload($path, $field, $hasfile, 250);
+        $makeRequest = [
+            'name' => $request['name'],
+            'device_type' => $request['device_type'],
+            'photo' => $photo['small'],
+            'full_size' => $photo['full'],
+            'feature' => $request['feature'],
+            'user_create' => $user_id,
+            'user_update' => $user_id
+        ];
+        $this->brandRepo->create($makeRequest);
+        $data['response'] = 1;
+        return response()->json($data);
+    }
+
+    public function GetBrandDetails($hashedId)
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data['brand'] = $this->brandRepo->find($id);
+        return response()->json($data);
+    }
+
+    public function DeleteBrand ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $this->brandRepo->delete($id);
+        $response['status'] = 200;
+        $response['message'] = "Record has been successfully deleted";
+        return response()->json($response);  
+    }
+
+    
+
 
     /**
      * CRON JOBS

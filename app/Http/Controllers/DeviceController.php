@@ -25,6 +25,7 @@ use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
 use App\Models\Admin\Product as ModelProduct;
+use App\Models\TableList as Tablelist;
 use Illuminate\Support\Facades\Auth;
 use PDF;
 
@@ -44,6 +45,7 @@ class DeviceController extends Controller
     protected $product;
     protected $orderRepo;
     protected $orderItemRepo;
+    protected $tablelist;
 
     function __construct(Brand $brandRepo, 
                         Product $productRepo, 
@@ -58,7 +60,8 @@ class DeviceController extends Controller
                         CustomerTransaction $customerTransactionRepo, 
                         ModelProduct $product, 
                         Order $orderRepo, 
-                        OrderItem $orderItemRepo)
+                        OrderItem $orderItemRepo, 
+                        TableList $tablelist)
     {
         $this->brandRepo = $brandRepo;
         $this->productRepo = $productRepo;
@@ -74,6 +77,7 @@ class DeviceController extends Controller
         $this->product = $product;
         $this->orderRepo = $orderRepo;
         $this->orderItemRepo = $orderItemRepo;
+        $this->tablelist = $tablelist;
     }
 
 
@@ -82,15 +86,7 @@ class DeviceController extends Controller
         $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
         $data['brand'] = $brand;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
-        $data['paymentList'] = [
-            '' => '--',
-            'Apple Pay' => 'Apple Pay',
-            'Google Pay' => 'Google Pay',
-            'Venmo' => 'Venmo',
-            'Cash App' => 'Cash App',
-            'Paypal' => 'Paypal',
-            'Bank Transfer' => 'Bank Transfer'
-        ];
+        $data['paymentList'] = $this->tablelist->payment_list;
         $brandDetails = $this->brandRepo->findByField('name', $brand);
         $data['chkproduct'] = $this->productRepo->rawCount("brand_id = ?", [$brandDetails->id]);
         $data['networks'] =  $this->productRepo->queryTable()->whereRaw("brand_id = ? and device_type IN ('Buy', 'Both')", [$brandDetails->id])->groupBy('network')->get();
@@ -246,15 +242,7 @@ class DeviceController extends Controller
             $data['model'] = $model;
             $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$result->id]);
             $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
-            $data['paymentList'] = [
-                '' => '--',
-                'Apple Pay' => 'Apple Pay',
-                'Google Pay' => 'Google Pay',
-                'Venmo' => 'Venmo',
-                'Cash App' => 'Cash App',
-                'Paypal' => 'Paypal',
-                'Bank Transfer' => 'Bank Transfer'
-            ];
+            $data['paymentList'] = $this->tablelist->payment_list;
             
             $getProductStorage = $data['productStorage'][0];
 

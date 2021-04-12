@@ -3,28 +3,29 @@ var baseUrl = $('body').attr('data-url');
 $(function () {
     
     $('#create-meta-tags').click(function (){
+        $('#modal_tag_content').html('Meta Tag Content');
         $('#modal-metatags-form')[0].reset();
         $('#modal-metatags').modal();
-        // getDropdownOptionsTitleId(baseUrl+'/api/pagebuilders', 'GET', 'modal_dropdown_metatag_pageid');
-        // getDropdownOptionsStatic(baseUrl+'/api/metatagnames', 'GET', 'modal_dropdown_metatag_name');
     });
 
     $('#modal-metatags-form').on('submit', function () {
+        var hashedpageid = $('#hashedpageid').attr('data-attr-id');
         var data = $(this).serializeArray();
-        var form_url = baseUrl+'/api/page/metatags';
+        var form_url = baseUrl+'/api/pagebuilder/'+hashedpageid+'/tags';
         doAjaxProcess('PATCH', '#modal-metatags-form', data, form_url);
         return false;
     });
 
     if($("#metatags-table").length)
     {
+        var hashedpageid = $('#hashedpageid').attr('data-attr-id');
         var categoryTable;
         categoryTable = $('#metatags-table').DataTable({
             processing: true,
             serverSide: true,
             "pagingType": "input",
             ajax: {
-                url: baseUrl+'/api/page/metatags',
+                url: baseUrl+'/api/pagebuilder/'+hashedpageid+'/tags',
                 type:'POST'
             },
             columns: [
@@ -41,23 +42,36 @@ $(function () {
             ]
         });
     }
+
+    $('#modal_dropdown_metatag_name').on('change', function () {
+        if ($(this).val() === 'keywords') { 
+            $('#modal_tag_content').html('Site Keywords (Separate with commas)');
+        } else {
+            $('#modal_tag_content').html('Meta Tag Content');
+        }
+    })
 });
 
 
 
 function updatemetatag (hashedId) 
 {
+    var hashedpageid = $('#hashedpageid').attr('data-attr-id');
     $('#modal-metatags-form')[0].reset();
     $('#modal_page_metatag_id').val(hashedId);
 	$.ajax({
-		url: baseUrl+'/api/page/metatags/'+hashedId,
+		url: baseUrl+'/api/pagebuilder/'+hashedpageid+'/tags/'+hashedId,
 		type: "GET",
 		dataType: 'json',
 		success: function (result) 
 		{
             if (result.status == 200) 
             {
-                $('#modal_dropdown_metatag_pageid option[value="' + result.model.page_id + '"]').attr('selected','selected');
+                if (result.model.name === 'keywords') { 
+                    $('#modal_tag_content').html('Site Keywords (Separate with commas)');
+                } else {
+                    $('#modal_tag_content').html('Meta Tag Content');
+                }
                 $('#modal_dropdown_metatag_name option[value="' + result.model.name + '"]').attr('selected','selected');
                 $('#modal_metatag_content').val(result.model.content);
                 $('#modal-metatags').modal();
@@ -71,7 +85,8 @@ function updatemetatag (hashedId)
 
 function deletemetatag (hashedId) 
 {
-    var form_url = baseUrl+'/api/page/metatags/'+hashedId;
+    var hashedpageid = $('#hashedpageid').attr('data-attr-id');
+    var form_url = baseUrl+'api/pagebuilder/'+hashedpageid+'/tags/'+hashedId;
     doAjaxConfirmProcessing('DELETE', '', {}, form_url);
 }
 

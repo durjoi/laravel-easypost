@@ -9,7 +9,7 @@ class Brand extends Model
 {
     protected $table = "brands";
     protected $guarded = [];
-    protected $appends = ['updated_at_display','photo_display'];
+    protected $appends = ['updated_at_display','photo_display','hashedid'];
 
     public function getUpdatedAtDisplayAttribute()
     {
@@ -22,5 +22,10 @@ class Brand extends Model
             return basename($this->attributes['photo']);
         }
         return '';
+    }
+
+    public function getHashedidAttribute()
+    {
+        return \Hashids::encode($this->id);
     }
 }

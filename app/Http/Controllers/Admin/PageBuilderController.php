@@ -27,6 +27,7 @@ class PageBuilderController extends Controller
         $data['pageBuilder'] = $this->pageBuilderRepo->all();
         $config = $this->configRepo->find(1);
         $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
+        $data['tvpage'] = true;
         return view('admin.pagebuilder.index', $data);
     }
 

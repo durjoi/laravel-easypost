@@ -352,8 +352,8 @@ class DatatableController extends Controller
             $html_out .= '<div class="dropdown">';
                 $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
                 $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
-                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="updatebrand(\''.$brands->id.'\')"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
-                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deletebrand(\''.$brands->id.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="updatebrand(\''.$brands->hashedid.'\')"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deletebrand(\''.$brands->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
                 $html_out .= '</div>';
             $html_out .= '</div>';
             return $html_out;
@@ -363,9 +363,10 @@ class DatatableController extends Controller
     }
 
 
-    public function GetMetaTags()
+    public function GetMetaTags($hashedId)
     {
-        $pageMetaTags = $this->pageMetaTagRepo->rawWith(['page'], '1 = ?', [1], 'page_id', 'asc');
+        $page_id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $pageMetaTags = $this->pageMetaTagRepo->rawWith(['page'], 'page_id = ?', [$page_id], 'page_id', 'asc');
         return Datatables::of($pageMetaTags)
         ->editColumn('name', function($pageMetaTags) {
             return $pageMetaTags->name;

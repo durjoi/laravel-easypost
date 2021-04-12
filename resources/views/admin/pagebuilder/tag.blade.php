@@ -1,17 +1,18 @@
 @extends('layouts.app')
 @section('content')
-    <div class="content-wrapper">
+    <div class="content-wrapper" id="hashedpageid" data-attr-id="{{ isset($hashedId) ? $hashedId : '' }}">
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h2><i class="nav-icon fas fa-th"></i> Manage Categories</h2>
+                        <h2><i class="nav-icon fas fa-hashtag"></i> Manage Meta Tags</h2>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}" class="{{ (isset($is_dark_mode) && $is_dark_mode == true ) ? 'fontWhite' : 'fontGray1' }}"><i class="nav-icon fas fa-tachometer-alt"></i> Dashboard</a></li>
-                            <li class="breadcrumb-item"><i class="nav-icon fas fa-cogs"></i> Settings</li>
-                            <li class="breadcrumb-item active">Category List</li>
+                            <li class="breadcrumb-item"><i class="nav-icon fas fa-file"></i> Page Builder</li>
+                            <li class="breadcrumb-item"><i class="nav-icon fas fa-hashtag"></i> Manage Meta Tags</li>
+                            <li class="breadcrumb-item active">Details</li>
                         </ol>
                     </div>
                 </div>
@@ -22,17 +23,20 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
+                            <spa class="font20px">{{ (isset($page)) ? $page->title.' Meta Tags' : '' }}</spa>
                             <div class="card-tools">
-                                <a href="javascript:void(0)" id="create-category" class="btn btn-primary btn-sm">Create Category</a>
+                                <a href="javascript:void(0)" id="create-meta-tags" class="btn btn-primary btn-sm">Create Page Meta Tag</a>
                             </div>
                         </div>
                         <div class="card-body table-responsive">
-                            <table class="table-hover table-striped text-nowrap table-sm" id="category-table">
+                            <table class="table-hover table-striped text-nowrap table-sm" id="metatags-table">
                                 <thead>
                                     <tr>
-                                        <th></th>
-                                        <th>Category Name</th>
-                                        <th class="text-center">Action</th>
+                                        <th class="text-center"></th>
+                                        <th class="text-center">Name</th>
+                                        <th>Tag Name</th>
+                                        <th>Tag Content</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -53,9 +57,9 @@
 @endsection
 
 @section('page-js')
-    @include('admin.modals.settings.categories.modal')
+    @include('admin.modals.pagemetatags.modal')
     <script src="{{ url('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
-    <script src="{{ url('library/js/admin/settings/components.js') }}"></script>
+    <script src="{{ url('library/js/admin/pagemetatag/components.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
