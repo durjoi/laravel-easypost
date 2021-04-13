@@ -47,3 +47,9 @@ Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'canc
 
 Route::get('test/sms', [App\Http\Controllers\FrontPageController::class, 'test']);
 // Route::get('/{any}', [App\Http\Controllers\FrontPageController::class, 'custompage']);
+
+
+Route::any('page/{uri}', [
+  'uses' => 'App\Http\Controllers\WebsiteController@uri',
+  'as' => 'page',
+])->where('uri', '.*');

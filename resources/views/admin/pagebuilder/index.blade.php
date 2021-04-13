@@ -24,8 +24,9 @@
                         <a href="javascript:void(0);" id="create-page" class="btn btn-primary btn-sm">Create Page</a>
                     </div>
                 </div>
-                <div class="card-body table-responsive">
-                    <table class="table table-hover text-nowrap table-sm">
+                <div class="card-body table-responsive" style="margin:5px;padding:5px;overflow:hidden">
+                    <iframe src="{{ url('/admin/pages') }}" style="overflow:hidden;height:100vh;width:100%;border: none;" height="100%" width="100%"></iframe>
+                    <!-- <table class="table table-hover text-nowrap table-sm">
                         <thead>
                             <tr>
                                 <th style="width: 3%;">#</th>
@@ -61,7 +62,7 @@
                                 @endforelse
                             @endif
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
             </div>
         </section>

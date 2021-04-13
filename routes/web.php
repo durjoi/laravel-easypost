@@ -87,6 +87,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
             Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'StoreBrands']);
         });
     });
+
+    Route::get('pages/overview', function () {
+        return 'qwe';
+    });
 });
 
 

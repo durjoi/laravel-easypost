@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3df94ccc40e362f3701fddd8c1ffff55",
+    "content-hash": "4df8fb42ceaccd2c71d4d54559fb504f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1170,6 +1170,109 @@
                 "source": "https://github.com/guzzle/psr7/tree/1.8.1"
             },
             "time": "2021-03-21T16:25:00+00:00"
+        },
+        {
+            "name": "hansschouten/laravel-pagebuilder",
+            "version": "v0.19.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HansSchouten/Laravel-Pagebuilder.git",
+                "reference": "73b669bab9f56ba7a7fffe9768cbe565709fea52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HansSchouten/Laravel-Pagebuilder/zipball/73b669bab9f56ba7a7fffe9768cbe565709fea52",
+                "reference": "73b669bab9f56ba7a7fffe9768cbe565709fea52",
+                "shasum": ""
+            },
+            "require": {
+                "hansschouten/phpagebuilder": "^0.19",
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "HansSchouten\\LaravelPageBuilder\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "PageBuilder": "HansSchouten\\LaravelPageBuilder\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "HansSchouten\\LaravelPageBuilder\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hans Schouten",
+                    "email": "hans@falcosolutions.nl"
+                }
+            ],
+            "description": "A drag and drop pagebuilder to manage pages in any Laravel project.",
+            "homepage": "https://github.com/HansSchouten/Laravel-Pagebuilder",
+            "keywords": [
+                "laravel",
+                "pagebuilder"
+            ],
+            "support": {
+                "issues": "https://github.com/HansSchouten/Laravel-Pagebuilder/issues",
+                "source": "https://github.com/HansSchouten/Laravel-Pagebuilder/tree/v0.19.0"
+            },
+            "time": "2021-03-30T19:29:19+00:00"
+        },
+        {
+            "name": "hansschouten/phpagebuilder",
+            "version": "v0.19.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HansSchouten/PHPageBuilder.git",
+                "reference": "f6c3fa0221ea1c0567c9f737e8af2201b2a0a86d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HansSchouten/PHPageBuilder/zipball/f6c3fa0221ea1c0567c9f737e8af2201b2a0a86d",
+                "reference": "f6c3fa0221ea1c0567c9f737e8af2201b2a0a86d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPageBuilder\\": "src/"
+                },
+                "files": [
+                    "src/Core/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hans Schouten",
+                    "email": "hans@falcosolutions.nl"
+                }
+            ],
+            "description": "A drag and drop pagebuilder to manage pages in any PHP project.",
+            "homepage": "https://github.com/HansSchouten/PHPagebuilder",
+            "keywords": [
+                "pagebuilder"
+            ],
+            "support": {
+                "issues": "https://github.com/HansSchouten/PHPageBuilder/issues",
+                "source": "https://github.com/HansSchouten/PHPageBuilder/tree/v0.19.0"
+            },
+            "time": "2021-03-22T10:22:59+00:00"
         },
         {
             "name": "hashids/hashids",
@@ -5957,16 +6060,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.17.1",
+            "version": "v9.17.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "53b3f8532b5021ffda813a8a54ecca121834ddb7"
+                "reference": "a970ba1159df6940a87fabcf44f571ef14b57927"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/53b3f8532b5021ffda813a8a54ecca121834ddb7",
-                "reference": "53b3f8532b5021ffda813a8a54ecca121834ddb7",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/a970ba1159df6940a87fabcf44f571ef14b57927",
+                "reference": "a970ba1159df6940a87fabcf44f571ef14b57927",
                 "shasum": ""
             },
             "require": {
@@ -6026,7 +6129,7 @@
             ],
             "support": {
                 "issues": "https://github.com/yajra/laravel-datatables/issues",
-                "source": "https://github.com/yajra/laravel-datatables/tree/v9.17.1"
+                "source": "https://github.com/yajra/laravel-datatables/tree/v9.17.2"
             },
             "funding": [
                 {
@@ -6038,7 +6141,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2021-03-23T01:32:51+00:00"
+            "time": "2021-04-12T04:03:34+00:00"
         }
     ],
     "packages-dev": [
@@ -6113,16 +6216,16 @@
         },
         {
             "name": "facade/flare-client-php",
-            "version": "1.6.1",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/flare-client-php.git",
-                "reference": "f2b0969f2d9594704be74dbeb25b201570a98098"
+                "reference": "6bf380035890cb0a09b9628c491ae3866b858522"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/f2b0969f2d9594704be74dbeb25b201570a98098",
-                "reference": "f2b0969f2d9594704be74dbeb25b201570a98098",
+                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/6bf380035890cb0a09b9628c491ae3866b858522",
+                "reference": "6bf380035890cb0a09b9628c491ae3866b858522",
                 "shasum": ""
             },
             "require": {
@@ -6166,7 +6269,7 @@
             ],
             "support": {
                 "issues": "https://github.com/facade/flare-client-php/issues",
-                "source": "https://github.com/facade/flare-client-php/tree/1.6.1"
+                "source": "https://github.com/facade/flare-client-php/tree/1.7.0"
             },
             "funding": [
                 {
@@ -6174,7 +6277,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-04-08T08:50:01+00:00"
+            "time": "2021-04-12T09:30:36+00:00"
         },
         {
             "name": "facade/ignition",
