@@ -48,7 +48,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::get('{hashedid}/build/getcontent', ['as' => 'admin.pagebuilder.build.getcontent', 'uses' => 'App\Http\Controllers\Admin\PageBuilderController@getContent']);
 
         Route::get('{hashedId}/tags', [\App\Http\Controllers\Admin\PageViewerController::class, 'MetaTags']);
-
     });
 
     
