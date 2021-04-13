@@ -59,7 +59,7 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function handleCreate()
     {
-        echo 'qwe';exit;
+        // echo 'qwehandleCreate';exit;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pageRepository = new PageRepository;
             $page = $pageRepository->create($_POST);
@@ -81,7 +81,7 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function handleEdit(PageContract $page)
     {
-        echo 'qwe';exit;
+        // echo 'qwehandleEdit';exit;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pageRepository = new PageRepository;
             $success = $pageRepository->update($page, $_POST);
@@ -103,7 +103,6 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function handleDestroy(PageContract $page)
     {
-        echo 'qwe';exit;
         $pageRepository = new PageRepository;
         $pageRepository->destroy($page->getId());
         phpb_redirect(phpb_url('website_manager'), [
@@ -117,7 +116,7 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function handleUpdateSettings()
     {
-        echo 'qwe';exit;
+        echo 'qwehandleUpdateSettings';exit;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $settingRepository = new SettingRepository;
             $success = $settingRepository->updateSettings($_POST);
@@ -143,10 +142,7 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
 // exit;
         $viewFile = 'overview';
         $data['viewFile'] = $viewFile;
-        // return redirect()->to('admin.pages.overview');
-        // require __DIR__ . '/../../../../resources/views/pagebuilder/empty.blade.php';
-        // require __DIR__ . '/../../../../resources/views/layouts/app.blade.php';
-        require __DIR__ . '/../../../../resources/views/pagebuilder/master.blade.php';
+        require __DIR__ . '/../../../../resources/views/admin/page/master.blade.php';
     }
 
     /**
@@ -156,12 +152,13 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function renderPageSettings(PageContract $page = null)
     {
-        echo 'qwe';exit;
+        // echo 'qwerenderPageSettings';exit;
         $action = isset($page) ? 'edit' : 'create';
         $theme = phpb_instance('theme', [phpb_config('theme'), phpb_config('theme.active_theme')]);
 
         $viewFile = 'page-settings';
-        require __DIR__ . '/resources/layouts/master.php';
+        require __DIR__ . '/../../../../resources/views/admin/page/master.blade.php';
+        // require __DIR__ . '/resources/layouts/master.php';
     }
 
     /**
@@ -169,7 +166,7 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function renderMenuSettings()
     {
-        echo 'qwe';exit;
+        echo 'qwerenderMenuSettings';exit;
         $viewFile = 'menu-settings';
         require __DIR__ . '/resources/layouts/master.php';
     }
@@ -179,7 +176,7 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function renderBlockThumbs()
     {
-        echo 'qwe';exit;
+        echo 'qwerenderBlockThumbs';exit;
         $viewFile = 'block-thumbs';
         require __DIR__ . '/resources/layouts/master.php';
     }
@@ -189,10 +186,10 @@ class WebsiteManager implements \PHPageBuilder\Contracts\WebsiteManagerContract
      */
     public function renderWelcomePage()
     {
-        echo 'qwe';exit;
+        echo 'qwerenderWelcomePage';exit;
         $viewFile = 'welcome';
         $data['viewFile'] = $viewFile;
-        require __DIR__ . '/../../../../resources/views/pagebuilder/empty.blade.php';
+        require __DIR__ . '/../../../../resources/views/admin/page/empty.blade.php';
         // return view('pagebuilder.empty', $data);
         // require __DIR__ . '/resources/layouts/empty.php';
     }

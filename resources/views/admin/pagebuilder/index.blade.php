@@ -19,13 +19,13 @@
         </section>
         <section class="content">
             <div class="card">
-                <div class="card-header">
+                <!-- <div class="card-header">
                     <div class="card-tools">
                         <a href="javascript:void(0);" id="create-page" class="btn btn-primary btn-sm">Create Page</a>
                     </div>
-                </div>
+                </div> -->
                 <div class="card-body table-responsive" style="margin:5px;padding:5px;overflow:hidden">
-                    <iframe src="{{ url('/admin/pages') }}" style="overflow:hidden;height:100vh;width:100%;border: none;" height="100%" width="100%"></iframe>
+                    <iframe src="{{ url('/admin/pages') }}" style="overflow:hidden;height:80vh;width:100%;border: none;" height="100%" width="100%"></iframe>
                     <!-- <table class="table table-hover text-nowrap table-sm">
                         <thead>
                             <tr>

@@ -9,7 +9,7 @@ $settingsTabActive = isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'activ
 
 <div class="row">
     <div class="col-12">
-        <ul class="nav nav-tabs">
+        <!-- <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link <?= phpb_e($pagesTabActive) ?>" data-toggle="tab" href="#pages"><?= phpb_trans('website-manager.pages') ?></a>
             </li>
@@ -19,7 +19,7 @@ $settingsTabActive = isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'activ
             <li class="nav-item">
                 <a class="nav-link <?= phpb_e($settingsTabActive) ?>" data-toggle="tab" href="#settings"><?= phpb_trans('website-manager.settings') ?></a>
             </li>
-        </ul>
+        </ul> -->
 
         <div class="tab-content">
             <div id="pages" class="tab-pane <?= phpb_e($pagesTabActive) ?>">
@@ -67,6 +67,11 @@ $settingsTabActive = isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'activ
                                         <a href="<?= phpb_url('website_manager', ['route' => 'page_settings', 'action' => 'edit', 'page' => $page->getId()]) ?>" class="btn btn-secondary btn-sm">
                                             <span><?= phpb_trans('website-manager.settings') ?></span> <i class="fas fa-cog"></i>
                                         </a>
+
+                                        <a class="btn btn-info btn-sm" href="{{ url('admin/pagebuilder/'.$page->hashedid.'/tags') }}">
+                                            <i class="fa fa-hashtag fa-fw"></i> Meta Tags
+                                        </a>
+                                            
                                         <a href="<?= phpb_url('website_manager', ['route' => 'page_settings', 'action' => 'destroy', 'page' => $page->getId()]) ?>" class="btn btn-danger btn-sm">
                                             <span><?= phpb_trans('website-manager.remove') ?></span> <i class="fas fa-trash"></i>
                                         </a>

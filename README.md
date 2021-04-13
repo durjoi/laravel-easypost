@@ -8,7 +8,24 @@ In `ApiController` change the recipeient of the email notification
 
 
 
+---------------------------------------------------------------------------------------------
+## Updating File 
 
+Follow instruction below for installation of app
+
+
+```Package
+execute >  `composer update`
+```
+
+
+```DATABASE
+execute >  `php artisan migrate:fresh`
+```
+
+```Seeder
+execute >  `php artisan db:seed`
+```
 
 ---------------------------------------------------------------------------------------------
 ## Instruction
@@ -52,7 +69,7 @@ execute >  `composer update`
 Run migrate to migrate additional alters in tables and to re-run migration
 
 ```DATABASE
-execute > `php artisan migrate:refresh`
+execute > `php artisan migrate:fresh`
 ```
 
 Run seeder to insert data in database
