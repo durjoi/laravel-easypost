@@ -23,6 +23,16 @@ use Illuminate\Support\Facades\Auth;
 use PDF;
 use App\Models\TableList as Tablelist;
 
+
+// For Page Builder
+use PHPageBuilder\PHPageBuilder;
+use PHPageBuilder\Theme;
+use PHPageBuilder\Modules\GrapesJS\PageRenderer;
+use PHPageBuilder\Repositories\PageRepository;
+use PHPageBuilder\Repositories\PageTranslationRepository;
+
+
+
 // For Twilio
 require __DIR__ . '/../../../vendor/twilio/sdk/src/Twilio/autoload.php';
 use Twilio\Rest\Client;
@@ -85,8 +95,30 @@ class FrontPageController extends Controller
     }
 
 
+
+    public function landingPage()
+    {
+        $currentUrl = phpb_current_relative_url();
+        echo '<pre>';
+        print_r($currentUrl);
+        echo '</pre>';
+        exit;
+        $data['page'] = $this->pageBuilderRepo->findByField('url', '/');
+        $data['page_id'] = $data['page']->id;
+        $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
+        $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+        $data['meta'] = $this->GenerateMetaTags('/');
+        return view('welcome', $data);
+    }
+
+
     public function handleRequest ($uri) 
     {
+        $currentUrl = phpb_current_relative_url();
+        echo '<pre>';
+        print_r($currentUrl);
+        echo '</pre>';
+        exit;
         $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
         $data['page'] = $this->pageBuilderRepo->findByField('url', $uri);
         if ($data['page']) {
@@ -161,17 +193,6 @@ class FrontPageController extends Controller
     public function processRequest ($id) 
     {
         return $data['page'] = $this->pageBuilderRepo->find($id);
-    }
-
-
-    public function landingPage()
-    {
-        $data['page'] = $this->pageBuilderRepo->findByField('url', '/');
-        $data['page_id'] = $data['page']->id;
-        $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
-        $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-        $data['meta'] = $this->GenerateMetaTags('/');
-        return view('welcome', $data);
     }
 
     // public function aboutus()

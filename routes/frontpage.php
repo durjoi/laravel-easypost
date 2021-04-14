@@ -13,9 +13,9 @@ Route::get('/api/web/getproductlist', ['as' => 'api.web.getproductlist', 'uses' 
 Route::post('/api/web/cart', ['as' => 'api.web.cart', 'uses' => 'App\Http\Controllers\FrontPageController@getCartList']);
 Route::get('/cart/checkout', ['as' => 'cart.checkout', 'uses' => 'App\Http\Controllers\CartController@cartCheckout']);
 // Route::get('/pagecontent/{id}', [App\Http\Controller::class, 'processRequest']);
-Route::get('/', [\App\Http\Controllers\FrontPageController::class, 'landingPage']);
 // Route::get('/about-us', [App\Http\Controllers\FrontPageController::class, 'aboutus']);
 // Route::get('/how-it-works', [App\Http\Controllers\FrontPageController::class, 'howitworks']);
+Route::get('/', [\App\Http\Controllers\FrontPageController::class, 'landingPage']);
 
 
 Route::group(['prefix' => 'products'], function() {
