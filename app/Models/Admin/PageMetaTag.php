@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PageMetaTag extends Model
 {
-    protected $table = "page_meta_tags";
+    protected $table = "pagebuilder__meta_tags";
     protected $guarded = [];
     protected $appends = ['hashedid'];
 

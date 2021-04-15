@@ -7,7 +7,7 @@ use Vinkla\Hashids\HashidsManager;
 
 class PageBuilderPages extends Model
 {
-    protected $table = "pagebuilder_pages";
+    protected $table = "pagebuilder__pages";
     protected $guarded = [];
 
     protected $fillable = [

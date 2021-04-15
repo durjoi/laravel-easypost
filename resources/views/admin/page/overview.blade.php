@@ -57,7 +57,7 @@ $settingsTabActive = isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'activ
                                     <td>
                                         <?= phpb_e($page->getRoute()) ?>
                                     </td>
-                                    <td class="actionss">
+                                    <td class="actions" align="center">
                                         <a href="../../<?= phpb_e($page->getRoute()) ?>" target="_blank" class="btn btn-light btn-sm">
                                             <span><?= phpb_trans('website-manager.view') ?></span> <i class="fas fa-eye"></i>
                                         </a>
@@ -71,21 +71,11 @@ $settingsTabActive = isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'activ
                                         <a class="btn btn-info btn-sm" href="{{ url('admin/pagebuilder/'.$page->hashedid.'/tags') }}">
                                             <i class="fa fa-hashtag fa-fw"></i> Meta Tags
                                         </a>
-                                            
+                                        <?php if ($page->getId() > 6) { ?>
                                         <a href="<?= phpb_url('website_manager', ['route' => 'page_settings', 'action' => 'destroy', 'page' => $page->getId()]) ?>" class="btn btn-danger btn-sm">
                                             <span><?= phpb_trans('website-manager.remove') ?></span> <i class="fas fa-trash"></i>
                                         </a>
-                                        
-                                        <!-- <div class="dropdown">
-                                            <button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                                            <div class="dropdown-menu" aria-labelledby="action-btn">
-                                                <a class="dropdown-item font14px" href="{{ '../'.$page->url }}" target="_blank"><i class="fa fa-eye fa-fw"></i> View</a>
-                                                <a class="dropdown-item font14px" href="{{ url('admin/pagebuilder/'.$page->hashedid.'/tags') }}"><i class="fa fa-hashtag fa-fw"></i> Meta Tags</a>
-                                                <a class="dropdown-item font14px edit-page" data-attr-identification="{{ $page->id }}" data-attr-id="{{ $page->hashedid }}" href="javascript:void(0);"><i class="fa fa-edit fa-fw"></i> Edit</a>
-                                                <a class="dropdown-item font14px"href="{{ url('admin/pagebuilder/'.$page->hashedid.'/build') }}"><i class="fa fa-cog fa-fw"></i> Settings</a>
-                                                <a class="dropdown-item font14px" href="javascript:void(0)"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>
-                                            </div>
-                                        </div> -->
+                                        <?php } ?>
                                     </td>
                                 </tr>
                             <?php
@@ -114,7 +104,6 @@ $settingsTabActive = isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'activ
                 <?php
                 require __DIR__ . '/settings.php';
                 ?>
-
             </div>
         </div>
     </div>

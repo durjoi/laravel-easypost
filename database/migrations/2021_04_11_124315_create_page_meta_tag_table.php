@@ -13,7 +13,7 @@ class CreatePageMetaTagTable extends Migration
      */
     public function up()
     {
-        Schema::create('page_meta_tags', function (Blueprint $table) {
+        Schema::create('pagebuilder__meta_tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('meta_type');
@@ -30,6 +30,6 @@ class CreatePageMetaTagTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('page_meta_tags');
+        Schema::dropIfExists('pagebuilder__meta_tags');
     }
 }

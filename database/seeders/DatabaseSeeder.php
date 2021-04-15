@@ -26,5 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(NetworksSeeder::class);
         $this->call(SettingsStatusSeeder::class);
         $this->call(PageBuildersSeeder::class);
+        $this->call(PageMetaTagsSeeder::class);
+        
     }
 }

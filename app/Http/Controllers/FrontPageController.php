@@ -31,6 +31,9 @@ use PHPageBuilder\Modules\GrapesJS\PageRenderer;
 use PHPageBuilder\Repositories\PageRepository;
 use PHPageBuilder\Repositories\PageTranslationRepository;
 
+use App\Models\Admin\PageBuilderPages;
+use App\Models\Admin\PageBuilderPageTranslations;
+
 
 
 // For Twilio
@@ -60,6 +63,8 @@ class FrontPageController extends Controller
     protected $url;
     protected $tablelist;
     protected $pageMetaTagRepo;
+    protected $pageBuiderPages;
+    protected $pageBuilderPageTranslations;
 
     function __construct(Page $pageRepo, 
                          PageSection $sectionRepo, 
@@ -75,7 +80,9 @@ class FrontPageController extends Controller
                          Network $networkRepo,
                          UrlGenerator $url, 
                          TableList $tablelist, 
-                         PageMetaTag $pageMetaTagRepo)
+                         PageMetaTag $pageMetaTagRepo, 
+                         PageBuilderPages $pageBuiderPages, 
+                         PageBuilderPageTranslations $pageBuilderPageTranslations)
     {
         $this->pageRepo = $pageRepo;
         $this->sectionRepo = $sectionRepo;
@@ -92,6 +99,8 @@ class FrontPageController extends Controller
         $this->url = $url;
         $this->tablelist = $tablelist;
         $this->pageMetaTagRepo = $pageMetaTagRepo;
+        $this->pageBuiderPages = $pageBuiderPages;
+        $this->pageBuilderPageTranslations = $pageBuilderPageTranslations;
     }
 
 
@@ -99,26 +108,140 @@ class FrontPageController extends Controller
     public function landingPage()
     {
         $currentUrl = phpb_current_relative_url();
-        echo '<pre>';
-        print_r($currentUrl);
-        echo '</pre>';
-        exit;
-        $data['page'] = $this->pageBuilderRepo->findByField('url', '/');
-        $data['page_id'] = $data['page']->id;
-        $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
-        $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-        $data['meta'] = $this->GenerateMetaTags('/');
-        return view('welcome', $data);
+        $pagetranslation = $this->pageBuilderPageTranslations->where('route', $currentUrl)->first();
+        $page = $this->pageBuiderPages->find($pagetranslation->page_id);
+        $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
+        if ($page->data == null || $page->data == $default_empty_content) {
+            $data['page'] = $page;
+            $data['page_id'] = $data['page']->id;
+            $data['rowone'] = $this->brandRepo->rawAll("feature = ?", [1]);
+            $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
+            $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
+            $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+            $data['meta'] = $this->GenerateMetaTags('/');
+            return view('welcome', $data);
+        } else {
+            $urlTitle = (substr($currentUrl, 1) == '') ? '/' : substr($currentUrl, 1);
+            $parameters = array();
+            array_push($parameters, $urlTitle);
+            
+            $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
+            if ($page == null) {
+                return view('404');
+                return "invalid page";
+            }
+
+            $data['meta'] = $this->GenerateMetaTags($currentUrl);
+            $data['html'] = $this->trimPageContent($page);
+            return view('layouts.pagebuilder', $data);
+        }
+    }
+
+    private function displayPageBuildTemplate ($currentUrl) 
+    {
+
     }
 
 
     public function handleRequest ($uri) 
     {
-        $currentUrl = phpb_current_relative_url();
-        echo '<pre>';
-        print_r($currentUrl);
-        echo '</pre>';
-        exit;
+        $currentUrl = basename(request()->path());
+        
+        $pagetranslate = $this->pageBuilderPageTranslations->firstWhere('route', $currentUrl);
+        $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
+  
+        if (strlen($pagetranslate) != 0) {
+            
+                $page = $this->pageBuiderPages->find($pagetranslate->page_id);
+                if ($page->data == null || $page->data == $default_empty_content) {
+                    $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+                    if ($currentUrl == "about-us") {
+                        $data['meta'] = $this->GenerateMetaTags('about-us');
+                        return view('front.aboutus.index', $data);
+                    }
+                    
+                    if ($currentUrl == "how-it-works") {
+                        $data['meta'] = $this->GenerateMetaTags('how-it-works');
+                        return view('front.howitworks.index', $data);
+                    }
+    
+                    if ($currentUrl == "cart") {
+                        $data['brands'] = $this->brandRepo->all();
+            
+                        $data['meta'] = [
+                                '<meta name="title" content="Cart - Tronics Pay" />', 
+                                '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
+                                '<meta property="og:type" content="article" />', 
+                                '<meta property="og:title" content="Cart - Tronics Pay" />',
+                                '<meta property="og:url" content="'.url('/cart').'" />', 
+                                '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                                '<meta name="twitter:title" content="Cart - Tronics Pay" />', 
+                                '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />', 
+                                '<meta name="twitter:url" content="'.url('/cart').'" />',
+                                '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
+                        ];
+                        return view("front.cart.index", $data);
+                    }
+                } else {
+                    $urlTitle = $currentUrl;
+                    $parameters = array();
+                    array_push($parameters, $urlTitle);
+                    
+                    $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
+                    if ($page == null) {
+                        return view('404');
+                        return "invalid page";
+                    }
+        
+                    $data['meta'] = $this->GenerateMetaTags($currentUrl);
+                    $data['html'] = $this->trimPageContent($page);
+                    return view('layouts.pagebuilder', $data);
+                    echo '<pre>';
+                    print_r($currentUrl);
+                    echo '</pre>';
+                    exit;
+                }
+
+
+            // $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+            // if ($currentUrl == "about-us") {
+            //     $data['meta'] = $this->GenerateMetaTags('about-us');
+            //     return view('front.aboutus.index', $data);
+            // }
+            
+            // if ($currentUrl == "how-it-works") {
+            //     $data['meta'] = $this->GenerateMetaTags('how-it-works');
+            //     return view('front.howitworks.index', $data);
+            // }
+
+            // if ($currentUrl == "cart") {
+            //     $data['brands'] = $this->brandRepo->all();
+    
+            //     $data['meta'] = [
+            //             '<meta name="title" content="Cart - Tronics Pay" />', 
+            //             '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
+            //             '<meta property="og:type" content="article" />', 
+            //             '<meta property="og:title" content="Cart - Tronics Pay" />',
+            //             '<meta property="og:url" content="'.url('/cart').'" />', 
+            //             '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+            //             '<meta name="twitter:title" content="Cart - Tronics Pay" />', 
+            //             '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />', 
+            //             '<meta name="twitter:url" content="'.url('/cart').'" />',
+            //             '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
+            //     ];
+            //     return view("front.cart.index", $data);
+            // }
+
+        } else {
+            echo '<pre>';
+            print_r($currentUrl);
+            echo '</pre>';
+            exit;
+        }
+
+
+
+
         $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
         $data['page'] = $this->pageBuilderRepo->findByField('url', $uri);
         if ($data['page']) {
@@ -426,9 +549,11 @@ class FrontPageController extends Controller
     }
 
 
-    private function GenerateMetaTags ($page) 
+    private function GenerateMetaTags ($page_url) 
     {
-        $page = $this->pageBuilderRepo->findByField('url', $page);
+        $pagetranslation = $this->pageBuilderPageTranslations->where('route', $page_url)->first();
+        $page = $this->pageBuiderPages->find($pagetranslation->page_id);
+
         $meta = [];
         $pageMeta = $this->pageMetaTagRepo->rawByFieldAll("page_id = ?", [$page->id]);
         foreach ($pageMeta as $key => $val) {
@@ -437,6 +562,55 @@ class FrontPageController extends Controller
         return $meta;
     }
 
+
+    private function trimPageContent ($page) 
+    {
+        // return phpb_e(phpb_full_url(phpb_current_relative_url()));
+        $pageId = $page[0]->page_id;
+        
+        $theme = new Theme(config('pagebuilder.theme'), config('pagebuilder.theme.active_theme'));
+        $page = (new PageRepository)->findWithId($pageId);
+        $pageRenderer = new PageRenderer($theme, $page);
+
+        $openingHtmlTag = '<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+
+
+<!-- Bootstrap core CSS -->
+<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+<!-- Favicons -->
+<link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="manifest" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/manifest.json">
+<link rel="mask-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<title></title>
+<link rel="stylesheet" href="/themes/demo/css/style.css" />
+</head>
+<body>';
+        $closingHtmlTag = '<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://getbootstrap.com/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+</body>
+</html>';
+
+        $html = str_replace($openingHtmlTag, '', $pageRenderer->render());
+        $html = str_replace($closingHtmlTag, '', $html);
+        return $html;
+    }
 
     public function test () 
     {

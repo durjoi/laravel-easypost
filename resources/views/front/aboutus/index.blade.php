@@ -1,6 +1,6 @@
 @extends('layouts.front')
 @section('content')
-    <div class="pt-70 pb50">
+    <div class="pt-50 pb50">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 form-group">
