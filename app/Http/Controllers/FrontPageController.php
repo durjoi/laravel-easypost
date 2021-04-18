@@ -109,11 +109,7 @@ class FrontPageController extends Controller
     {
         $currentUrl = phpb_current_relative_url();
         $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
-        $pagetranslation = $this->pageBuilderPageTranslations->where('route', $currentUrl)->first();
-        if (strlen($pagetranslate) != 0) 
-        
-        
-  
+        $pagetranslate = $this->pageBuilderPageTranslations->where('route', $currentUrl)->first();
         if (strlen($pagetranslate) != 0) {
             
             $page = $this->pageBuiderPages->find($pagetranslate->page_id);
