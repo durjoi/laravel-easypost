@@ -17,6 +17,7 @@
 	
 	<meta property="article:publisher" content="https://www.facebook.com/recellelectronics816/" />
 	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 @if(isset($meta) && count($meta) > 0)
 @foreach($meta as $key => $val)
@@ -26,7 +27,6 @@
 
 	<link rel="canonical" href="https://www.tronicspay.com/" />
 	<link rel="shortcut icon" href="{{ url('library/images/favicon.ico') }}" />
-	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="{{ url('assets/css/style.css') }}" rel="stylesheet">
 	<link rel="stylesheet" href="{{ url('assets/plugins/fontawesome-free/css/all.min.css') }}">
