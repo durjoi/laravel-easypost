@@ -109,7 +109,8 @@ class FrontPageController extends Controller
     {
         $currentUrl = phpb_current_relative_url();
         $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
-        $pagetranslate = $this->pageBuilderPageTranslations->where('route', $currentUrl)->first();
+        // $urlTitle = (substr($currentUrl, 1) == '' || substr($currentUrl, 1) == '/aperemarketing.com') ? '/' : substr($currentUrl, 1);
+        $pagetranslate = $this->pageBuilderPageTranslations->where('route', '')->first();
         if (strlen($pagetranslate) != 0) {
             
             $page = $this->pageBuiderPages->find($pagetranslate->page_id);
