@@ -26,7 +26,7 @@ class PageBuildersSeeder extends Seeder
 
 
         DB::table('pagebuilder__page_translations')->insert([
-            'id' => '1', 'page_id' => '1', 'locale' => 'en', 'title' => 'Landing Page', 'route' => '/', 'created_at' => '2020-12-03 07:17:52', 'updated_at' => '2020-12-03 07:17:52'
+            'id' => '1', 'page_id' => '1', 'locale' => 'en', 'title' => 'Landing Page', 'route' => '', 'created_at' => '2020-12-03 07:17:52', 'updated_at' => '2020-12-03 07:17:52'
         ]);
         DB::table('pagebuilder__page_translations')->insert([
             'id' => '2', 'page_id' => '2', 'locale' => 'en', 'title' => 'About Us', 'route' => 'about-us', 'created_at' => '2020-12-03 07:17:52', 'updated_at' => '2020-12-03 07:17:52'
