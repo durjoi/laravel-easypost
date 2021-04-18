@@ -121,7 +121,7 @@ class FrontPageController extends Controller
                 $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
                 $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
                 $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-                $data['meta'] = $this->GenerateMetaTags('/');
+                $data['meta'] = $this->GenerateMetaTags('');
                 return view('welcome', $data);
             } else {
                 $urlTitle = (substr($currentUrl, 1) == '' || substr($currentUrl, 1) == '/aperemarketing.com') ? '/' : substr($currentUrl, 1);
