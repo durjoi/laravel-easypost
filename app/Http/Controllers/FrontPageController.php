@@ -123,7 +123,7 @@ class FrontPageController extends Controller
                 $data['meta'] = $this->GenerateMetaTags('/');
                 return view('welcome', $data);
             } else {
-                $urlTitle = (substr($currentUrl, 1) == '') ? '/' : substr($currentUrl, 1);
+                $urlTitle = (substr($currentUrl, 1) == '' || substr($currentUrl, 1) == '/aperemarketing.com') ? '/' : substr($currentUrl, 1);
                 $parameters = array();
                 array_push($parameters, $urlTitle);
                 
