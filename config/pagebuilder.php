@@ -92,7 +92,7 @@ return [
      |--------------------------------------------------------------------------
      |
      | By default a PageBuilder is provided based on GrapesJS.
-     |
+     | 
      */
     'pagebuilder' => [
         'class' => PHPageBuilder\Modules\GrapesJS\PageBuilder::class,

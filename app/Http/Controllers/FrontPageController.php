@@ -108,33 +108,73 @@ class FrontPageController extends Controller
     public function landingPage()
     {
         $currentUrl = phpb_current_relative_url();
-        $pagetranslation = $this->pageBuilderPageTranslations->where('route', $currentUrl)->first();
-        $page = $this->pageBuiderPages->find($pagetranslation->page_id);
         $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
-        if ($page->data == null || $page->data == $default_empty_content) {
-            $data['page'] = $page;
-            $data['page_id'] = $data['page']->id;
-            $data['rowone'] = $this->brandRepo->rawAll("feature = ?", [1]);
-            $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
-            $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
-            $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-            $data['meta'] = $this->GenerateMetaTags('/');
-            return view('welcome', $data);
-        } else {
-            $urlTitle = (substr($currentUrl, 1) == '') ? '/' : substr($currentUrl, 1);
-            $parameters = array();
-            array_push($parameters, $urlTitle);
+        $pagetranslation = $this->pageBuilderPageTranslations->where('route', $currentUrl)->first();
+        if (strlen($pagetranslate) != 0) 
+        
+        
+  
+        if (strlen($pagetranslate) != 0) {
             
-            $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
-            if ($page == null) {
-                return view('404');
-                return "invalid page";
+            $page = $this->pageBuiderPages->find($pagetranslate->page_id);
+            if ($page->data == null || $page->data == $default_empty_content) {
+                $data['page'] = $page;
+                $data['page_id'] = $data['page']->id;
+                $data['rowone'] = $this->brandRepo->rawAll("feature = ?", [1]);
+                $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
+                $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
+                $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+                $data['meta'] = $this->GenerateMetaTags('/');
+                return view('welcome', $data);
+            } else {
+                $urlTitle = (substr($currentUrl, 1) == '') ? '/' : substr($currentUrl, 1);
+                $parameters = array();
+                array_push($parameters, $urlTitle);
+                
+                $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
+                if ($page == null) {
+                    return view('404');
+                    return "invalid page";
+                }
+    
+                $data['meta'] = $this->GenerateMetaTags($currentUrl);
+                $data['html'] = $this->trimPageContent($page);
+                return view('layouts.pagebuilder', $data);
             }
-
-            $data['meta'] = $this->GenerateMetaTags($currentUrl);
-            $data['html'] = $this->trimPageContent($page);
-            return view('layouts.pagebuilder', $data);
         }
+        else 
+        {
+            echo '<pre>';
+            print_r($currentUrl);
+            echo '</pre>';
+            exit;
+        }
+        // $page = $this->pageBuiderPages->find($pagetranslation->page_id);
+        // $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
+        // if ($page->data == null || $page->data == $default_empty_content) {
+        //     $data['page'] = $page;
+        //     $data['page_id'] = $data['page']->id;
+        //     $data['rowone'] = $this->brandRepo->rawAll("feature = ?", [1]);
+        //     $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
+        //     $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
+        //     $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+        //     $data['meta'] = $this->GenerateMetaTags('/');
+        //     return view('welcome', $data);
+        // } else {
+        //     $urlTitle = (substr($currentUrl, 1) == '') ? '/' : substr($currentUrl, 1);
+        //     $parameters = array();
+        //     array_push($parameters, $urlTitle);
+            
+        //     $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
+        //     if ($page == null) {
+        //         return view('404');
+        //         return "invalid page";
+        //     }
+
+        //     $data['meta'] = $this->GenerateMetaTags($currentUrl);
+        //     $data['html'] = $this->trimPageContent($page);
+        //     return view('layouts.pagebuilder', $data);
+        // }
     }
 
     private function displayPageBuildTemplate ($currentUrl) 
