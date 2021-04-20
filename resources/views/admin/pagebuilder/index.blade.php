@@ -25,8 +25,8 @@
                     </div>
                 </div> -->
                 <div class="card-body table-responsive" style="margin:5px;padding:5px;overflow:hidden">
-                    <iframe src="{{ url('/admin/204') }}" style="overflow:hidden;height:50vh;width:100%;border: none;" height="100%" width="100%"></iframe>
-                    <!-- <iframe src="{{ url('/admin/pages') }}" style="overflow:hidden;height:80vh;width:100%;border: none;" height="100%" width="100%"></iframe> -->
+                    <!-- <iframe src="{{ url('/admin/204') }}" style="overflow:hidden;height:50vh;width:100%;border: none;" height="100%" width="100%"></iframe> -->
+                    <iframe src="{{ url('/admin/pages') }}" style="overflow:hidden;height:80vh;width:100%;border: none;" height="100%" width="100%"></iframe>
                     <!-- <table class="table table-hover text-nowrap table-sm">
                         <thead>
                             <tr>

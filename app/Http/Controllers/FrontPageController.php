@@ -277,6 +277,7 @@ class FrontPageController extends Controller
             // }
 
         } else {
+            return view('404');
             echo '<pre>';
             print_r($currentUrl);
             echo '</pre>';
