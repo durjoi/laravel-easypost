@@ -125,7 +125,7 @@
         <div class="maintenance-anim"></div>
         <section class="maintenance-content">
             <h1>Server Problem.</h1>
-            <p>Page Builder package can be working only Apache installed server.</p>
+            <p>Page Builder package can working only with Apache installed server.</p>
             <footer>Please install Apache on server and contact support team.
             <!-- <h1>Pardon our dust.</h1>
             <p>The website is currently under construction and will be back up in a few days.</p>
