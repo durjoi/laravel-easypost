@@ -91,6 +91,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     Route::get('pages/overview', function () {
         return 'qwe';
     });
+
+    Route::get('204', function () {
+        return view('204');
+    });
 });
 
 
