@@ -277,6 +277,32 @@ class FrontPageController extends Controller
             // }
 
         } else {
+
+                
+            /**
+             * start: Customer Cart Page
+             */
+            if ($currentUrl == "cart") {
+                $data['brands'] = $this->brandRepo->all();
+                $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+
+                $data['meta'] = [
+                        '<meta name="title" content="Cart - Tronics Pay" />', 
+                        '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
+                        '<meta property="og:type" content="article" />', 
+                        '<meta property="og:title" content="Cart - Tronics Pay" />',
+                        '<meta property="og:url" content="'.url('/cart').'" />', 
+                        '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                        '<meta name="twitter:title" content="Cart - Tronics Pay" />', 
+                        '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />', 
+                        '<meta name="twitter:url" content="'.url('/cart').'" />',
+                        '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
+                ];
+                
+                
+                return view("front.cart.index", $data);
+            }
+            
             return view('404');
             echo '<pre>';
             print_r($currentUrl);
