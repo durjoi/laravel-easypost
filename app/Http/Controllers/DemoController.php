@@ -10,6 +10,12 @@ class DemoController extends Controller
     {
         return view('demo.emailtemplate.index');
     }
+
+    public function EmailTemplateCreate () 
+    {
+        return view('demo.emailtemplate.create');
+    }
+
     public function EmailTemplateEdit () 
     {
         return view('demo.emailtemplate.edit');
