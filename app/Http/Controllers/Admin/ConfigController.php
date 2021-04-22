@@ -43,7 +43,8 @@ class ConfigController extends Controller
             'good' => $request['good'],
             'fair' => $request['fair'],
             'poor' => $request['poor'],
-            'is_dark_mode' => $request['is_dark_mode']
+            'is_dark_mode' => $request['is_dark_mode'], 
+            'notify_device_by_last_updated_date' => $request['notify_device_by_last_updated_date']
         ];
 
         $this->configRepo->update($makeRequest, $id);

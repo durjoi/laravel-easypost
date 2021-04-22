@@ -283,7 +283,15 @@ class DatatableController extends Controller
             return '';
         })
         ->editColumn('model', function($products) {
-            $html  = $products->model;
+            $config = $this->configRepo->find(1);
+            if ($products->updated_at < date("Y-m-d h:i:s", strtotime("- ".$config['notify_device_by_last_updated_date']." days"))) {
+                $mark_as_not_updated = '<a href="javascript:void(0);" class="text-red" data-toggle="popover" data-placement="top" data-html="true" data-content="Device price haven`t updated '.$config['notify_device_by_last_updated_date'].' days ago" data-trigger="hover"><i class="fa fa-exclamation fa-fw"></i></a> ';
+                $mark_as_not_updated .= '<script>$(function () {   $(\'[data-toggle="popover"]\').popover(); $(\'[data-toggle="tooltip"]\').tooltip();});</script>';
+            } else {
+                $mark_as_not_updated = '';
+            }
+            
+            $html = $mark_as_not_updated.' '.$products->model;
             return $html;
         })
         ->editColumn('brand', function($products) {

@@ -156,11 +156,14 @@ Route::group(['prefix' => 'api'], function() {
         Route::get('admin/payment/cancel', 'PayPalController@cancel')->name('api.admin.payment.cancel');
         Route::get('admin/payment/success', 'PayPalController@success')->name('api.admin.payment.success');
     });
-    Route::group(['prefix' => 'cron'], function () {
-        Route::get('notifyday7', ['as' => 'api.cron.notifyday7', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay7']);
-        Route::get('notifyday29', ['as' => 'api.cron.notifyday29', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay29']);
-        Route::get('notifycustomerorder', ['as' => 'api.cron.notifycustomerorder', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyCustomerOrder']);
-    });
+    // Route::group(['prefix' => 'cron'], function () {
+    //     Route::get('notifyday7', ['as' => 'api.cron.notifyday7', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay7']);
+    //     Route::get('notifyday29', ['as' => 'api.cron.notifyday29', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyDay29']);
+    //     Route::get('notifycustomerorder', ['as' => 'api.cron.notifycustomerorder', 'uses' => 'App\Http\Controllers\Api\ApiController@NotifyCustomerOrder']);
+    // });
 });
+
+require __DIR__.'/cronjobs.php';
 require __DIR__.'/customer.php';
+require __DIR__.'/demo.php';
 require __DIR__.'/frontpage.php';

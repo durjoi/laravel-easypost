@@ -134,6 +134,37 @@
                 <div class="row">
                     <div class="col-md-5 fn">
                         <div class="config-legend">
+                            <h4>Phone Pricing</h4>
+                            <p>Phone Pricing Last Updated Within.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Number of days to notify the device haven't updated </h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-4 fn">
+                                        <input type="number" class="form-control" name="notify_device_by_last_updated_date" value="{{ $config->notify_device_by_last_updated_date }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-5 fn">
+                        <div class="config-legend">
                             <h4>Page Appearance</h4>
                             <p>Customize the appearance of admin page.</p>
                         </div>

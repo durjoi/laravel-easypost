@@ -16,6 +16,11 @@ class Tablelist extends Model
         'password' => 'P@utangnaman123'
     ];
 
+    public $plivo_client_credentials = [
+        'username' => 'plivo@tronicspay.com',
+        'password' => 'Soccer01?!'
+    ];
+
     public $twilio_sms_credential = [
         'link' => 'https://www.twilio.com/console/gate',
         'console' => 'https://console.twilio.com/',

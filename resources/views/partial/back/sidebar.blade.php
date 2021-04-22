@@ -41,7 +41,13 @@
                         <p>Pages</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvproducts == 'product') ? 'menu-open' : '' }} ">
+                <li class="nav-item has-treeview">
+                    <a href="{{ url('admin/products') }}" class="nav-link {{ (isset($module) && $module == 'product') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-shopping-basket"></i>
+                        <p>Product List</p>
+                    </a>
+                </li>
+                <!-- <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvproducts == 'product') ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvproducts) && $tvproducts == 'product') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-basket"></i>
                         <p>Products<i class="fas fa-angle-left right"></i></p>
@@ -60,7 +66,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> -->
                 <li class="nav-item has-treeview {{ (isset($tvsettings) && $tvsettings == true) ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvsettings) && $tvsettings == true) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cogs"></i>
