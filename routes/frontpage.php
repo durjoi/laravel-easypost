@@ -2,19 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 
-// http://localhost:8000/builder/pagecontent/2
-// Route::any('/{uri}', ['uses' => 'App\Http\Controllers\FrontPageController@handleRequest')->where('uri', '.*');
 Route::get('/{uri}', [App\Http\Controllers\FrontPageController::class, 'handleRequest']);
-// uilder/pagecontent/2
 Route::get('/builder/pagecontent/{id}', ['as' => 'builder.pagecontent', 'uses' => 'App\Http\Controllers\FrontPageController@processRequest']);
 
 Route::get('/api/web/getproductlist', ['as' => 'api.web.getproductlist', 'uses' => 'App\Http\Controllers\FrontPageController@getProductList']);
 
 Route::post('/api/web/cart', ['as' => 'api.web.cart', 'uses' => 'App\Http\Controllers\FrontPageController@getCartList']);
 Route::get('/cart/checkout', ['as' => 'cart.checkout', 'uses' => 'App\Http\Controllers\CartController@cartCheckout']);
-// Route::get('/pagecontent/{id}', [App\Http\Controller::class, 'processRequest']);
-// Route::get('/about-us', [App\Http\Controllers\FrontPageController::class, 'aboutus']);
-// Route::get('/how-it-works', [App\Http\Controllers\FrontPageController::class, 'howitworks']);
 Route::get('/', [\App\Http\Controllers\FrontPageController::class, 'landingPage']);
 
 
@@ -23,7 +17,6 @@ Route::group(['prefix' => 'products'], function() {
   Route::post('checkout', [\App\Http\Controllers\CartController::class, 'storecheckout']);
   Route::resource('cart', App\Http\Controllers\CartController::class);
 });
-// Route::resource('my-cart', App\Http\Controllers\CartController::class);
 
 Route::get('/products', [App\Http\Controllers\FrontPageController::class, 'products']);
 Route::get('/products/sell', [App\Http\Controllers\FrontPageController::class, 'productsell']);
@@ -46,7 +39,6 @@ Route::get('paypal/success', [App\Http\Controllers\PaypalController::class, 'suc
 Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'cancel'])->name('paypal.cancel');
 
 Route::get('test/sms', [App\Http\Controllers\FrontPageController::class, 'test']);
-// Route::get('/{any}', [App\Http\Controllers\FrontPageController::class, 'custompage']);
 
 
 Route::any('page/{uri}', [

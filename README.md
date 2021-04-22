@@ -12,6 +12,10 @@ In `ApiController` change the recipeient of the email notification
 
 Follow instruction below for installation of app
 
+```Server Requirements
+Install `Apache` on the server to make page builder work.
+```
+
 ```Package
 execute >  `composer update`
 ```

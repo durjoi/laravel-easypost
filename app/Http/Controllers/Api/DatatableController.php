@@ -284,8 +284,9 @@ class DatatableController extends Controller
         })
         ->editColumn('model', function($products) {
             $config = $this->configRepo->find(1);
+            
             if ($products->updated_at < date("Y-m-d h:i:s", strtotime("- ".$config['notify_device_by_last_updated_date']." days"))) {
-                $mark_as_not_updated = '<a href="javascript:void(0);" class="text-red" data-toggle="popover" data-placement="top" data-html="true" data-content="Device price haven`t updated '.$config['notify_device_by_last_updated_date'].' days ago" data-trigger="hover"><i class="fa fa-exclamation fa-fw"></i></a> ';
+                $mark_as_not_updated = '<a href="javascript:void(0);" class="text-red" data-toggle="popover" data-placement="top" data-html="true" data-content="It has been more than <b class=\'text-red\'>'.$config['notify_device_by_last_updated_date'].'</b> days since this device\'s price has been updated." data-trigger="hover"><i class="fa fa-exclamation fa-fw"></i></a> ';
                 $mark_as_not_updated .= '<script>$(function () {   $(\'[data-toggle="popover"]\').popover(); $(\'[data-toggle="tooltip"]\').tooltip();});</script>';
             } else {
                 $mark_as_not_updated = '';

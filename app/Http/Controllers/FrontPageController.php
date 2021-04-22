@@ -37,12 +37,12 @@ use App\Models\Admin\PageBuilderPageTranslations;
 
 
 // For Twilio
-require __DIR__ . '/../../../vendor/twilio/sdk/src/Twilio/autoload.php';
-use Twilio\Rest\Client;
+// require __DIR__ . '/../../../vendor/twilio/sdk/src/Twilio/autoload.php';
+// use Twilio\Rest\Client;
 
 // For Plivio
-// require __DIR__ . '/../../../vendor/autoload.php';
-// use Plivo\RestClient;
+require __DIR__ . '/../../../vendor/autoload.php';
+use Plivo\RestClient;
 
 use Illuminate\Routing\UrlGenerator;
 
@@ -691,18 +691,46 @@ class FrontPageController extends Controller
         /**
          * Plivo
          */
-        // $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
-        // $message_created = $client->messages->create(
-        //     '+971543293292',
-        //     ['+971503361319'],
-        //     'hello there'
-        //     // 'Howdy Glenn,
-        //     // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
+        $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
+        $message_created = $client->messages->create(
+            '+971543293292',
+            ['+971503361319'],
+            'hello there'
+            // 'Howdy Glenn,
+            // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
             
-        //     // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
-        // );
-        // print_r($message_created);
+            // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
+        );
+        print_r($message_created);
 
+
+        // // Sample 1 : Sending SMS with callback
+        // $client = new RestClient("auth_id", "auth_token");
+        // $response = $client->messages->create(
+        // null, #from
+        // ['+14152223333'], #to
+        // "Hello, this is a sample text", #text
+        // ["url"=>"http://foo.com/sms_status/"],
+        // 'your_powerpack_uuid'
+        // );
+        // print_r($response);
+        // // Prints only the message_uuid
+        // print_r($response->getmessageUuid(0));
+
+        
+        // // Sample 2 : Retrieve a message
+        // // reference: https://www.plivo.com/docs/sms/api/message#retrieve-a-message
+        // GET: https://api.plivo.com/v1/Account/{auth_id}/Message/{message_uuid}/
+
+        // // Sample 3 : List all message
+        // // reference: https://www.plivo.com/docs/sms/api/message#list-all-messages
+        // GET: https://api.plivo.com/v1/Account/{auth_id}/Message/
+
+        // Sample 4 : Bulk messaging 
+        // reference : https://www.plivo.com/docs/sms/api/message#bulk-messaging
+        
+        // Sample 5 : Message status callback
+        // reference : https://www.plivo.com/docs/sms/api/message#message-status-callbacks
 
 
 
@@ -824,31 +852,31 @@ class FrontPageController extends Controller
          * TWILIO
          */
         // Your Account SID and Auth Token from twilio.com/console
-        $account_sid = $this->tablelist->twilio_sms_credential['account_sid'];
-        $auth_token = $this->tablelist->twilio_sms_credential['auth_token'];
-        $twilio_number = "+13347210661";
-        $message = 'Howdy Glenn,
-        We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
+        // $account_sid = $this->tablelist->twilio_sms_credential['account_sid'];
+        // $auth_token = $this->tablelist->twilio_sms_credential['auth_token'];
+        // $twilio_number = "+13347210661";
+        // $message = 'Howdy Glenn,
+        // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
         
-        We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.';
-        try {
-            $client = new Client($account_sid, $auth_token);
-            $client->messages->create(
-                // Where to send a text message (your cell phone?)
-                '+971503361319',
-                array(
-                    'from' => $twilio_number,
-                    'body' => $message
-                )
-            );
-            echo '<pre>';
-            print_r($client);
-            echo '</pre>';
+        // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.';
+        // try {
+        //     $client = new Client($account_sid, $auth_token);
+        //     $client->messages->create(
+        //         // Where to send a text message (your cell phone?)
+        //         '+971503361319',
+        //         array(
+        //             'from' => $twilio_number,
+        //             'body' => $message
+        //         )
+        //     );
+        //     echo '<pre>';
+        //     print_r($client);
+        //     echo '</pre>';
         
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-        exit;
+        // } catch (\Exception $e) {
+        //     echo $e->getMessage();
+        // }
+        // exit;
 
 
 
