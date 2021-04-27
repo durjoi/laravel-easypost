@@ -92,6 +92,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ url('admin/settings/emailtemplate') }}" class="nav-link {{ (isset($module) && $module == 'email') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Email Template</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ url('admin/settings/menus') }}" class="nav-link {{ (isset($module) && $module == 'menu') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Menus</p>

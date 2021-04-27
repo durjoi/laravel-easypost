@@ -43,6 +43,8 @@ use App\Models\Admin\PageBuilderPageTranslations;
 // For Plivio
 require __DIR__ . '/../../../vendor/autoload.php';
 use Plivo\RestClient;
+use Plivo\Exceptions\PlivoAuthenticationException;
+use Plivo\Exceptions\PlivoRestException;
 
 use Illuminate\Routing\UrlGenerator;
 
@@ -691,17 +693,53 @@ class FrontPageController extends Controller
         /**
          * Plivo
          */
+
         $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
-        $message_created = $client->messages->create(
-            '+971543293292',
-            ['+971503361319'],
-            'hello there'
-            // 'Howdy Glenn,
-            // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
+
+        try {
+            $response = $client->accounts->get();
+            echo '<pre>';
+            print_r($response);
+            echo '</pre>';
+        }
+        catch (PlivoRestException $ex) {
+            echo 'asd';
+            print_r($ex);
+        }
+
+        // $ch = curl_init();
+
+        // curl_setopt($ch, CURLOPT_URL, 'https://api.plivo.com/v1/Account/MAMTDJN2Q2Y2Q3NJY5MJ/');
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        
+        // curl_setopt($ch, CURLOPT_USERPWD, 'AUTH_ID' . ':' . 'ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk');
+        
+        // $result = curl_exec($ch);
+        // if (curl_errno($ch)) {
+        //     echo 'Error:' . curl_error($ch);
+        // }
+        // curl_close($ch);
+
+        // echo '<pre>';
+        // print_r($result);
+        // echo '</pre>';
+
+
+        // // Sample SMS Sending
+        // $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
+        // $message_created = $client->messages->create(
+        //     '+971543293292',
+        //     ['+971503361319'],
+        //     'hello there'
+        //     // 'Howdy Glenn,
+        //     // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
             
-            // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
-        );
-        print_r($message_created);
+        //     // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
+        // );
+        // echo '<pre>';
+        // print_r($message_created);
+        // echo '</pre>';
 
 
         // // Sample 1 : Sending SMS with callback

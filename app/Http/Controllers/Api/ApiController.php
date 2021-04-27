@@ -25,6 +25,7 @@ use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
 use App\Repositories\Admin\PageBuilderRepositoryEloquent as PageBuilder;
 use App\Repositories\Admin\PageMetaTagRepositoryEloquent as PageMetaTag;
+use App\Repositories\Admin\SettingsEmailTemplateEloquentRepository as EmailTemplate;
 use App\Models\TableList;
 use Saperemarketing\Phpmailer\Facades\Mailer;
 use App\Http\Requests\Admin\UserRequest;
@@ -50,6 +51,7 @@ class ApiController extends Controller
     protected $userRepo;
     protected $pageBuilderRepo;
     protected $pageMetaTagRepo;
+    protected $emailTemplateRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -68,7 +70,8 @@ class ApiController extends Controller
                         ProductCategory $productCategoryRepo, 
                         User $userRepo, 
                         PageBuilder $pageBuilderRepo, 
-                        PageMetaTag $pageMetaTagRepo
+                        PageMetaTag $pageMetaTagRepo, 
+                        EmailTemplate $emailTemplateRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -88,6 +91,7 @@ class ApiController extends Controller
         $this->userRepo = $userRepo;
         $this->pageBuilderRepo = $pageBuilderRepo;
         $this->pageMetaTagRepo = $pageMetaTagRepo;
+        $this->emailTemplateRepo = $emailTemplateRepo;
     }
 
     public function GetProduct ($id) 
@@ -148,6 +152,13 @@ class ApiController extends Controller
     {
         $response['status'] = 200;
         $response['model'] = $this->tablelist->modulesList;
+        return response()->json($response);
+    }
+
+    public function GetNotificationModules () 
+    {
+        $response['status'] = 200;
+        $response['model'] = $this->tablelist->notificationModules;
         return response()->json($response);
     }
 
@@ -462,6 +473,77 @@ class ApiController extends Controller
     }
 
     
+    public function PatchEmailTemplate (Request $request) 
+    {
+        if ($request['id']) {
+            // return $request->all();
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
+            $checkDuplicate = $this->emailTemplateRepo->rawByField("name = ? and id != ?", [$request['name'], $id]);
+        } else {
+            $checkDuplicate = $this->emailTemplateRepo->rawByField("name = ?", [$request['name']]);
+        }
+        if ($checkDuplicate) 
+        {
+            $response['status'] = 400;
+            $response['error'] = $request['name'].' already exists';
+        } 
+        else 
+        {
+            $response['status'] = 200;
+            $response['message'] = 'Email Template has been successfully updated';
+            if ($request['id']) 
+            {
+                $makeRequest = [
+                    'name' => $request->name,
+                    'subject' => $request->subject,
+                    'description' => $request->description,
+                    'status' => $request->status,
+                    'model' => $request->model,
+                    'scheduled_days' => $request->scheduled_days,
+                    'receiver' => $request->receiver,
+                    'content' => $request->content,
+                ];
+                $this->emailTemplateRepo->update($makeRequest, $id);
+            }
+            else 
+            {
+                $makeRequest = [
+                    'name' => $request->name,
+                    'subject' => $request->subject,
+                    'description' => $request->description,
+                    'status' => $request->status,
+                    'model' => $request->model,
+                    'scheduled_days' => $request->scheduled_days,
+                    'receiver' => $request->receiver,
+                    'content' => $request->content,
+                ];
+                $this->emailTemplateRepo->create($makeRequest);
+                $response['status'] = 200;
+                $response['message'] = "Email Template has been successfully saved";
+            }
+        }
+        return response()->json($response);   
+    }
+
+    public function GetEmailTemplate ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data['status'] = 200;
+        $data['emailtemplate'] = $this->emailTemplateRepo->find($id);
+        return response()->json($data);   
+    }
+
+    public function DeleteEmailTemplate ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $this->emailTemplateRepo->delete($id);
+        $response['status'] = 200;
+        $response['message'] = "Record has been successfully deleted";
+        return response()->json($response);  
+    }
+
+
+
 
 
     /**
@@ -721,4 +803,5 @@ class ApiController extends Controller
 
         return response()->json($output);
     }
+
 }

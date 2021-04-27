@@ -24,6 +24,7 @@ use App\Repositories\Admin\SettingsStatusEloquentRepository as SettingsStatus;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
 use App\Repositories\Admin\PageMetaTagRepositoryEloquent as PageMetaTag;
+use App\Repositories\Admin\SettingsEmailTemplateEloquentRepository as EmailTemplate;
 
 class DatatableController extends Controller
 {
@@ -42,6 +43,7 @@ class DatatableController extends Controller
     protected $settingsCategoryRepo;
     protected $userRepo;
     protected $pageMetaTagRepo;
+    protected $emailTemplateRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -58,7 +60,8 @@ class DatatableController extends Controller
                         SettingsStatus $settingsStatusRepo, 
                         SettingsCategory $settingsCategoryRepo, 
                         User $userRepo, 
-                        PageMetaTag $pageMetaTagRepo
+                        PageMetaTag $pageMetaTagRepo, 
+                        EmailTemplate $emailTemplateRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -76,6 +79,7 @@ class DatatableController extends Controller
         $this->settingsCategoryRepo = $settingsCategoryRepo;
         $this->userRepo = $userRepo;
         $this->pageMetaTagRepo = $pageMetaTagRepo;
+        $this->emailTemplateRepo = $emailTemplateRepo;
     }
 
 
@@ -407,6 +411,47 @@ class DatatableController extends Controller
             return $html_out;
         })
         ->rawColumns(['name', 'page', 'content', 'action'])
+        ->make(true);
+    }
+
+
+
+    public function GetEmailTemplates()
+    {
+        $email_template = $this->emailTemplateRepo->all();
+        return Datatables::of($email_template)
+        ->editColumn('name', function($email_template) {
+            return $email_template->name;
+        })
+        ->editColumn('description', function($email_template) {
+            $description = $email_template->description;
+            if( strlen($email_template->description) > 30) {
+                $description = explode( "\n", wordwrap($email_template->description, 30));
+                $description = $description[0] . '...';
+            }
+            return $description;
+        })
+        ->editColumn('model', function($email_template) {
+            return '<center>'.$email_template->model.'</center>';
+        })
+        ->editColumn('status', function($email_template) {
+            return '<center><span class="label label-info">'.$email_template['status'].'</span></center>';
+        })
+        ->editColumn('scheduled_days', function($email_template) {
+            return '<center>'.$email_template->scheduled_days.'</center>';
+        })
+        ->addColumn('action', function ($email_template) {
+            $html_out  = '';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="editEmailTemplate(\''.$email_template->hashedid.'\')"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteEmailTemplate(\''.$email_template->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
+            return $html_out;
+        })
+        ->rawColumns(['name', 'description', 'model', 'status', 'scheduled_days', 'action'])
         ->make(true);
     }
 }

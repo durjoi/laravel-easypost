@@ -184,7 +184,13 @@ class Tablelist extends Model
     public $fcm_api_accesskey = 'AAAAUKR6L4M:APA91bGwwSuo_8hsrdfAT5Zatg95fpLevgFZrJQvJoqTZSFfs6dFP6m7uljuG283h5B-2UWYH2d94PbiLuLdb0P8KabJP17IuIZ38SqkF1Pm8pHzvWZ30WEYRjMmGnLZSWZBOGpOiE2U';
 
     public $modulesList = [
-        "Brand", "Config", "Customer", "Dashboard", "Menu", "Order", "Page", "Product", "Status", "User"
+        "Brand", "Config", "Customer", "Dashboard", "Email Template", "Menu", "Order", "Page", "Product", "Status", "User"
+    ];
+
+    public $notificationModules = [
+        'Process order and registration', 
+        'Process order with existing account', 
+        'Reminder'
     ];
 
     public $enableOption = ["Disable", "Enable"];
@@ -195,7 +201,7 @@ class Tablelist extends Model
                         "customer" => ["id" => 2, "name" => "Customers", "icon" => "nav-icon fas fa-users", "modal" => ""],
                         "page" => ["id" => 3, "name" => "Pages", "icon" => "nav-icon fas fa-file", "modal" => "modal-show-advice"],
                         "product" => ["id" => 4, "name" => "Products", "icon" => "nav-icon fas fa-shopping-basket", "modal" => ""],
-                        "user" => ["id" => 5, "name" => "Users", "icon" => "nav-icon fas fa-user-friends", "modal" => ""],
+                        "user" => ["id" => 5, "name" => "Users", "icon" => "nav-icon fas fa-uds", "modal" => ""],
                         "config" => ["id" => 6, "name" => "Configuration", "icon" => "far fa-circle nav-icon", "modal" => ""],
                         "menu" => ["id" => 7, "name" => "Menu Manager", "icon" => "far fa-circle nav-icon", "modal" => ""],
                         "brand" => ["id" => 8, "name" => "Brands Manager", "icon" => "far fa-circle nav-icon", "modal" => ""],

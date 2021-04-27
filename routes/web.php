@@ -86,6 +86,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
             Route::get('/', [\App\Http\Controllers\Admin\PageViewerController::class, 'Brands']);
             Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'StoreBrands']);
         });
+        
+        Route::group(['prefix' => 'emailtemplate'], function() {
+            Route::get('/', [\App\Http\Controllers\Admin\PageViewerController::class, 'EmailTemplates']);
+            // Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplates']);
+        });
     });
 
     Route::get('pages/overview', function () {
@@ -117,6 +122,8 @@ Route::group(['prefix' => 'api'], function() {
         Route::patch('products/{hashedid}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchProduct']);
         
         Route::get('modules', ['as' => 'api.modules', 'uses' => 'App\Http\Controllers\Api\ApiController@GetModules']);
+        Route::get('notificationmodules', ['as' => 'api.modules', 'uses' => 'App\Http\Controllers\Api\ApiController@GetNotificationModules']);
+        
         Route::get('enableoptions', ['as' => 'api.enableoptions', 'uses' => 'App\Http\Controllers\Api\ApiController@GetEnableOptions']);
 
         Route::get('pagebuilder/{hashedPageId}/tags/{hashedTagId}', [\App\Http\Controllers\Api\ApiController::class, 'GetMetaTagDetails']);
@@ -134,6 +141,13 @@ Route::group(['prefix' => 'api'], function() {
                 Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'StoreBrands']);
                 Route::get('{hashedId}/edit', [\App\Http\Controllers\Api\ApiController::class, 'GetBrandDetails']);
                 Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteBrand']);
+            });
+            
+            Route::group(['prefix' => 'emailtemplates'], function() {
+                Route::post('/', [App\Http\Controllers\Api\DatatableController::class, 'GetEmailTemplates']);
+                Route::patch('/', [App\Http\Controllers\Api\ApiController::class, 'PatchEmailTemplate']);
+                Route::get('/{hashedId}', [App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplate']);
+                Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteEmailTemplate']);
             });
         });
 

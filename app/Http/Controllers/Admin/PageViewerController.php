@@ -145,4 +145,15 @@ class PageViewerController extends Controller
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.brands.index', $data);
     }
+
+    public function EmailTemplates () 
+    {
+        $data['module'] = 'email';
+        $data['tvsettings'] = true;
+        // $data['types'] = [''=>'Choose Device', 'Mobile'=>'Mobile Device', 'Other'=>'Other Devices'];
+        // $data['featureList'] = [''=>'No', 1=>'Yes at Row 1', 2=>'Yes at Row 2', 3=>'Yes at Row 3'];
+        $data['config'] = $this->configRepo->find(1);
+        $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
+        return view('admin.settings.email.index', $data);
+    }
 }
