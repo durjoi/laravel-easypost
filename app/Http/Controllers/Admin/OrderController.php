@@ -62,6 +62,8 @@ class OrderController extends Controller
                                                     ], "id = ?", [$id]);
         // $data['customer'] = $this->customerTransactionRepo->rawByWithField(['bill', 'sells', 'sells.product', 'sells.network', 'sells.product_storage'], "id = ?", [$id]);
         $data['hashedId'] = $hashedId;
+        
+        $config = $this->configRepo->find(1);
         $data['products'] = $this->productRepo->rawWith(['brand','photo','networks.network','storages'], "status = ?", ['Active']);
         $data['is_dark_mode'] = ($config == 1) ? true : false;
         return view('admin.orders.edit', $data);
