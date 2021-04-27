@@ -339,6 +339,7 @@ class OrderController extends Controller
         $data['customerSell'] = $this->orderItemRepo->rawByWithField(['product_storage'], 'id = ?', [$id]);
         $data['productDetails'] = $this->productRepo->rawByWithField(['networks.network'], 'id = ?', [$data['customerSell']['product_id']]);
         $data['productDetails']['storages'] = $data['productDetails']->storagesForBuying()->get();
+        $config = $this->configRepo->find(1);
         return $data;
     }
 }
