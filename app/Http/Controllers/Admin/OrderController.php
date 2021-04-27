@@ -65,7 +65,7 @@ class OrderController extends Controller
         
         $config = $this->configRepo->find(1);
         $data['products'] = $this->productRepo->rawWith(['brand','photo','networks.network','storages'], "status = ?", ['Active']);
-        $data['is_dark_mode'] = ($config == 1) ? true : false;
+        $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.orders.edit', $data);
     }
 
