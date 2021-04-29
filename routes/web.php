@@ -68,6 +68,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
 
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
 
+    Route::group(['prefix' => 'templates'], function() {
+        Route::group(['prefix' => 'email'], function() {
+            Route::get('/', [\App\Http\Controllers\Admin\PageViewerController::class, 'EmailTemplates']);
+            // Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplates']);
+        });
+        Route::group(['prefix' => 'sms'], function() {
+            Route::get('/', [\App\Http\Controllers\Admin\PageViewerController::class, 'SmsTemplates']);
+            // Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplates']);
+        });
+    });
+
     Route::group(['prefix' => 'settings'], function() {
         Route::get('status', [\App\Http\Controllers\Admin\PageViewerController::class, 'Status']);
         Route::get('categories', [\App\Http\Controllers\Admin\PageViewerController::class, 'Categories']);
@@ -87,10 +98,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
             Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'StoreBrands']);
         });
         
-        Route::group(['prefix' => 'emailtemplate'], function() {
-            Route::get('/', [\App\Http\Controllers\Admin\PageViewerController::class, 'EmailTemplates']);
-            // Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplates']);
-        });
     });
 
     Route::get('pages/overview', function () {
@@ -112,12 +119,13 @@ Route::group(['prefix' => 'api'], function() {
         Route::patch('settings/status', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchStatus']);
         Route::delete('settings/status/{hashedId}', ['as' => 'api.settings.status', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteStatus']);
 
-        Route::get('orders/{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'GetOrder']);
-        Route::post('orders/getorders', [\App\Http\Controllers\Api\DatatableController::class, 'getOrders']);
-        Route::get('orders/{hashedId}/paymentsuccess', [\App\Http\Controllers\Api\ApiController::class, 'OrderPaymentSuccess']);
-        Route::delete('order/{hashedId}/orderitem', ['as' => 'api.order.orderitem', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderItem']);
-        Route::put('orders/{hashedId}/status', [\App\Http\Controllers\Api\ApiController::class, 'UpdateOrderStatus']);
-
+        Route::group(['prefix' => 'orders'], function() {
+            Route::get('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'GetOrder']);
+            Route::post('getorders', [\App\Http\Controllers\Api\DatatableController::class, 'getOrders']);
+            Route::get('{hashedId}/paymentsuccess', [\App\Http\Controllers\Api\ApiController::class, 'OrderPaymentSuccess']);
+            Route::delete('{hashedId}/orderitem', [\App\Http\Controllers\Api\ApiController::class, 'DeleteOrderItem']);
+            Route::put('{hashedId}/status', [\App\Http\Controllers\Api\ApiController::class, 'UpdateOrderStatus']);
+        });
         Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
         Route::patch('products/{hashedid}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchProduct']);
         
@@ -133,6 +141,21 @@ Route::group(['prefix' => 'api'], function() {
 
         Route::post('settings/users', [\App\Http\Controllers\Api\DatatableController::class, 'GetUsers']);
 
+        Route::group(['prefix' => 'templates'], function() {
+            Route::group(['prefix' => 'email'], function() {
+                Route::post('/', [App\Http\Controllers\Api\DatatableController::class, 'GetEmailTemplates']);
+                Route::patch('/', [App\Http\Controllers\Api\ApiController::class, 'PatchEmailTemplate']);
+                Route::get('/{hashedId}', [App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplate']);
+                Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteEmailTemplate']);
+            });
+            Route::group(['prefix' => 'sms'], function() {
+                Route::get('/', [App\Http\Controllers\Api\ApiController::class, 'GetSmsTemplatesList']);
+                Route::post('/', [App\Http\Controllers\Api\DatatableController::class, 'GetSmsTemplates']);
+                Route::patch('/', [App\Http\Controllers\Api\ApiController::class, 'PatchSmsTemplate']);
+                Route::get('/{hashedId}', [App\Http\Controllers\Api\ApiController::class, 'GetSmsTemplate']);
+                Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteSmsTemplate']);
+            });
+        });
         
         Route::group(['prefix' => 'settings'], function() {
             Route::group(['prefix' => 'brands'], function() {
@@ -143,12 +166,6 @@ Route::group(['prefix' => 'api'], function() {
                 Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteBrand']);
             });
             
-            Route::group(['prefix' => 'emailtemplates'], function() {
-                Route::post('/', [App\Http\Controllers\Api\DatatableController::class, 'GetEmailTemplates']);
-                Route::patch('/', [App\Http\Controllers\Api\ApiController::class, 'PatchEmailTemplate']);
-                Route::get('/{hashedId}', [App\Http\Controllers\Api\ApiController::class, 'GetEmailTemplate']);
-                Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteEmailTemplate']);
-            });
         });
 
         Route::post('settings/categories', [App\Http\Controllers\Api\DatatableController::class, 'GetCategories']);

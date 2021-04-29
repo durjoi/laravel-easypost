@@ -124,61 +124,7 @@ $(function () {
             ]
         });
     }
-    
-    if($("#emailtemplate-table").length)
-    {
-        $('#emailtemplate-table').DataTable({
-            processing: true,
-            serverSide: true,
-            "pagingType": "input",
-            ajax: {
-                url: baseUrl+'/api/settings/emailtemplates',
-                type:'POST'
-            },
-            columns: [
-                {
-                    width:'4%', searchable: false, orderable: false,
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }, className: "text-center"
-                },
-                { data: 'name', name: 'name', searchable: true, orderable: true, width:'16%' },
-                { data: 'description', name: 'description', searchable: true, orderable: true, width:'16%' },
-                { data: 'model', name: 'model', searchable: true, orderable: true, width:'16%' },
-                { data: 'status', name: 'status', searchable: false, orderable: false, width:'16%' },
-                { data: 'scheduled_days', name: 'scheduled_days', searchable: true, orderable: true, width:'16%' },
-                { data: 'action', name: 'action', searchable: false, orderable: false, width:'16%', className: "text-center"},
-            ]
-        });
-    }
-    
-    $('#create-emailtemplate').click(function (){
-        $('.modal-header-emailtemplate-action').html('Create');
-        $('#modal-emailtemplate-form')[0].reset();
-        getDropdownOptionsStatic(baseUrl+'/api/notificationmodules', 'GET', 'modal_emailtemplate_model');
-        $('.modal_div_schedule_reminder').addClass('hideme');
-        $('#modal_emailtemplate_scheduled_days').val(0);
-        $('#modal-emailtemplate').modal();
-    });
-    
 
-    $('#modal-emailtemplate-form').on('submit', function () {
-        var data = $(this).serializeArray();
-        var form_url = baseUrl+'/api/settings/emailtemplates';
-        // console.log(data);
-        // return false;
-        doAjaxProcess('PATCH', '#modal-emailtemplate-form', data, form_url);
-        return false;
-    });
-
-    $('#modal_emailtemplate_model').on('change', function () {
-        if ($(this).val() != "Reminder") {
-            $('#modal_emailtemplate_scheduled_days').val(0);
-            $('.modal_div_schedule_reminder').addClass('hideme');
-        } else {
-            $('.modal_div_schedule_reminder').removeClass('hideme');
-        }
-    });
 });
 
 function editStatus (hashedId) 
@@ -257,55 +203,4 @@ function deleteCategory (hashedId)
 function deleteuser(id){
     var form_url = baseUrl+'/admin/settings/users/'+id;
     doAjaxConfirmProcessing ('DELETE', '', {}, form_url)
-}
-
-
-function editEmailTemplate (hashedId) 
-{
-    $('.modal-header-emailtemplate-action').html('Update');
-    $('#modal-emailtemplate-form')[0].reset();
-    getDropdownOptionsStatic(baseUrl+'/api/notificationmodules', 'GET', 'modal_emailtemplate_model');
-    $('.modal_div_schedule_reminder').addClass('hideme');
-    $('#modal_emailtemplate_scheduled_days').val(0);
-    $('#modal_emailtemplate_id').val(hashedId);
-	$.ajax({
-		url: baseUrl+'/api/settings/emailtemplates/'+hashedId,
-		type: "GET",
-		dataType: 'json',
-		success: function (result) 
-		{
-            if (result.status == 200) 
-            {
-                $('#modal_emailtemplate_name').val(result.emailtemplate.name);
-                $('#modal_emailtemplate_subject').val(result.emailtemplate.subject);
-                $('#modal_emailtemplate_description').val(result.emailtemplate.description);
-                $('#modal_emailtemplate_model option[value="'+result.emailtemplate.model+'"]').attr('selected', 'selected');
-                $('#modal_emailtemplate_status option[value="'+result.emailtemplate.status+'"]').attr('selected', 'selected');
-                $('#modal_emailtemplate_receiver option[value="'+result.emailtemplate.receiver+'"]').attr('selected', 'selected');
-                
-                
-                $('#email-content').summernote('reset');
-                if (result.emailtemplate.content != "") {
-                    $('#email-content').summernote('code', result.emailtemplate.content);
-                }
-                
-                if (result.emailtemplate.model == "Reminder") {
-                    $('.modal_div_schedule_reminder').removeClass('hideme');
-                    $('#modal_emailtemplate_scheduled_days').val(result.emailtemplate.scheduled_days);
-                }
-
-                $('#modal-emailtemplate').modal();
-            } else {
-                swalWarning ("Oops", "Status not found", "warning", "Close");
-                return false;
-            }
-		}
-	});
-}
-
-
-function deleteEmailTemplate (hashedId) 
-{
-    var form_url = baseUrl+'/api/settings/emailtemplates/'+hashedId;
-    doAjaxConfirmProcessing('DELETE', '', {}, form_url);
 }

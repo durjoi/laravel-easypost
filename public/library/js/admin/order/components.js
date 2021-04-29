@@ -93,7 +93,7 @@ $(function () {
 
     $('.btn-delete-sell-device').on('click', function () {
         const hashedId = $(this).attr('data-attr-id');
-        var form_url = baseUrl+'/api/order/'+hashedId+'/orderitem';
+        var form_url = baseUrl+'/api/orders/'+hashedId+'/orderitem';
         doAjaxConfirmProcessing('DELETE', '', {}, form_url);
     });
     $('.approve-order').on('click', function () {
@@ -127,12 +127,38 @@ $(function () {
             return false;
         })
     }
+
+    $('.modal-order-status-id').on('change', function () {
+        // alert($(this).val());
+        if ($(this).val() == 6) {
+            $('.modal-status-template-sms').removeClass('hideme');
+            
+            $.ajax({
+                type: "GET",
+                url: baseUrl+"/api/templates/sms",
+                dataType: "json",
+                success: function (response) {
+                    if (response.status == 200) {
+                        $.each(response.model, function( index, value ) {
+                            $('#modal-status-select-template-sms').append('<option value="'+value.id+'">'+value.name+'</option>');
+                        });
+                    }
+                }
+            });
+        } else {
+            
+            $('.modal-status-template-sms').addClass('hideme');
+            $('#modal-status-select-template-sms').html('<option value="">Please Select SMS Template</option>');
+        }
+    });
 });
 
 function UpdateOrderStatus (id, statusId) {
     $('.modal-order-status-id').html('');
     $('#selectedStatusId').val('');
     $('.modal-button-order-status-id').html('Update');
+    $('.modal-status-template-sms').addClass('hideme');
+    $('#modal-status-select-template-sms').html('<option value="">Please Select SMS Template</option>');
     $.ajax({
         type: "GET",
         url: baseUrl+"/api/settings/status/filter/order",

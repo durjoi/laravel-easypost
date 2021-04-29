@@ -44,6 +44,7 @@ class ConfigController extends Controller
             'fair' => $request['fair'],
             'poor' => $request['poor'],
             'is_dark_mode' => $request['is_dark_mode'], 
+            'is_sms_feature_active' => $request['is_sms_feature_active'], 
             'notify_device_by_last_updated_date' => $request['notify_device_by_last_updated_date']
         ];
 

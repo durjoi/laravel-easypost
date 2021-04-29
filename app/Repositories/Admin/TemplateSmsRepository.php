@@ -1,6 +1,6 @@
 <?php
 namespace App\Repositories\Admin;
 
-interface SettingsEmailTemplateRepository {
+interface TemplateSmsRepository {
 	public function datatablesIndex();
 }

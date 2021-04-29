@@ -91,7 +91,7 @@
 
                         <hr>
 
-                        <h4 class="mt-3">Available Carrier <small>(Please select one)</small></h4>
+                        <h4 class="mt-3">Available Network <small>(Please select one)</small></h4>
                         <div class="table table-responsive">
                             <table>
                                 <tbody>

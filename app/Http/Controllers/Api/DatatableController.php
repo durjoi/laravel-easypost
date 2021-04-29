@@ -24,7 +24,8 @@ use App\Repositories\Admin\SettingsStatusEloquentRepository as SettingsStatus;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
 use App\Repositories\Admin\PageMetaTagRepositoryEloquent as PageMetaTag;
-use App\Repositories\Admin\SettingsEmailTemplateEloquentRepository as EmailTemplate;
+use App\Repositories\Admin\TemplateEmailEloquentRepository as EmailTemplate;
+use App\Repositories\Admin\TemplateSmsEloquentRepository as SmsTemplate;
 
 class DatatableController extends Controller
 {
@@ -44,6 +45,7 @@ class DatatableController extends Controller
     protected $userRepo;
     protected $pageMetaTagRepo;
     protected $emailTemplateRepo;
+    protected $smsTemplateRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -61,7 +63,8 @@ class DatatableController extends Controller
                         SettingsCategory $settingsCategoryRepo, 
                         User $userRepo, 
                         PageMetaTag $pageMetaTagRepo, 
-                        EmailTemplate $emailTemplateRepo
+                        EmailTemplate $emailTemplateRepo, 
+                        SmsTemplate $smsTemplateRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -80,6 +83,7 @@ class DatatableController extends Controller
         $this->userRepo = $userRepo;
         $this->pageMetaTagRepo = $pageMetaTagRepo;
         $this->emailTemplateRepo = $emailTemplateRepo;
+        $this->smsTemplateRepo = $smsTemplateRepo;
     }
 
 
@@ -452,6 +456,38 @@ class DatatableController extends Controller
             return $html_out;
         })
         ->rawColumns(['name', 'description', 'model', 'status', 'scheduled_days', 'action'])
+        ->make(true);
+    }
+
+    public function GetSmsTemplates()
+    {
+        $model = $this->smsTemplateRepo->all();
+        return Datatables::of($model)
+        ->editColumn('name', function($model) {
+            return $model->name;
+        })
+        ->editColumn('receiver', function($model) {
+            return '<center>'.$model->receiver.'</center>';
+        })
+        ->editColumn('status', function($model) {
+            $badge_class = ($model->status == "Active") ? 'badge-success' : 'badge-danger';
+            return  '<center><span class="badge '.$badge_class.'">'.$model->status.'</span></center>';
+        })
+        ->editColumn('model', function($model) {
+            return '<center>'.$model->model.'</center>';
+        })
+        ->addColumn('action', function ($model) {
+            $html_out  = '';
+            $html_out .= '<div class="dropdown">';
+                $html_out .= '<button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="action-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>';
+                $html_out .= '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-btn">';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="editSmsTemplate(\''.$model->hashedid.'\')"><i class="fa fa-pencil-alt fa-fw"></i> Edit</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteSmsTemplate(\''.$model->hashedid.'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
+                $html_out .= '</div>';
+            $html_out .= '</div>';
+            return $html_out;
+        })
+        ->rawColumns(['name', 'receiver', 'status', 'model', 'action'])
         ->make(true);
     }
 }

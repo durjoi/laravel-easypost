@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSettingsemailtemplateTable extends Migration
+class CreateTemplatesmsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,13 @@ class CreateSettingsemailtemplateTable extends Migration
      */
     public function up()
     {
-        Schema::create('template__email', function (Blueprint $table) {
+        Schema::create('template__sms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('subject');
-            $table->longText('description');
-            $table->integer('scheduled_days');
+            $table->longText('content');
             $table->string('receiver');
             $table->string('status');
             $table->string('model');
-            $table->longText('content');
             $table->timestamps();
         });
     }
@@ -34,6 +31,6 @@ class CreateSettingsemailtemplateTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('template__email');
+        Schema::dropIfExists('template__sms');
     }
 }

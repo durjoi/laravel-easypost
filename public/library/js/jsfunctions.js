@@ -380,7 +380,7 @@ function doAjaxProcessBasic (method, datas, form_url)
 }
 
 
-function validate_field (input_name, form_name) 
+function validate_field (input_name) 
 {
 	var field = $('#'+input_name);
 	if (field.val().trim() == '') {
@@ -397,6 +397,42 @@ function validate_field (input_name, form_name)
 		return false;
 	}
 	return true;
+}
+
+function copyHtmlToClipBoard(propertyId) {
+	/* Get the text field */
+	var copyText = document.getElementById(propertyId);
+	console.log(copyText.innerHTML);
+	/* Select the text field */
+	copyText.select();
+	copyText.setSelectionRange(0, 99999); /* For mobile devices */
+  
+	/* Copy the text inside the text field */
+	document.execCommand("copy");
+  
+	/* Alert the copied text */
+	
+	alert("Copied the text: " + copyText.value);
+}
+
+function copyInputToClipBoard(propertyId) {
+	/* Get the text field */
+	var copyText = document.getElementById(propertyId);
+	console.log(copyText.value);
+  
+	/* Select the text field */
+	copyText.select();
+	copyText.setSelectionRange(0, 99999); /* For mobile devices */
+  
+	/* Copy the text inside the text field */
+	document.execCommand("copy");
+  
+	/* Alert the copied text */
+	// alert("Copied the text: " + copyText.value);
+	var tooltip = document.getElementById('tooltip_button_clipboard_'+propertyId);
+	// tooltip.innerHTML = "Copied: " + copyText.value;
+	tooltip.innerHTML = '<span class="text-green"><i class="fas fa-copy"></i> Copied!</span>';
+	
 }
 
 

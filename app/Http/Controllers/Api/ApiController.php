@@ -25,12 +25,20 @@ use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
 use App\Repositories\Admin\UserRepositoryEloquent as User;
 use App\Repositories\Admin\PageBuilderRepositoryEloquent as PageBuilder;
 use App\Repositories\Admin\PageMetaTagRepositoryEloquent as PageMetaTag;
-use App\Repositories\Admin\SettingsEmailTemplateEloquentRepository as EmailTemplate;
+use App\Repositories\Admin\TemplateEmailEloquentRepository as EmailTemplate;
+use App\Repositories\Admin\TemplateSmsEloquentRepository as SmsTemplate;
 use App\Models\TableList;
 use Saperemarketing\Phpmailer\Facades\Mailer;
 use App\Http\Requests\Admin\UserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\SettingsBrandRequest as BrandRequest;
+
+
+// For Plivio
+require __DIR__ . '/../../../../vendor/autoload.php';
+use Plivo\RestClient;
+use Plivo\Exceptions\PlivoAuthenticationException;
+use Plivo\Exceptions\PlivoRestException;
 
 class ApiController extends Controller
 {
@@ -52,6 +60,7 @@ class ApiController extends Controller
     protected $pageBuilderRepo;
     protected $pageMetaTagRepo;
     protected $emailTemplateRepo;
+    protected $smsTemplateRepo;
 
     function __construct(
                         Brand $brandRepo, 
@@ -71,7 +80,8 @@ class ApiController extends Controller
                         User $userRepo, 
                         PageBuilder $pageBuilderRepo, 
                         PageMetaTag $pageMetaTagRepo, 
-                        EmailTemplate $emailTemplateRepo
+                        EmailTemplate $emailTemplateRepo, 
+                        SmsTemplate $smsTemplateRepo
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -92,6 +102,7 @@ class ApiController extends Controller
         $this->pageBuilderRepo = $pageBuilderRepo;
         $this->pageMetaTagRepo = $pageMetaTagRepo;
         $this->emailTemplateRepo = $emailTemplateRepo;
+        $this->smsTemplateRepo = $smsTemplateRepo;
     }
 
     public function GetProduct ($id) 
@@ -258,7 +269,12 @@ class ApiController extends Controller
     public function UpdateOrderStatus ($hashedId, Request $request) 
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
-        
+        $status_package_delivered = $this->statusRepo->rawByField("name = ?", ['Package delivered']);
+        if ($request['status_id'] == $status_package_delivered->id) 
+        {
+            // $this->doSmsSending($request['sms_template_id']);
+        }
+
         $makeRequest = ['status_id' => $request['status_id']];
         
         $this->orderRepo->update($makeRequest, $id);
@@ -472,6 +488,9 @@ class ApiController extends Controller
         return response()->json($response);  
     }
 
+    /**
+     * Email Template
+     */
     
     public function PatchEmailTemplate (Request $request) 
     {
@@ -542,7 +561,79 @@ class ApiController extends Controller
         return response()->json($response);  
     }
 
+    /**
+     * SMS Template
+     */
 
+
+    public function GetSmsTemplatesList () 
+    {
+        $data['status'] = 200;
+        $data['model'] = $this->smsTemplateRepo->rawByFieldAll('model = ? and status = ?', ['Orders', 'Active']);
+        return response()->json($data);   
+    }
+
+    public function PatchSmsTemplate (Request $request) 
+    {
+        if ($request['id']) {
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
+            $checkDuplicate = $this->smsTemplateRepo->rawByField("name = ? and id != ?", [$request['name'], $id]);
+        } else {
+            $checkDuplicate = $this->smsTemplateRepo->rawByField("name = ?", [$request['name']]);
+        }
+        if ($checkDuplicate) 
+        {
+            $response['status'] = 400;
+            $response['error'] = $request['name'].' already exists';
+        } 
+        else 
+        {
+            $response['status'] = 200;
+            $response['message'] = 'SMS Template has been successfully updated';
+            if ($request['id']) 
+            {
+                $makeRequest = [
+                    'name' => $request->name,
+                    'content' => $request->content,
+                    'status' => $request->status,
+                    'model' => $request->model,
+                    'receiver' => $request->receiver,
+                ];
+                $this->smsTemplateRepo->update($makeRequest, $id);
+            }
+            else 
+            {
+                $makeRequest = [
+                    'name' => $request->name,
+                    'content' => $request->content,
+                    'status' => $request->status,
+                    'model' => $request->model,
+                    'receiver' => $request->receiver,
+                ];
+                $this->smsTemplateRepo->create($makeRequest);
+                $response['status'] = 200;
+                $response['message'] = "SMS Template has been successfully saved";
+            }
+        }
+        return response()->json($response);   
+    }
+
+    public function GetSmsTemplate ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data['status'] = 200;
+        $data['smstemplate'] = $this->smsTemplateRepo->find($id);
+        return response()->json($data);   
+    }
+
+    public function DeleteSmsTemplate ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $this->smsTemplateRepo->delete($id);
+        $response['status'] = 200;
+        $response['message'] = "Record has been successfully deleted";
+        return response()->json($response);  
+    }
 
 
 
@@ -804,4 +895,35 @@ class ApiController extends Controller
         return response()->json($output);
     }
 
+
+    private function checkSMSFeatureIfActive () 
+    {
+        $config = $this->configRepo->find(1);    
+        return ($config->is_sms_feature_active == 1) ? true : false;
+    }
+    
+    private function doSmsSending($sms_template_id) 
+    {
+        if ($sms_template_id == 0) return false;
+        
+        if ($this->checkSMSFeatureIfActive() == false) return false;
+
+        $sms_template = $this->smsTemplateRepo->find($sms_template_id);
+        
+        $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
+        $message_created = $client->messages->create(
+            '+971503361319',
+            ['+971543293292'],
+            $sms_template['content']
+            // 'hello there'
+            // 'Howdy Glenn,
+            // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
+            
+            // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
+        );
+        return true;
+        // echo '<pre>';
+        // print_r($message_created);
+        // echo '</pre>';
+    }
 }

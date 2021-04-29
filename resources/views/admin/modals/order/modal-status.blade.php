@@ -13,6 +13,11 @@
                                 <select name="status_id" class="custom-select select-sm modal-order-status-id"></select>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group modal-status-template-sms hideme">
+                                <select name="sms_template_id" class="form-control form-control-sm" id="modal-status-select-template-sms"></select>
+                            </div>
+                        </div>
                     </div>
                 </div>  
                 <div class="modal-footer">

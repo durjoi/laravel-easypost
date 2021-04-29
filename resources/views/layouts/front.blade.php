@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     
     <title>{{ (isset($page) && $page->title != '') ? $page->title : 'TronicsPay' }}</title>
-    <link rel="stylesheet" href="<?= phpb_theme_asset('css/style.css') ?>" />
+    <!-- <link rel="stylesheet" href="<?= phpb_theme_asset('css/style.css') ?>" /> -->
 
 	@yield('page-css')
 </head>

@@ -47,6 +47,26 @@
                         <p>Product List</p>
                     </a>
                 </li>
+                <li class="nav-item has-treeview {{ (isset($tvtemplates) && $tvtemplates == true) ? 'menu-open' : '' }} ">
+                    <a href="#" class="nav-link {{ (isset($tvtemplates) && $tvtemplates == true) ? 'active' : '' }}">
+                        <i class="nav-icon fas fa fa-clone"></i>
+                        <p>Templates<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ url('admin/templates/email') }}" class="nav-link {{ (isset($module) && $module == 'email') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Email Template</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('admin/templates/sms') }}" class="nav-link {{ (isset($module) && $module == 'sms') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>SMS Template</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <!-- <li class="nav-item has-treeview {{ (isset($tvproducts) && $tvproducts == 'product') ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvproducts) && $tvproducts == 'product') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-basket"></i>
@@ -89,12 +109,6 @@
                             <a href="{{ url('admin/settings/categories') }}" class="nav-link {{ (isset($module) && $module == 'category') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Categories</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/settings/emailtemplate') }}" class="nav-link {{ (isset($module) && $module == 'email') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Email Template</p>
                             </a>
                         </li>
                         <li class="nav-item">

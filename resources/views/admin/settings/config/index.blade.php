@@ -165,6 +165,40 @@
                 <div class="row">
                     <div class="col-md-5 fn">
                         <div class="config-legend">
+                            <h4>Automatic Services</h4>
+                            <p>Services that runs in background.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Feature that runs in server automatically </h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12 fn">
+                                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                            <input type="checkbox" class="custom-control-input" id="customSwitch4" name="is_sms_feature_active" value="1" {{ ($config->is_sms_feature_active == 1) ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="customSwitch4">Toggle this to turn on/off sms feature.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+</div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-5 fn">
+                        <div class="config-legend">
                             <h4>Page Appearance</h4>
                             <p>Customize the appearance of admin page.</p>
                         </div>

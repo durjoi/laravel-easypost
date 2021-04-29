@@ -186,17 +186,27 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <a href="{{ url('admin/orders/'.$hashedId.'/generatePDF') }}" class="btn btn-danger btn-sm pull-right">
-                                        <i class="fas fa-download"></i> Generate PDF
-                                    </a>
-                                    <a href="{{ url('admin/orders/'.$hashedId.'/generatePDF') }}" class="btn btn-primary btn-sm pull-right">
-                                        <i class="fas fa-pencil-alt"></i> Change Status
-                                    </a>
-                                    @if($order['shipping_label'] != '')
-                                    <a href="{{ url('order/'.$order['hashedId'].'/shippinglabel') }}" class="btn btn-success btn-sm pull-right" target="_blank">
-                                        <i class="fa fa-eye"></i> Shipping Label
-                                    </a>
-                                    @endif
+                                    <div class="btn-group pull-right">
+                                        <a href="{{ url('admin/orders/'.$hashedId.'/generatePDF') }}" class="btn btn-danger btn-sm pull-right">
+                                            <i class="fas fa-download"></i> Generate PDF
+                                        </a>
+                                        <a href="{{ url('admin/orders/'.$hashedId.'/generatePDF') }}" class="btn btn-primary btn-sm pull-right">
+                                            <i class="fas fa-pencil-alt"></i> Change Status
+                                        </a>
+                                        @if($order['shipping_label'] != '')
+                                        <a href="{{ url('order/'.$order['hashedId'].'/shippinglabel') }}" class="btn btn-success btn-sm pull-right" target="_blank">
+                                            <i class="fa fa-eye"></i> Shipping Label
+                                        </a>
+                                        @endif
+                                        
+                                        @if($order['status_id'] != 1)
+                                            @if($order['shipping_tracker'] != '')
+                                                <a href="{{ $order['shipping_tracker'] }}" class="btn btn-warning btn-sm pull-right" target="_blank">
+                                                    <i class="fa fa-truck fa-fw"></i> Track Order
+                                                </a>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

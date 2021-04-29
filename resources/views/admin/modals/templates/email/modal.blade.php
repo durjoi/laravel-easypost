@@ -11,20 +11,20 @@
                 <div class="modal-body">
                     <div class="card-body padding0">
                         <div class="form-group">
-                            <input name="name" id="modal_emailtemplate_name" class="form-control" value="" placeholder="Template Name:">
+                            <input name="name" id="modal_emailtemplate_name" class="form-control form-control-sm" value="" placeholder="Template Name:" data-attr="Template Name">
                         </div>
                         <div class="form-group">
-                            <input name="subject" id="modal_emailtemplate_subject" class="form-control" value="" placeholder="Subject:">
+                            <input name="subject" id="modal_emailtemplate_subject" class="form-control form-control-sm" value="" placeholder="Subject:" data-attr="Template Subject">
                         </div>
                         <div class="form-group">
-                            <textarea name="description" rows="4" cols="" class="form-control" id="modal_emailtemplate_description" placeholder="Template Description:"></textarea>
+                            <textarea name="description" rows="4" cols="" class="form-control form-control-sm" id="modal_emailtemplate_description" placeholder="Template Description:" data-attr="Template Description"></textarea>
                         </div>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <select class="form-control" id="modal_emailtemplate_receiver" name="receiver">
-                                            <option value="">Receiver</option>
+                                        <select class="form-control form-control-sm" id="modal_emailtemplate_receiver" name="receiver" data-attr="Receiver">
+                                            <option value="">Select Receiver</option>
                                             <option value="Customer">Customer</option>
                                             <option value="TronicsPay">TronicsPay</option>
                                         </select>
@@ -32,8 +32,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <select class="form-control" id="modal_emailtemplate_status" name="status">
-                                            <option value="">Template Status</option>
+                                        <select class="form-control form-control-sm" id="modal_emailtemplate_status" name="status" data-attr="Template Status">
+                                            <option value="">Select Template Status</option>
                                             <option value="Active">Active</option>
                                             <option value="In-Active">In-Active</option>
                                         </select>
@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <select class="form-control" id="modal_emailtemplate_model" name="model">
+                                        <select class="form-control  form-control-sm" id="modal_emailtemplate_model" name="model" data-attr="Template Module">
                                             <option value="">Select Module</option>
                                             <option value="Registration">Registration</option>
                                             <option value="Orders">Orders</option>
@@ -52,7 +52,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group modal_div_schedule_reminder hideme">
                                         Schedule after 
-                                        <input name="scheduled_days" id="modal_emailtemplate_scheduled_days" class="form-control" type="number" style="width: 75px; display: inline;" value="0"> 
+                                        <input name="scheduled_days" id="modal_emailtemplate_scheduled_days" class="form-control form-control-sm" type="number" style="width: 75px; display: inline;" value="0"> 
                                         day(s) to follow up
                                     </div>
                                 </div>

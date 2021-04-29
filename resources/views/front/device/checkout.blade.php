@@ -97,7 +97,7 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <h3>Available Carrier</h3>
+                                                    <h3>Available Network</h3>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <div id="section-networks" class="btn-group-toggle" data-toggle="buttons"></div>

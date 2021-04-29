@@ -673,7 +673,7 @@ strong {
 }
 
 body {
-    background: #eaeded;
+    background: #eaeded !important;
 }
 
 .valign-middle {

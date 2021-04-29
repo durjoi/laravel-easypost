@@ -5,9 +5,9 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Vinkla\Hashids\HashidsManager;
 
-class SettingsEmailTemplate extends Model
+class TemplateEmail extends Model
 {
-    protected $table = "settings_emailtemplate";
+    protected $table = "template__email";
     protected $guarded = [];
     protected $appends = ['hashedid'];
 

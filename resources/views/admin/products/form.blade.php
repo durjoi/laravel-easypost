@@ -60,7 +60,7 @@
                                 <div class="input-group-append">
                                 </div>
                             </div> -->
-                            <input accept="image/*" type="file" name="photo" class="form-control custom-file">
+                            <input accept="image/*" type="file" name="photo" class="form-control custom-file form-control-sm">
                         </div>
                         <div style="<?php echo isset($product->photo) ? 'display:block' : 'display:none'; ?>">
                             <div class="input-group mb-3">
