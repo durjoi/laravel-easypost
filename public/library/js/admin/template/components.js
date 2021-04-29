@@ -124,7 +124,7 @@ $(function () {
         {
             return false;
         }
-
+        $('#sms-submit').html('<i class="fa fa-spinner fa-spin"></i> Please wait..')
         var form_url = baseUrl+'/api/templates/sms';
         doAjaxProcess('PATCH', '#modal-smstemplate-form', data, form_url);
         return false;
