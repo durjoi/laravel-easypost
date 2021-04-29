@@ -272,7 +272,7 @@ class ApiController extends Controller
         $status_package_delivered = $this->statusRepo->rawByField("name = ?", ['Package delivered']);
         if ($request['status_id'] == $status_package_delivered->id) 
         {
-            // $this->doSmsSending($request['sms_template_id']);
+            $this->doSmsSending($request['sms_template_id']);
         }
 
         $makeRequest = ['status_id' => $request['status_id']];

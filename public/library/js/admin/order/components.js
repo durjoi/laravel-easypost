@@ -130,7 +130,7 @@ $(function () {
 
     $('.modal-order-status-id').on('change', function () {
         // alert($(this).val());
-        if ($(this).val() == 6) {
+        if ($(this).val() == 6 || $(this).val() == 10) {
             $('.modal-status-template-sms').removeClass('hideme');
             
             $.ajax({
