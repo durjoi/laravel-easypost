@@ -76,19 +76,6 @@
                 </ul>
 
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a 
-                            class="nav-link" 
-                            data-toggle="popover" 
-                            data-placement="bottom" 
-                            data-html="true" 
-                            data-content="SMS Remaining Credit <b class='text-green navbar-sms-credit'>$0</b>" 
-                            data-trigger="hover"
-                        >
-                            <i class="far fas fa-mobile-alt"></i>
-                            <span class="badge badge-success navbar-badge navbar-sms-credit">$0</span>
-                        </a>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-toggle="dropdown" href="#">
                             <i class="far fa-comments"></i>
@@ -218,7 +205,7 @@
         <script src="{{ url('assets/dist/js/adminlte.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
         
-        <script>
+        <!-- <script>
             $(function () {   
                 $('[data-toggle="popover"]').popover(); 
                 $('[data-toggle="tooltip"]').tooltip();
@@ -235,6 +222,6 @@
                     }
                 });
             });
-        </script>
+        </script> -->
     </body>
 </html>
