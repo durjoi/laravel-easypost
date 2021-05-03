@@ -107,5 +107,33 @@ class ApiController extends Controller
         $data['productDetails']['storages'] = $data['productDetails']->storagesForBuying()->get();
         return $data;
     } 
+
+    public function verification (Request $request) 
+    {
+        if ($request['input1'] == '' || $request['input2'] == '' || $request['input3'] == '' || $request['input4'] == '') 
+        {
+            $response['status'] = 400;
+            $response['message'] = "Please enter valid verification code";
+            return response()->json($response);
+        }
+
+        $merge_code = $request['input1'].''.$request['input2'].''.$request['input3'].''.$request['input4']; 
+        // return Auth::guard('customer')->user()->verification_code .' - '. $merge_code;
+        if (Auth::guard('customer')->user()->verification_code != $merge_code) 
+        {
+            $response['status'] = 400;
+            $response['message'] = "Verification code not matched";
+            return response()->json($response);  
+        }
+        
+        $makeRequest = [
+            'status' => 'Active', 
+            'is_verified' => 1
+        ];
+        $this->customerRepo->update($makeRequest, Auth::guard('customer')->user()->id);
+        $response['status'] = 200;
+        $response['message'] = "Account verified";
+        return response()->json($response);  
+    }
     
 }

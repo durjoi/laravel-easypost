@@ -180,6 +180,11 @@ class ProfileController extends Controller
         ->make(true);
     }
 
+    public function verification () 
+    {
+        return view('customer.verification.index');
+    }
+
 
     // public function GetBrands()
     // {

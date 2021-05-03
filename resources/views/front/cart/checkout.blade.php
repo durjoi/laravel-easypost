@@ -296,6 +296,15 @@
                             $('#checkoutInProgress').html('');
                             $('#checkoutCompletedSection').removeClass('hideme');
                             localStorage.clear();
+                        } else if (response.status == 301) {
+                            swal({
+                                title : "Congratulations!",
+                                text : response.message,
+                                icon : "success", 
+                                buttons: "Close",
+                            })
+                            window.location.href = '../'+response.redirectTo;
+                            localStorage.clear();
                         } else {
                             swal({
                                 title : "Oops!",

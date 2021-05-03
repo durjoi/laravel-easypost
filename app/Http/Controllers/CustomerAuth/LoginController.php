@@ -80,12 +80,17 @@ class LoginController extends Controller
         if ($response = $this->authenticated($request, $this->guard()->user())) {
             return $response;
         }
+        
         if(Auth::guard('customer')->check()){
             if($request['cart']){
                 return redirect()->back();
             }
             if ($request['from_email'] == true) {
                 return redirect()->to($request['redirect_to_custom_url']);
+            }
+            if (Auth::guard('customer')->user()->status == "In-Active" && Auth::guard('customer')->user()->is_verified == 0) 
+            {
+                return redirect()->to('customer/verification');
             }
             return redirect()->to($this->redirectTo);
         }

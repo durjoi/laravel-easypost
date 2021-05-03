@@ -29,6 +29,14 @@ use App\Models\TableList as Tablelist;
 use Illuminate\Support\Facades\Auth;
 use PDF;
 
+
+// For Plivio
+require __DIR__ . '/../../../vendor/autoload.php';
+use Plivo\RestClient;
+use Plivo\Exceptions\PlivoAuthenticationException;
+use Plivo\Exceptions\PlivoRestException;
+
+
 class DeviceController extends Controller
 {
     protected $brandRepo;
@@ -641,7 +649,51 @@ class DeviceController extends Controller
         $chkcustomer = $this->customerRepo->findByField('email', $request['email']);
         if ($response['status'] == 200) 
         {
+            
+            EasyPost::setApiKey(config('account.easypost_apikey'));
             $config = $this->configRepo->find(1);
+            
+            $to_address = Address::create([
+                // "company" => "", // $config->company_name,
+                "name" => $config->company_name, // "Dr. Steve Brule",
+                "street1" => $config->address1, //"179 N Harbor Dr", //$config->address1,
+                // "street2" => $config->address2,
+                "city"    => $config->city, // "Redondo Beach", // $config->city,
+                "state"   => $config->state, // "CA", // $config->state,
+                "zip"     => $config->zip_code, // "90277",  // $config->zip_code,
+                "phone"   => $config->phone, // "310-808-5243", // $config->phone,
+            ]);
+    
+            $from_address = Address::create([
+                "company" => "EasyPost",
+                "street1" => $request['address1'], // "118 2nd Street",
+                "street2" => $request['address2'], // "4th Floor",
+                "city"    => $request['city'], // "San Francisco", 
+                "state"   => $request['state'], // "CA",
+                "zip"     => $request['zip'], // "94105",
+                "phone"   => $request['phone'], // "415-456-7890",
+            ]);
+    
+            // EasyPost::setApiKey(config('account.easypost_apikey'));
+            $parcel = Parcel::create([
+                // 'predefined_package' => $this->package($product->height, $product->width),
+                'predefined_package' => 'LargeFlatRateBox',
+                'weight' => 76.9, // $product->height,
+            ]);
+            
+            $shipment = Shipment::create([
+                'to_address'   => $to_address,
+                'from_address' => $from_address,
+                'parcel'       => $parcel
+            ]);
+                
+            if (count($shipment->rates) == 0) {
+                $response['status'] = 400;
+                $response['message'] = "No rates found on your location";
+                return $response;
+            }
+
+
             if (!$chkcustomer) 
             {
                 $password = Str::random(10);
@@ -655,7 +707,9 @@ class DeviceController extends Controller
                     'bank' => $request['bank'],
                     'account_name' => $request['account_name'],
                     'account_number' => $request['account_number'],
-                    'authpw' => $password
+                    'authpw' => $password, 
+                    'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(),
+                    'status' => 'In-Active'
                 ];
                 $customer = $this->customerRepo->create($customerRequest);
                 $addressRequest = [
@@ -668,6 +722,7 @@ class DeviceController extends Controller
                     'phone' => $request['phone']
                 ];
                 $address = $this->addressRepo->create($addressRequest);
+                $this->doSMSRegistration($customerRequest, $request['phone']);
             } else {
                 $password = '';
                 $address = $this->addressRepo->findByField('customer_id', $chkcustomer['id']);
@@ -679,42 +734,44 @@ class DeviceController extends Controller
                  * start: easy post integration
                  */
 
-                EasyPost::setApiKey(config('account.easypost_apikey'));
-                $config = $this->configRepo->find(1);
-                
-                $to_address = Address::create([
-                    // "company" => "", // $config->company_name,
-                    "name" => $config->company_name, // "Dr. Steve Brule",
-                    "street1" => $config->address1, //"179 N Harbor Dr", //$config->address1,
-                    // "street2" => $config->address2,
-                    "city"    => $config->city, // "Redondo Beach", // $config->city,
-                    "state"   => $config->state, // "CA", // $config->state,
-                    "zip"     => $config->zip_code, // "90277",  // $config->zip_code,
-                    "phone"   => $config->phone, // "310-808-5243", // $config->phone,
-                ]);
-        
-                $from_address = Address::create([
-                    "company" => "EasyPost",
-                    "street1" => "118 2nd Street", // $address->address1,
-                    "street2" => "4th Floor", // $address->address2,
-                    "city"    => "San Francisco", // $address->city,
-                    "state"   => "CA", // $address->state,
-                    "zip"     => "94105", // $address->zip,
-                    "phone"   => "415-456-7890", // $address->phone
-                ]);
-        
                 // EasyPost::setApiKey(config('account.easypost_apikey'));
-                $parcel = Parcel::create([
-                    // 'predefined_package' => $this->package($product->height, $product->width),
-                    'predefined_package' => 'LargeFlatRateBox',
-                    'weight' => 76.9, // $product->height,
-                ]);
+                // $config = $this->configRepo->find(1);
                 
-                $shipment = Shipment::create([
-                    'to_address'   => $to_address,
-                    'from_address' => $from_address,
-                    'parcel'       => $parcel
-                ]);
+                // $to_address = Address::create([
+                //     // "company" => "", // $config->company_name,
+                //     "name" => $config->company_name, // "Dr. Steve Brule",
+                //     "street1" => $config->address1, //"179 N Harbor Dr", //$config->address1,
+                //     // "street2" => $config->address2,
+                //     "city"    => $config->city, // "Redondo Beach", // $config->city,
+                //     "state"   => $config->state, // "CA", // $config->state,
+                //     "zip"     => $config->zip_code, // "90277",  // $config->zip_code,
+                //     "phone"   => $config->phone, // "310-808-5243", // $config->phone,
+                // ]);
+        
+                // $from_address = Address::create([
+                //     "company" => "EasyPost",
+                //     "street1" => $address->address1, // "118 2nd Street",
+                //     "street2" => $address->address2, // "4th Floor",
+                //     "city"    => $address->city, // "San Francisco", 
+                //     "state"   => $address->state, // "CA",
+                //     "zip"     => $address->zip, // "94105",
+                //     "phone"   => $address->phone, // "415-456-7890",
+                // ]);
+        
+                // // EasyPost::setApiKey(config('account.easypost_apikey'));
+                // $parcel = Parcel::create([
+                //     // 'predefined_package' => $this->package($product->height, $product->width),
+                //     'predefined_package' => 'LargeFlatRateBox',
+                //     'weight' => 76.9, // $product->height,
+                // ]);
+                
+                // $shipment = Shipment::create([
+                //     'to_address'   => $to_address,
+                //     'from_address' => $from_address,
+                //     'parcel'       => $parcel
+                // ]);
+                // $shipment->buy($shipment->lowest_rate());
+            
                 $shipment->buy($shipment->lowest_rate());
                 $shipment->insure(array('amount' => 100));
                 
@@ -1116,5 +1173,35 @@ class DeviceController extends Controller
         } else {
             return 'LargeFlatRateBox';
         }
+    }
+    
+
+
+    private function checkSMSFeatureIfActive () 
+    {
+        $config = $this->configRepo->find(1);    
+        return ($config->is_sms_feature_active == 1) ? true : false;
+    }
+
+    private function doSMSRegistration($request, $phone) 
+    {   
+        if ($this->checkSMSFeatureIfActive() == false) return false;
+
+        $plivo_credentials = $this->tablelist->plivo_client_credentials;
+
+        $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
+
+        $message = 'Thank you for choosing TronicsPay. Your login credential is: 
+email: '.$request['email'].'
+password: '.$request['authpw'].'
+        
+Your verification code: '.$request['verification_code'];
+
+        $message_created = $client->messages->create(
+            $plivo_credentials['sender'],
+            [$phone],
+            $message
+        );
+        return true;
     }
 }

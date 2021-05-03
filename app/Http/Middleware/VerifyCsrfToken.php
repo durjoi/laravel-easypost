@@ -13,7 +13,8 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/products/sell/payment-method',
-        '/device'
+        '/device',
+        '/api/customer/verification'
         //
         // 'admin/pagebuilder/{id}/build'
     ];

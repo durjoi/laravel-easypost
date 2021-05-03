@@ -15,8 +15,16 @@ class DemoController extends Controller
         $this->orderRepo = $orderRepo;
     }
 
+    public function VerificationPage () 
+    {
+        
+        // return $order = $this->orderRepo->rawByWithField(['customer.bill', 'status_details'], "id = ?", [1]);
+        return view('demo.verification.index');
+    }
     public function EmailTemplateIndex () 
     {
+        
+        // return $order = $this->orderRepo->rawByWithField(['customer.bill', 'status_details'], "id = ?", [1]);
         return view('demo.emailtemplate.index');
     }
 

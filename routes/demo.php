@@ -6,4 +6,6 @@ Route::group(['namespace' => 'Demo', 'prefix' => 'demo'], function () { // , 'mi
     Route::get('emailtemplate/edit', [\App\Http\Controllers\DemoController::class, 'EmailTemplateEdit']);
     
     Route::get('sms', [App\Http\Controllers\FrontPageController::class, 'test']);
+
+    Route::get('verification', [App\Http\Controllers\DemoController::class, 'VerificationPage']);
 });

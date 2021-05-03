@@ -959,14 +959,16 @@ class ApiController extends Controller
         
         $message = $this->replaceSMSPlaceHolder($sms_template['content'], $order_id);
 
+        $order = $this->orderRepo->rawByWithField(['customer', 'status_details'], "id = ?", [$order_id]);
 
         $plivo_credentials = $this->tablelist->plivo_client_credentials;
 
         $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
 
         $message_created = $client->messages->create(
-            '+17077230437',
-            ['+971503361319'],
+            $plivo_credentials['sender'],
+            [$order['customer']['bill']['phone']],
+            // ['+971503361319'],
             $message
         );
         return true;

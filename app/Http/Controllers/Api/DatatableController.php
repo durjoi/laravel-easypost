@@ -232,7 +232,7 @@ class DatatableController extends Controller
 
     public function GetCustomers()
     {
-        $customers = $this->customerRepo->rawWith(['bill'], "status = ?", ['Active']);
+        $customers = $this->customerRepo->rawWith(['bill'], "1 = ?", [1]);
         return Datatables::of($customers)
         ->editColumn('fullname', function($customers) {
             return $customers->fname.' '.$customers->lname;

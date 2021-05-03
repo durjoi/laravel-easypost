@@ -26,6 +26,8 @@ Route::group(['prefix' => 'customer'], function() {
         Route::get('my-bundles/{hashedId}/generatePDF', [\App\Http\Controllers\Admin\OrderController::class, 'generatePDF']);
 
         Route::get('profile', [\App\Http\Controllers\Customer\ProfileController::class, 'index']);
+
+        Route::get('verification', [\App\Http\Controllers\Customer\ProfileController::class, 'verification']);
     });
 
 });
@@ -35,5 +37,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth:customer'], function() {
         Route::get('orders/{hashedId}/orderItem', [\App\Http\Controllers\Customer\ApiController::class, 'GetOrderItem']);
         Route::patch('orders/{hashedid}/orderItem', [\App\Http\Controllers\Api\ApiController::class, 'PatchProduct']);
         Route::delete('bundle/{hashedId}/orderItem', [\App\Http\Controllers\Api\ApiController::class, 'DeleteOrderItem']);
+        
+        Route::post('verification', [\App\Http\Controllers\Customer\ApiController::class, 'verification']);
     });
 });

@@ -46,4 +46,9 @@ class GlobalFunctionController extends Controller
         $bytes = random_bytes(5);
         return strtoupper(bin2hex($bytes));
     }
+
+    public function verificationCode () 
+    {
+        return mt_rand(1000, 9999);
+    }
 }
