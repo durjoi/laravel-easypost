@@ -365,7 +365,7 @@
         function selectDeviceCarrier(networkId) 
         {
             $('.btn-carrier').removeClass('active')
-            $('#label-carrier-'+networkId).addClass('active');
+            $(this).addClass('active');
         }
 
 

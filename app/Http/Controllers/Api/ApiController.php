@@ -33,7 +33,6 @@ use App\Http\Requests\Admin\UserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\SettingsBrandRequest as BrandRequest;
 
-
 // For Plivio
 require __DIR__ . '/../../../../vendor/autoload.php';
 use Plivo\RestClient;
@@ -72,7 +71,7 @@ class ApiController extends Controller
                         ProductStorage $productStorageRepo, 
                         CustomerSell $customerSellRepo, 
                         Order $orderRepo, 
-                        OrderItem $orderItemRepo, 
+                        OrderItem $orderItemRepo,  
                         Status $statusRepo,
                         TableList $tablelist, 
                         SettingsCategory $settingsCategoryRepo, 
@@ -272,7 +271,7 @@ class ApiController extends Controller
         $status_package_delivered = $this->statusRepo->rawByField("name = ?", ['Package delivered']);
         if ($request['status_id'] == $status_package_delivered->id) 
         {
-            $this->doSmsSending($request['sms_template_id']);
+            $this->doSmsSending($request['sms_template_id'], $id);
         }
 
         $makeRequest = ['status_id' => $request['status_id']];
@@ -895,6 +894,24 @@ class ApiController extends Controller
         return response()->json($output);
     }
 
+    public function GetSMSCredit () 
+    {
+        $plivo_credentials = $this->tablelist->plivo_client_credentials;
+
+        $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
+
+        try {
+            $response = $client->accounts->get();
+            $output['status'] = 200;
+            $output['model'] = $response->properties;
+            return response()->json($output);
+        }
+        catch (PlivoRestException $ex) {
+            $output['status'] = 400;
+            $output['error'] = $ex;
+            return response()->json($output);
+        }
+    }
 
     private function checkSMSFeatureIfActive () 
     {
@@ -902,7 +919,34 @@ class ApiController extends Controller
         return ($config->is_sms_feature_active == 1) ? true : false;
     }
     
-    private function doSmsSending($sms_template_id) 
+    private function replaceSMSPlaceHolder ($str, $order_id) 
+    {
+        $order = $this->orderRepo->rawByWithField(['customer', 'status_details'], "id = ?", [$order_id]);
+        $string = $str;
+        $result = str_replace(
+            [
+                '{customer_name}', 
+                '{customer_email}', 
+                '{customer_password}', 
+                '{order_shipping_label}', 
+                '{order_tracking_number}', 
+                '{order_transaction_id}', 
+                '{order_status}'
+            ], 
+            [
+                $order['customer']['fullname'], 
+                $order['customer']['email'],
+                app('App\Http\Controllers\GlobalFunctionController')->decrypt($order['customer']['authtoken']),
+                $order['shipping_label'], 
+                $order['tracking_code'], 
+                $order['status_details']['name'], 
+            ],
+            $string
+        );
+        return $result;
+    }
+
+    private function doSmsSending($sms_template_id, $order_id) 
     {
         if ($sms_template_id == 0) return false;
         
@@ -910,16 +954,20 @@ class ApiController extends Controller
 
         $sms_template = $this->smsTemplateRepo->find($sms_template_id);
         
-        $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
+        $data['placeholder_customer_list'] = $this->tablelist->placeholder_customer_list;
+        $data['placeholder_order_list'] = $this->tablelist->placeholder_order_list;
+        
+        $message = $this->replaceSMSPlaceHolder($sms_template['content'], $order_id);
+
+
+        $plivo_credentials = $this->tablelist->plivo_client_credentials;
+
+        $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
+
         $message_created = $client->messages->create(
-            '+971503361319',
-            ['+971543293292'],
-            $sms_template['content']
-            // 'hello there'
-            // 'Howdy Glenn,
-            // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
-            
-            // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
+            '+17077230437',
+            ['+971503361319'],
+            $message
         );
         return true;
         // echo '<pre>';

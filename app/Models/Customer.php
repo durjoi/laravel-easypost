@@ -14,7 +14,7 @@ class Customer extends Authenticatable
 
     protected $guard = 'customer';
     protected $guarded = [];
-    protected $appends = ['fullname', 'hashedid'];
+    protected $appends = ['fullname', 'hashedid', 'authtoken'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -23,6 +23,7 @@ class Customer extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'authpw',
         'remember_token',
     ];
 
@@ -53,6 +54,14 @@ class Customer extends Authenticatable
     public function addresses()
     {
         return $this->hasMany(\App\Models\Customer\CustomerAddress::class, 'customer_id');
+    }
+
+    public function getAuthtokenAttribute()
+    {
+        // $test = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $this->attributes['password'] ), base64_decode( $q ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
+        // return $test;
+        return app('App\Http\Controllers\GlobalFunctionController')->encrypt($this->attributes['authpw']);
+        return $this->attributes['authpw'];
     }
 
     

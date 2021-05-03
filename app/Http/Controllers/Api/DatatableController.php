@@ -337,6 +337,9 @@ class DatatableController extends Controller
             }
             return $html;
         })
+        ->editColumn('dateAdded', function ($products) {
+            return $products->display_created_at;
+        })
         ->addColumn('action', function ($products) {
             $html_out  = '';
             $html_out .= '<div class="dropdown">';

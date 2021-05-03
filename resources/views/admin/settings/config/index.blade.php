@@ -189,6 +189,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12 fn">
+                                        <i class="fas fa-mobile-alt fa-fw"></i> SMS Remaining Credit: {!! $sms_remaining_credit !!}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

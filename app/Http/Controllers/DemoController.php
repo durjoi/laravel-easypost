@@ -3,9 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Repositories\Admin\OrderRepositoryEloquent as Order;
+use Illuminate\Support\Facades\Crypt;
 
 class DemoController extends Controller
 {
+    protected $orderRepo;
+    
+    function __construct(Order $orderRepo) 
+    {
+        $this->orderRepo = $orderRepo;
+    }
+
     public function EmailTemplateIndex () 
     {
         return view('demo.emailtemplate.index');

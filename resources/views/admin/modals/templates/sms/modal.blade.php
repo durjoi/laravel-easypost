@@ -1,44 +1,3 @@
-
-<style>
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 140px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -75px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-</style>
-
 <div class="modal fade" id="modal-smstemplate" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -106,26 +65,15 @@
                                                 </div>
                                             </div>
                                             <div class="card-body">
-                                                <li>
-                                                    Customer Name : 
-                                                    <input class="text-yellow" style="background: none; border: 0; width: 121px;" readonly id="clipboard_customer_name" value="{customer_name}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_customer_name" onClick="copyInputToClipBoard('clipboard_customer_name')"><i class="fas fa-copy"></i> Copy</a>
-                                                </li>
-                                                <li>
-                                                    Username : 
-                                                    <input class="text-yellow" style="background: none; border: 0; " readonly id="clipboard_customer_username" value="{customer_username}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_customer_username" onClick="copyInputToClipBoard('clipboard_customer_username')"><i class="fas fa-copy"></i> Copy</a>
-                                                </li>
-                                                <li>
-                                                    Email Address : 
-                                                    <input class="text-yellow" style="background: none; border: 0; width: 132px;" readonly id="clipboard_customer_email" value="{customer_email}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_customer_email" onClick="copyInputToClipBoard('clipboard_customer_email')"><i class="fas fa-copy"></i> Copy</a>
-                                                </li>
-                                                <li>
-                                                    Password : 
-                                                    <input class="text-yellow" style="background: none; border: 0; width: 158px;" readonly id="clipboard_customer_password" value="{customer_password}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_customer_password" onClick="copyInputToClipBoard('clipboard_customer_password')"><i class="fas fa-copy"></i> Copy</a>
-                                                </li>
+                                                @if(isset($placeholder_customer_list))
+                                                    @foreach($placeholder_customer_list as $key => $val)
+                                                        <li>
+                                                            {{ $val['name'] }} : 
+                                                            <input class="text-yellow" style="{{ $val['style'] }}" readonly id="{{ $val['id'] }}" value="{{ $val['value'] }}"> 
+                                                            <a href="javascript:void(0);" id="tooltip_button_{{ $val['id'] }}" onClick="copyInputToClipBoard('{{ $val['id'] }}')"><i class="fas fa-copy"></i> Copy</a>
+                                                        </li>
+                                                    @endforeach
+                                                @endif
                                             </div>
                                         </div> 
                                         <div class="card card-outline card-warning collapsed-card">
@@ -138,26 +86,15 @@
                                                 </div>
                                             </div>
                                             <div class="card-body">
-                                                <li>
-                                                    Shipping Label : 
-                                                    <input class="text-yellow" style="background: none; border: 0; " readonly id="clipboard_order_shipping_label" value="{order_shipping_label}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_order_shipping_label" onClick="copyInputToClipBoard('clipboard_order_shipping_label')"><i class="fas fa-copy fa-fw"></i> Copy</a>
-                                                </li>
-                                                <li>
-                                                    Tracking # : 
-                                                    <input class="text-yellow" style="background: none; border: 0; width: 183px;" readonly id="clipboard_order_tracking_number" value="{order_tracking_number}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_order_tracking_number" onClick="copyInputToClipBoard('clipboard_order_tracking_number')"><i class="fas fa-copy fa-fw"></i> Copy</a>
-                                                </li>
-                                                <li>
-                                                    Transaction ID : 
-                                                    <input class="text-yellow" style="background: none; border: 0; width: 158px;" readonly id="clipboard_order_transaction_id" value="{order_transaction_id}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_order_transaction_id" onClick="copyInputToClipBoard('clipboard_order_transaction_id')"><i class="fas fa-copy fa-fw"></i> Copy</a>
-                                                </li>
-                                                <li>
-                                                    Status : 
-                                                    <input class="text-yellow" style="background: none; border: 0; width: 205px;" readonly id="clipboard_order_status" value="{order_status}"> 
-                                                    <a href="javascript:void(0);" id="tooltip_button_clipboard_clipboard_order_status" onClick="copyInputToClipBoard('clipboard_order_status')"><i class="fas fa-copy fa-fw"></i> Copy</a>
-                                                </li>
+                                                @if(isset($placeholder_order_list))
+                                                    @foreach($placeholder_order_list as $key => $val)
+                                                        <li>
+                                                            {{ $val['name'] }} : 
+                                                            <input class="text-yellow" style="{{ $val['style'] }}" readonly id="{{ $val['id'] }}" value="{{ $val['value'] }}"> 
+                                                            <a href="javascript:void(0);" id="tooltip_button_{{ $val['id'] }}" onClick="copyInputToClipBoard('{{ $val['id'] }}')"><i class="fas fa-copy"></i> Copy</a>
+                                                        </li>
+                                                    @endforeach
+                                                @endif
                                             </div>
                                         </div> 
                                 </div>

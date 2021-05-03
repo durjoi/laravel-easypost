@@ -154,6 +154,7 @@ Route::group(['prefix' => 'api'], function() {
                 Route::patch('/', [App\Http\Controllers\Api\ApiController::class, 'PatchSmsTemplate']);
                 Route::get('/{hashedId}', [App\Http\Controllers\Api\ApiController::class, 'GetSmsTemplate']);
                 Route::delete('{hashedId}', [\App\Http\Controllers\Api\ApiController::class, 'DeleteSmsTemplate']);
+                Route::get('/credits/remaining', [\App\Http\Controllers\Api\ApiController::class, 'GetSMSCredit']);
             });
         });
         

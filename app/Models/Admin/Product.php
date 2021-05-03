@@ -4,12 +4,13 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Vinkla\Hashids\HashidsManager;
+use Carbon\Carbon;
 
 class Product extends Model
 {
     protected $table = "products";
     protected $guarded = [];
-    protected $appends = ['dimension', 'hashedid'];
+    protected $appends = ['dimension', 'hashedid', 'display_created_at'];
     // protected $appedns = ['dimension'];
 
     public function brand()
@@ -64,5 +65,10 @@ class Product extends Model
     public function getHashedidAttribute()
     {
         return \Hashids::encode($this->id);
+    }
+
+    public function getDisplaycreatedatAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('M d Y');
     }
 }

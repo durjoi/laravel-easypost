@@ -16,6 +16,47 @@
         <link rel="stylesheet" href="{{ url('library/plugins/sweetalert/dist/sweetalert.css') }}">
         @yield('page-css')
 
+                
+        <style>
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 140px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -75px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+        }
+        </style>
+
         @if(isset($is_dark_mode) && $is_dark_mode == true)
             <link rel="stylesheet" href="{{ url('assets/dist/css/adminlte-darkmode.min.css') }}">
         @else
@@ -35,6 +76,19 @@
                 </ul>
 
                 <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a 
+                            class="nav-link" 
+                            data-toggle="popover" 
+                            data-placement="bottom" 
+                            data-html="true" 
+                            data-content="SMS Remaining Credit <b class='text-green navbar-sms-credit'>$0</b>" 
+                            data-trigger="hover"
+                        >
+                            <i class="far fas fa-mobile-alt"></i>
+                            <span class="badge badge-success navbar-badge navbar-sms-credit">$0</span>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-toggle="dropdown" href="#">
                             <i class="far fa-comments"></i>
@@ -163,5 +217,24 @@
         @yield('page-js')
         <script src="{{ url('assets/dist/js/adminlte.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
+        
+        <script>
+            $(function () {   
+                $('[data-toggle="popover"]').popover(); 
+                $('[data-toggle="tooltip"]').tooltip();
+
+                var baseUrl = $('body').attr('data-url');
+                $.ajax({
+                    type: "GET",
+                    url: baseUrl+"/api/templates/sms/credits/remaining",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.status == 200) {
+                            $('.navbar-sms-credit').html('$'+Math.round(response.model.cashCredits * 100) / 100);
+                        }
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

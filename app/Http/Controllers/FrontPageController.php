@@ -694,18 +694,22 @@ class FrontPageController extends Controller
          * Plivo
          */
 
-        $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
+        // glenn account
+        // $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk"); 
 
-        try {
-            $response = $client->accounts->get();
-            echo '<pre>';
-            print_r($response);
-            echo '</pre>';
-        }
-        catch (PlivoRestException $ex) {
-            echo 'asd';
-            print_r($ex);
-        }
+        // brent account
+        // $client = new RestClient("MAZGNINDJJNMQYMTK2NG", "NzUzYWUyZWNkM2NjYmU2NGMwZmMyZmRhZWNiMTJm"); 
+
+        // try {
+        //     $response = $client->accounts->get();
+        //     echo '<pre>';
+        //     print_r($response->properties);
+        //     echo '</pre>';
+        // }
+        // catch (PlivoRestException $ex) {
+        //     echo 'asd';
+        //     print_r($ex);
+        // }
 
         // $ch = curl_init();
 
@@ -728,18 +732,23 @@ class FrontPageController extends Controller
 
         // // Sample SMS Sending
         // $client = new RestClient("MAMTDJN2Q2Y2Q3NJY5MJ", "ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk");
-        // $message_created = $client->messages->create(
-        //     '+971543293292',
-        //     ['+971503361319'],
-        //     'hello there'
-        //     // 'Howdy Glenn,
-        //     // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
+
+        $plivo_credentials = $this->tablelist->plivo_client_credentials;
+
+        // $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
+        $client = new RestClient("MAZGNINDJJNMQYMTK2NG", "NzUzYWUyZWNkM2NjYmU2NGMwZmMyZmRhZWNiMTJm");
+        $message_created = $client->messages->create(
+            '+17077230437',
+            ['+971503361319'],
+            'hello there testq'
+            // 'Howdy Glenn,
+            // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
             
-        //     // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
-        // );
-        // echo '<pre>';
-        // print_r($message_created);
-        // echo '</pre>';
+            // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
+        );
+        echo '<pre>';
+        print_r($message_created);
+        echo '</pre>';
 
 
         // // Sample 1 : Sending SMS with callback

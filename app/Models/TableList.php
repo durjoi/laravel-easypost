@@ -46,6 +46,62 @@ class Tablelist extends Model
         'workspace_id' => '8849752'
     ];
 
+
+    public $placeholder_customer_list = [
+        [
+            'name' => 'Customer Name', 
+            'style' => 'background: none; border: 0; width: 121px;', 
+            'id' => 'clipboard_customer_name', 
+            'value' => '{customer_name}',
+        ],
+        [
+            'name' => 'Username', 
+            'style' => 'background: none; border: 0;', 
+            'id' => 'clipboard_customer_username', 
+            'value' => '{customer_username}'
+        ],
+        [
+            'name' => 'Email Address', 
+            'style' => 'background: none; border: 0; width: 132px;', 
+            'id' => 'clipboard_customer_email', 
+            'value' => '{customer_email}'
+        ],
+        [
+            'name' => 'Password', 
+            'style' => 'background: none; border: 0; width: 158px;', 
+            'id' => 'clipboard_customer_password', 
+            'value' => '{customer_password}'
+        ],
+    ];
+
+    public $placeholder_order_list = [
+        [
+            'name' => 'Shipping Label', 
+            'style' => 'background: none; border: 0;', 
+            'id' => 'clipboard_order_shipping_label', 
+            'value' => '{order_shipping_label}',
+        ],
+        [
+            'name' => 'Tracking #', 
+            'style' => 'background: none; border: 0; width: 183px;', 
+            'id' => 'clipboard_order_tracking_number', 
+            'value' => '{order_tracking_number}'
+        ],
+        [
+            'name' => 'Transaction ID', 
+            'style' => 'background: none; border: 0; width: 158px;', 
+            'id' => 'clipboard_order_transaction_id', 
+            'value' => '{order_transaction_id}'
+        ],
+        [
+            'name' => 'Status', 
+            'style' => 'background: none; border: 0; width: 205px;', 
+            'id' => 'clipboard_order_status', 
+            'value' => '{order_status}'
+        ],
+    ];
+
+
     public $paypal_admin = [
                     'sandbox_account' => 'sb-jcj7x5459425@business.example.com', 
                     'client_id' => 'ATchzVJN5IS1NvWOCkOwXTIj58wFXPqCT1GVHh1yRmE1NSrKREdIO4UcBMWzCSGav-Hmry9e-twxcE6q',

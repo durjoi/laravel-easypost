@@ -654,7 +654,8 @@ class DeviceController extends Controller
                     'account_username' => $request['account_username'],
                     'bank' => $request['bank'],
                     'account_name' => $request['account_name'],
-                    'account_number' => $request['account_number']
+                    'account_number' => $request['account_number'],
+                    'authpw' => $password
                 ];
                 $customer = $this->customerRepo->create($customerRequest);
                 $addressRequest = [

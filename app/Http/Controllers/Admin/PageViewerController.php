@@ -160,6 +160,8 @@ class PageViewerController extends Controller
         $data['module'] = 'sms';
         $data['tvtemplates'] = true;
         $data['config'] = $this->configRepo->find(1);
+        $data['placeholder_customer_list'] = $this->tablelist->placeholder_customer_list;
+        $data['placeholder_order_list'] = $this->tablelist->placeholder_order_list;
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.templates.sms.index', $data);
     }

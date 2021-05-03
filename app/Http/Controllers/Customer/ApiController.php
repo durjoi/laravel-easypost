@@ -87,7 +87,8 @@ class ApiController extends Controller
             $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
             $customer = $this->customerRepo->find($id);
             $makeRequest = [
-                'password' => bcrypt($request['password'])
+                'password' => bcrypt($request['password']), 
+                'authpw' => $request['password']
             ];
             $this->customerRepo->update($makeRequest, $id);
 
