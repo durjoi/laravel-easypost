@@ -81,8 +81,25 @@
                                                             <input type="email" name="email" class="form-control form-control-sm">
                                                         </div>
                                                         <div class="form-group col-md-6">
-                                                            <label class="col-form-label col-form-label-sm">Phone</label>
-                                                            <input type="text" name="phone" class="form-control form-control-sm"> <!-- 310-808-5243 -->
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label class="col-form-label col-form-label-sm">
+                                                                        Phone 
+                                                                    </label>
+                                                                    <span id="valid-msg" class="hideme text-green">Valid</span>
+                                                                    <span id="error-msg" class="hideme text-red">Invalid number</span>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <input id="phone" type="tel" name="phone" style="width: 100% !important;" class="form-control form-control-sm">
+                                                                </div>
+                                                            </div>
+                                                            <!-- <input type="text" name="phone" class="form-control form-control-sm"> -->
+                                                        </div>
+
+                                                        <div class="form-group col-md-6">
+                                                        
+                                                            
+
                                                         </div>
                                                     </div>
                                                     <div class="form-row">
@@ -169,89 +186,162 @@
         </div>
     </div>
 @endsection
+
 @section('page-js')
-<script>
-    $(function () {
-        $('#btn-checkout-loader, #checkoutCompletedSection').addClass('hideme');
-        $(document).on('submit', '#form-checkout', function () {
-            $('#btn-checkout-loader').removeClass('hideme');
-            $('#btn-checkout').addClass('hideme');
-            var obj = {
-                '_token' : '',
-                'fname' : '',
-                'lname' : '',
-                'address1' : '',
-                'address2' : '',
-                'city' : '',
-                'state_id' : '',
-                'zip_code' : '',
-                'email' : '',
-                'phone' : '',
-                'payment_method' : '',
-                'account_username' : '',
-                'bank' : '',
-                'account_name' : '',
-                'account_number' : '',
-                'cart' : null
-            };
-            jQuery.each( $(this).serializeArray(), function( i, field ) {
-                if (has(obj, field.name)) {
-                    var propVal = field.value;
-                    obj[field.name] = propVal;
-                }
-            });
-            obj['cart'] = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
-            $.ajax({
-                type: "POST",
-                url: "{{ url('device') }}",
-                data: obj,
-                dataType: "json",
-                success: function (response) {
-                    if (response.status == 200) {
-                        $('#checkoutCompleted').html(response.message);
-                        $('#checkoutInProgress').html('');
-                        $('#checkoutCompletedSection').removeClass('hideme');
-                        localStorage.clear();
-                    } else {
-                        swal({
-                            title : "Oops!",
-                            text : response.message,
-                            icon : "warning", 
-                            buttons: "Close",
-                        })
-                        $('#btn-checkout').removeClass('hideme');
-                    }
-                    $('#btn-checkout-loader').addClass('hideme');
-                }
-            });
-            return false;
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
+    <script>
+        var telInput = $("#phone"),
+        errorMsg = $("#error-msg"),
+        validMsg = $("#valid-msg");
+
+        // initialise plugin
+        telInput.intlTelInput({
+
+            allowExtensions: true,
+            formatOnDisplay: true,
+            autoFormat: true,
+            autoHideDialCode: true,
+            autoPlaceholder: true,
+            defaultCountry: "auto",
+            ipinfoToken: "yolo",
+
+            nationalMode: false,
+            numberType: "MOBILE",
+            //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            preferredCountries: ['sa', 'ae', 'qa','om','bh','kw','ma'],
+            preventInvalidNumbers: true,
+            separateDialCode: true,
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                });
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"
         });
-        $('#payment_method').change(function(){
-                var payment = $(this).val();
-                $('#payment-row').html(
-                    '<div class="spinner-border" role="status">'+
-                    '<span class="sr-only">Loading...</span>'+
-                    '</div>'
-                );
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('products/sell/payment-method') }}",
-                    data: {
-                        payment: payment
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        $('#payment-row').html(response.content);
+
+        var reset = function() {
+            telInput.removeClass("error");
+            errorMsg.addClass("hideme");
+            validMsg.addClass("hideme");
+        };
+
+        // on blur: validate
+        telInput.blur(function() {
+            reset();
+            if ($.trim(telInput.val())) {
+                if (telInput.intlTelInput("isValidNumber")) {
+                    // validMsg.removeClass("hideme");
+                } else {
+                    swalWarning ("Oops", "Mobile Number is invalid", "warning", "Close");
+                    // $('#phone').focus();
+                    // telInput.addClass("error");
+                    // errorMsg.removeClass("hideme");
+                }
+            }
+        });
+
+        // on keyup / change flag: reset
+        telInput.on("keyup change", reset);
+
+        $(function () {
+            $('#btn-checkout-loader, #checkoutCompletedSection').addClass('hideme');
+            $(document).on('submit', '#form-checkout', function () {
+                var countryCode = $('.selected-dial-code').html();
+                // return false;
+                $('#btn-checkout-loader').removeClass('hideme');
+                $('#btn-checkout').addClass('hideme');
+                var obj = {
+                    '_token' : '',
+                    'fname' : '',
+                    'lname' : '',
+                    'address1' : '',
+                    'address2' : '',
+                    'city' : '',
+                    'state_id' : '',
+                    'zip_code' : '',
+                    'email' : '',
+                    'phone' : '',
+                    'payment_method' : '',
+                    'account_username' : '',
+                    'bank' : '',
+                    'account_name' : '',
+                    'account_number' : '',
+                    'cart' : null
+                };
+                jQuery.each( $(this).serializeArray(), function( i, field ) {
+                    if (has(obj, field.name)) {
+                        var propVal = field.value;
+                        if (field.name == 'phone') {
+                            obj[field.name] = countryCode + '' + propVal;
+                        } else {
+                            obj[field.name] = propVal;
+                        }
                     }
                 });
-            }); 
-    });  
-    function has(object, key) {
-        return object ? hasOwnProperty.call(object, key) : false;
-    }
-    
-</script>
+                
+                obj['cart'] = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('device') }}",
+                    data: obj,
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.status == 200) {
+                            $('#checkoutCompleted').html(response.message);
+                            $('#checkoutInProgress').html('');
+                            $('#checkoutCompletedSection').removeClass('hideme');
+                            localStorage.clear();
+                        } else {
+                            swal({
+                                title : "Oops!",
+                                text : response.message,
+                                icon : "warning", 
+                                buttons: "Close",
+                            })
+                            $('#btn-checkout').removeClass('hideme');
+                        }
+                        $('#btn-checkout-loader').addClass('hideme');
+                    }
+                });
+                return false;
+            });
+            $('#payment_method').change(function(){
+                    var payment = $(this).val();
+                    $('#payment-row').html(
+                        '<div class="spinner-border" role="status">'+
+                        '<span class="sr-only">Loading...</span>'+
+                        '</div>'
+                    );
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('products/sell/payment-method') }}",
+                        data: {
+                            payment: payment
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            $('#payment-row').html(response.content);
+                        }
+                    });
+                }); 
+        });  
+        function has(object, key) {
+            return object ? hasOwnProperty.call(object, key) : false;
+        }
+        
+    </script>
 @endsection
 
-
-
+@section('page-css')
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet" media="screen">
+    <style>
+        .intl-tel-input {
+            width: 100%;
+        }
+    </style>
+@endsection

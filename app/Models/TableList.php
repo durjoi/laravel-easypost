@@ -55,12 +55,6 @@ class Tablelist extends Model
             'value' => '{customer_name}',
         ],
         [
-            'name' => 'Username', 
-            'style' => 'background: none; border: 0;', 
-            'id' => 'clipboard_customer_username', 
-            'value' => '{customer_username}'
-        ],
-        [
             'name' => 'Email Address', 
             'style' => 'background: none; border: 0; width: 132px;', 
             'id' => 'clipboard_customer_email', 

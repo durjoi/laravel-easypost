@@ -28,6 +28,7 @@
                                         <th></th>
                                         <th>Fullname</th>
                                         <th>Email</th>
+                                        <th>Mobile Number</th>
                                         <th>Billing Address</th>
                                         <th class="text-center">Action</th>
                                     </tr>

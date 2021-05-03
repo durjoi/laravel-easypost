@@ -7,14 +7,6 @@ function changepasswordcustomer (hashedId)
     $('#modal-changepassword').modal();
 }
 $(function () {
-    // alert('asd');
-    // $('.customer-change-password').on('click', function () {
-    //     // $('#modal_customer_id').val('');
-    //     // const id = $(this).attr('data-attr-id');
-    //     // $('#modal_customer_id').val(id);
-    //     // $('#modal-changepassword').modal();
-    //     alert('asd');
-    // });
 
     $('#modal-profile-form').on('submit', function () {
         const data = $(this).serializeArray();
@@ -58,10 +50,11 @@ $(function () {
                     }, 
                     className: "text-center"
                 },
-                { data: 'fullname', name: 'fullname', searchable: true, orderable: true, width:'15%' },
-                { data: 'email', name: 'email', searchable: true, orderable: true, width:'15%' },
-                { data: 'address', name: 'address', searchable: true, orderable: true, width:'30%' },
-                { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
+                { data: 'fullname', name: 'fullname', searchable: true, orderable: true, width:'20%' },
+                { data: 'email', name: 'email', searchable: true, orderable: true, width:'20%' },
+                { data: 'phone', name: 'phone', searchable: true, orderable: true, width:'15%' },
+                { data: 'address', name: 'address', searchable: true, orderable: true, width:'35%' },
+                { data: 'action', name: 'action', searchable: false, orderable: false, width:'8%', className: "text-center" },
             ]
         });
     }

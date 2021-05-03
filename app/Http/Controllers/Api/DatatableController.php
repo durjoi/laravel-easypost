@@ -237,6 +237,9 @@ class DatatableController extends Controller
         ->editColumn('fullname', function($customers) {
             return $customers->fname.' '.$customers->lname;
         })
+        ->editColumn('phone', function($customers) {
+            return $customers->bill->phone;
+        })
         ->editColumn('address', function($customers) {
             if(!empty($customers->bill)){
                 return $customers->bill->street.' '.$customers->bill->city.' '.$customers->bill->state;
