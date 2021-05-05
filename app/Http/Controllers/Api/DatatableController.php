@@ -132,6 +132,7 @@ class DatatableController extends Controller
                                                 'order_item.product.brand', 
                                                 'order_item.product.photo', 
                                                 'order_item.network', 
+                                                'order_note', 
                                             ], 
                                             "1 = ?", 
                                             [1], 
@@ -159,6 +160,27 @@ class DatatableController extends Controller
         ->editColumn('delivery_due', function($orders) {
             $html  = $orders['display_delivery_due'];
             return $html;
+        })
+        ->editColumn('order_notes', function($orders) {
+            
+            return (count($orders['order_note']) > 0) 
+                    ? '<center>
+                            <a 
+                                href="javascript:void(0);" 
+                                onClick="OpenOrderNotes(\''.$orders['hashedid'].'\')" 
+                                data-toggle="popover" 
+                                data-placement="top" 
+                                data-html="true" 
+                                data-content="There are <b class=\'text-blue\'>'.count($orders['order_note']).'</b> note(s) recorded" 
+                                data-trigger="hover"
+                            >
+                                <i class="fas fa-file"></i>
+                            </a>
+                        </center>
+                        <script>$(function () {   $(\'[data-toggle="popover"]\').popover(); $(\'[data-toggle="tooltip"]\').tooltip();});</script>'     
+                    : '';
+            // $html  = $orders['display_delivery_due'];
+            // return $html;
         })
         ->addColumn('action', function ($orders) {
             $html_out  = '';
@@ -195,13 +217,14 @@ class DatatableController extends Controller
                 } 
                     $html_out .= '<a class="dropdown-item font14px approve-order" onClick="UpdateOrderStatus(\''.$orders['hashedid'].'\', '.$orders['status_id'].')" data-attr-id="'.$orders['hashedid'].'" href="javascript:void(0);" ><i class="fa fa-pencil-alt fa-fw"></i> Update Status</a>'; 
                     $html_out .= '<a class="dropdown-item font14px" href="'.url('admin/orders/'.$orders['hashedid']).'/edit"><i class="fa fa-edit fa-fw"></i> Review Order</a>';
+                    $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0);" onClick="AddOrderNotes(\''.$orders['hashedid'].'\')"><i class="fa fa-file fa-fw"></i> Add Notes</a>';
                     $html_out .= '<a class="dropdown-item font14px" href="javascript:void(0)" onclick="deleteproduct(\''.$orders['hashedid'].'\')"><i class="fa fa-trash-alt fa-fw"></i> Delete</a>';
                 $html_out .= '</div>';
             $html_out .= '</div>';
             return $html_out;
         })
         // ->rawColumns(['photo', 'action', 'model','brand','amount'])
-        ->rawColumns(['tracking_code', 'order_no', 'seller_name', 'status', 'transaction_date', 'delivery_due', 'action'])
+        ->rawColumns(['tracking_code', 'order_no', 'seller_name', 'status', 'transaction_date', 'delivery_due', 'order_notes', 'action'])
         ->make(true);
     }
     

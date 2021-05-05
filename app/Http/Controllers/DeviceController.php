@@ -1176,32 +1176,16 @@ class DeviceController extends Controller
     }
     
 
-
-    private function checkSMSFeatureIfActive () 
-    {
-        $config = $this->configRepo->find(1);    
-        return ($config->is_sms_feature_active == 1) ? true : false;
-    }
-
     private function doSMSRegistration($request, $phone) 
     {   
-        if ($this->checkSMSFeatureIfActive() == false) return false;
-
-        $plivo_credentials = $this->tablelist->plivo_client_credentials;
-
-        $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
+        if (app('App\Http\Controllers\GlobalFunctionController')->checkSMSFeatureIfActive() == false) return false;
 
         $message = 'Thank you for choosing TronicsPay. Your login credential is: 
 email: '.$request['email'].'
 password: '.$request['authpw'].'
         
 Your verification code: '.$request['verification_code'];
-
-        $message_created = $client->messages->create(
-            $plivo_credentials['sender'],
-            [$phone],
-            $message
-        );
+        return app('App\Http\Controllers\GlobalFunctionController')->doSmsSending($phone, $message);
         return true;
     }
 }

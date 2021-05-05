@@ -44,18 +44,6 @@ class ConfigController extends Controller
         $data['sms_remaining_credit'] = ($response->properties['cashCredits'] > 0) 
             ? '<b class="text-green">$'.$response->properties['cashCredits'].'</b>' 
             : '<b class="text-red">$'.$response->properties['cashCredits'].'</b>' ;
-        // try {
-        //     $response = $client->accounts->get();
-        //     $data['status'] = 200;
-        //     $data['model'] = $response->properties;
-        //     return response()->json($output);
-        // }
-        // catch (PlivoRestException $ex) {
-        //     $data['status'] = 400;
-        //     $data['error'] = $ex;
-        //     return response()->json($output);
-        // }
-
 
         return view('admin.settings.config.index', $data);
     }

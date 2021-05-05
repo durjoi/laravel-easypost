@@ -37,7 +37,7 @@
                                 
                                 <div>
                                     Didn't receive the code?<br />
-                                    <a href="#">Send code again</a>
+                                    <a href="javascript:void(0);" id="resend-code">Send code again</a>
                                 </div>
                             </div>
                         </div> 

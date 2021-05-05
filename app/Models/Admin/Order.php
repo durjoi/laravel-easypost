@@ -27,6 +27,11 @@ class Order extends Model
         return $this->hasMany(\App\Models\Admin\OrderItem::class, 'order_id');
     }
 
+    public function order_note()
+    {
+        return $this->hasMany(\App\Models\Admin\OrderNote::class, 'order_id');
+    }
+
     // public function customersells()
     // {
     //     return $this->hasMany(\App\Models\Customer\CustomerSell::class, 'customer_transaction_id');

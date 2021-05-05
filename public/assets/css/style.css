@@ -198,7 +198,7 @@ strong {
     padding: 5px;
 }
 .card-step {
-    padding: 100px 50px;
+    padding: 20px 10px;
     text-align: center;
 }
 .card-step h3 {
@@ -206,6 +206,23 @@ strong {
     font-size: 60px;
     font-family: Poppins, sans-serif;
     font-weight: 400;
+}
+.card-step-header {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1b7c1b;
+}
+.text-gray-1 {
+    color:#7f7b79;
+}
+.card-step1-logo {
+    width: 124px;
+}
+.card-step2-logo {
+    width: 150px;
+}
+.card-step3-logo {
+    width: 180px;
 }
 .card-step p {
     margin-bottom: 10px;
@@ -305,7 +322,8 @@ strong {
 .parallax-2 {
     background-image: url("../images/bg-3.jpg");
     /*height: 460px;*/
-    min-height: 500px;
+    /* min-height: 500px; */
+    min-height: 300px;
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;

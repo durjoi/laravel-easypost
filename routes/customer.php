@@ -38,6 +38,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth:customer'], function() {
         Route::patch('orders/{hashedid}/orderItem', [\App\Http\Controllers\Api\ApiController::class, 'PatchProduct']);
         Route::delete('bundle/{hashedId}/orderItem', [\App\Http\Controllers\Api\ApiController::class, 'DeleteOrderItem']);
         
-        Route::post('verification', [\App\Http\Controllers\Customer\ApiController::class, 'verification']);
+        Route::post('verification', [\App\Http\Controllers\Customer\ApiController::class, 'Verification']);
+        Route::patch('verification/resend', [\App\Http\Controllers\Customer\ApiController::class, 'ResendVerification']);
     });
 });

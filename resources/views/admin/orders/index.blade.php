@@ -32,6 +32,7 @@
                                         <th>Customer</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center"><center>Transaction Date</center></th>
+                                        <th class="text-center"><center>Notes</center></th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -61,6 +62,8 @@
 @section('page-js')
     @include('admin.modals.order.modal-approve')
     @include('admin.modals.order.modal-status')
+    @include('admin.modals.order.modal-notes-add')
+    @include('admin.modals.order.modal-notes-list')
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -87,10 +90,11 @@
                     },
                     { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: true, width:'22%' },
                     { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'20%' },
-                    { data: 'seller_name', name: 'seller_name', searchable: true, orderable: true, width:'22%' },
+                    { data: 'seller_name', name: 'seller_name', searchable: true, orderable: true, width:'18%' },
                     { data: 'status', name: 'status', searchable: true, orderable: true, width:'14%', className: "text-center align-top" },
                     { data: 'transaction_date', name: 'transaction_date', searchable: true, orderable: false, width:'8%', className: "text-right align-top" },
-                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'12%', className: "text-center" },
+                    { data: 'order_notes', name: 'order_notes', searchable: false, orderable: false, width:'6%' },
+                    { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
                 ]
             });
         });

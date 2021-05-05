@@ -125,6 +125,10 @@ Route::group(['prefix' => 'api'], function() {
             Route::get('{hashedId}/paymentsuccess', [\App\Http\Controllers\Api\ApiController::class, 'OrderPaymentSuccess']);
             Route::delete('{hashedId}/orderitem', [\App\Http\Controllers\Api\ApiController::class, 'DeleteOrderItem']);
             Route::put('{hashedId}/status', [\App\Http\Controllers\Api\ApiController::class, 'UpdateOrderStatus']);
+            Route::post('notes', ['as' => 'api.orders.notes', 'uses' => 'App\Http\Controllers\Api\ApiController@StoreOrderNotes']);
+            Route::get('{hashedId}/notes', ['as' => 'api.orders.notes', 'uses' => 'App\Http\Controllers\Api\ApiController@GetOrderNotes']);
+            Route::put('{hashedId}/notes', ['as' => 'api.orders.notes', 'uses' => 'App\Http\Controllers\Api\ApiController@UpdateOrderNote']);
+            Route::delete('{hashedId}/notes', ['as' => 'api.orders.notes', 'uses' => 'App\Http\Controllers\Api\ApiController@DeleteOrderNote']);
         });
         Route::get('products/{id}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@GetProduct']);
         Route::patch('products/{hashedid}', ['as' => 'api.products', 'uses' => 'App\Http\Controllers\Api\ApiController@PatchProduct']);

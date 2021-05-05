@@ -19,6 +19,7 @@ use App\Repositories\Admin\ProductStorageEloquentRepository as ProductStorage;
 use App\Repositories\Customer\CustomerSellRepositoryEloquent as CustomerSell;
 use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
+use App\Repositories\Admin\OrderNoteRepositoryEloquent as OrderNote;
 use App\Repositories\Admin\SettingsStatusEloquentRepository as Status;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
@@ -51,6 +52,7 @@ class ApiController extends Controller
     protected $customerSellRepo;
     protected $orderRepo;
     protected $orderItemRepo;
+    protected $orderNoteRepo;
     protected $statusRepo;
     protected $tablelist;
     protected $settingsCategoryRepo;
@@ -72,6 +74,7 @@ class ApiController extends Controller
                         CustomerSell $customerSellRepo, 
                         Order $orderRepo, 
                         OrderItem $orderItemRepo,  
+                        OrderNote $orderNoteRepo,
                         Status $statusRepo,
                         TableList $tablelist, 
                         SettingsCategory $settingsCategoryRepo, 
@@ -93,6 +96,7 @@ class ApiController extends Controller
         $this->customerSellRepo = $customerSellRepo;
         $this->orderRepo = $orderRepo;
         $this->orderItemRepo = $orderItemRepo;
+        $this->orderNoteRepo = $orderNoteRepo;
         $this->statusRepo = $statusRepo;
         $this->tablelist = $tablelist;
         $this->settingsCategoryRepo = $settingsCategoryRepo;
@@ -883,15 +887,66 @@ class ApiController extends Controller
         $subject = 'TronicsPay | Payment Order #'.$data['order']['order_no'];
         $content = view('mail.paymentOrder', $data)->render();
         Mailer::sendEmail($email, $subject, $content);
-        $output['status'] = 200;
-        $output['message'] = 'Order # '.$data['order']['order_no'].' has been successfully paid';
+        $response['status'] = 200;
+        $response['message'] = 'Order # '.$data['order']['order_no'].' has been successfully paid';
         
         $makeRequest = [
             'status_id' => $status['id']
         ];
         $this->orderRepo->update($makeRequest, $id);
 
-        return response()->json($output);
+        return response()->json($response);
+    }
+
+    public function GetOrderNotes ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        
+        $response['model'] = $this->orderNoteRepo->findByFieldAll('order_id', $id);
+        $response['status'] = 200;
+        return response()->json($response);
+        return $hashedId;
+    }
+
+    public function StoreOrderNotes (Request $request)
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['hashedid']);
+        $order = $this->orderRepo->rawByWithField(['customer.bill', 'status_details'], "id = ?", [$id]);
+        $makeRequest = [
+            'order_id' => $id, 
+            'notes' => $request['notes']
+        ];
+        $this->orderNoteRepo->create($makeRequest);
+        $phone = $order['customer']['bill']['phone'];
+        $message = 'Transaction No: '.$order['order_no'].' has new notes made by TronicsPay.
+        
+'.$request['notes'];
+        app('App\Http\Controllers\GlobalFunctionController')->doSmsSending($phone, $message);
+        $response['status'] = 200;
+        $response['message'] = 'Note has been successfully posted';
+        return response()->json($response);
+    }
+
+    public function UpdateOrderNote ($hashedId, Request $request) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['hashedid']);
+        $makeRequest = [
+            'notes' => $request['notes']
+        ];
+        $this->orderNoteRepo->update($makeRequest, $id);
+
+        $response['status'] = 201;
+        $response['message'] = 'Note has been successfully updated';
+        return response()->json($response);
+    }
+
+    public function DeleteOrderNote ($hashedId) 
+    {
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $this->orderNoteRepo->delete($id);
+        $response['status'] = 201;
+        $response['message'] = "Record has been successfully deleted";
+        return response()->json($response); 
     }
 
     public function GetSMSCredit () 
@@ -911,12 +966,6 @@ class ApiController extends Controller
             $output['error'] = $ex;
             return response()->json($output);
         }
-    }
-
-    private function checkSMSFeatureIfActive () 
-    {
-        $config = $this->configRepo->find(1);    
-        return ($config->is_sms_feature_active == 1) ? true : false;
     }
     
     private function replaceSMSPlaceHolder ($str, $order_id) 
@@ -950,7 +999,8 @@ class ApiController extends Controller
     {
         if ($sms_template_id == 0) return false;
         
-        if ($this->checkSMSFeatureIfActive() == false) return false;
+        
+        if (app('App\Http\Controllers\GlobalFunctionController')->checkSMSFeatureIfActive() == false) return false;
 
         $sms_template = $this->smsTemplateRepo->find($sms_template_id);
         
@@ -961,19 +1011,7 @@ class ApiController extends Controller
 
         $order = $this->orderRepo->rawByWithField(['customer', 'status_details'], "id = ?", [$order_id]);
 
-        $plivo_credentials = $this->tablelist->plivo_client_credentials;
+        return app('App\Http\Controllers\GlobalFunctionController')->doSmsSending($order['customer']['bill']['phone'], $message);
 
-        $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
-
-        $message_created = $client->messages->create(
-            $plivo_credentials['sender'],
-            [$order['customer']['bill']['phone']],
-            // ['+971503361319'],
-            $message
-        );
-        return true;
-        // echo '<pre>';
-        // print_r($message_created);
-        // echo '</pre>';
     }
 }

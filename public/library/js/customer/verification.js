@@ -86,14 +86,12 @@ $(function() {
                     });
                     window.location.href = "dashboard";
                 }
-                // if(response.duplicate){
-                //     $('#storage-exist-error').css('display', 'inline');
-                // }else{
-                //     $('#storage-exist-error').css('display', 'none');
-                // }
             }
         });
+    });
 
-        
+    $('#resend-code').on('click', function () {
+        let form_url = baseUrl+'/api/customer/verification/resend';
+        doAjaxProcess('PATCH', '', {}, form_url);
     });
 })

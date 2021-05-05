@@ -21,6 +21,14 @@ use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Admin\SettingsStatusEloquentRepository as SettingsStatus;
 use App\Repositories\Customer\CustomerRepositoryEloquent as Customer;
+use App\Models\TableList as Tablelist;
+
+// For Plivio
+require __DIR__ . '/../../../../vendor/autoload.php';
+use Plivo\RestClient;
+use Plivo\Exceptions\PlivoAuthenticationException;
+use Plivo\Exceptions\PlivoRestException;
+
 
 class ApiController extends Controller
 {
@@ -36,6 +44,7 @@ class ApiController extends Controller
     protected $orderItemRepo;
     protected $settingsStatusRepo;
     protected $customerRepo;
+    protected $tablelist;
 
     function __construct(
                         Brand $brandRepo, 
@@ -49,7 +58,8 @@ class ApiController extends Controller
                         Order $orderRepo, 
                         OrderItem $orderItemRepo, 
                         SettingsStatus $settingsStatusRepo, 
-                        Customer $customerRepo
+                        Customer $customerRepo, 
+                        TableList $tablelist
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -64,6 +74,7 @@ class ApiController extends Controller
         $this->orderItemRepo = $orderItemRepo;
         $this->settingsStatusRepo = $settingsStatusRepo;
         $this->customerRepo = $customerRepo;
+        $this->tablelist = $tablelist;
     }
     
     public function ChangePassword (Request $request) 
@@ -108,7 +119,7 @@ class ApiController extends Controller
         return $data;
     } 
 
-    public function verification (Request $request) 
+    public function Verification (Request $request) 
     {
         if ($request['input1'] == '' || $request['input2'] == '' || $request['input3'] == '' || $request['input4'] == '') 
         {
@@ -135,5 +146,36 @@ class ApiController extends Controller
         $response['message'] = "Account verified";
         return response()->json($response);  
     }
+
+    public function ResendVerification () 
+    {
+        $id = Auth::guard('customer')->user()->id;
+        $makeRequest = [
+            'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode()
+        ];
+        $customer = $this->customerRepo->rawByWithField(['bill'], "id = ?", [$id]);
+        $this->customerRepo->update($makeRequest, $id);
+        $do_verification = $this->doSMSResendVerification($makeRequest, $customer['bill']['phone']);
+        if ($do_verification == true) {
+            $response['status'] = 200;
+            $response['message'] = "Verifcation code sent";
+        } else {
+            $response['status'] = 400;
+            $response['message'] = "Failed to send verifcation code";
+        }
+        return response()->json($response);  
+    }
     
+    private function doSMSResendVerification($request, $phone) 
+    {   
+        if (app('App\Http\Controllers\GlobalFunctionController')->checkSMSFeatureIfActive() == false) return false;
+
+        $plivo_credentials = $this->tablelist->plivo_client_credentials;
+
+        $client = new RestClient($plivo_credentials['auth_id'], $plivo_credentials['auth_token']); 
+
+        $message = 'Your new verification code is '.$request['verification_code'];
+
+        return app('App\Http\Controllers\GlobalFunctionController')->doSmsSending($phone, $message);
+    }
 }

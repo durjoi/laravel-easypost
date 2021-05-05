@@ -772,6 +772,20 @@ function percent(amount, offer)
 	}
 }
 
+function OpenPreloader (classProperty) 
+{
+	$('.'+classProperty+'').html('<div class="overlay dark"><i class="fas fa-2x fa-sync-alt fa-spin"></i></div>');
+}
+
+function OpenPreloaderModal (classProperty) 
+{
+	$('.'+classProperty+'').html('<div class="overlay dark" style="ertical-align: middle; text-align: center; padding-top: 40%;"><i class="fas fa-2x fa-sync-alt fa-spin"></i></div>');
+}
+
+function ClosePreloader (classProperty) 
+{
+	$('.'+classProperty+'').html('');
+}
 // function modalTrackShipping (shippingTracker) 
 // {
 // 	$('#modal-show-tracker').modal();

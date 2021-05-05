@@ -151,6 +151,14 @@ $(function () {
             $('#modal-status-select-template-sms').html('<option value="">Please Select SMS Template</option>');
         }
     });
+
+    $('#modal-note-order-form').on('submit', function () {
+        var data = $(this).serializeArray();
+        form_url = baseUrl+'/api/orders/notes';
+        OpenPreloaderModal('modal-note-order-preloader');
+        doAjaxProcess('POST', '#modal-note-order-form', data, form_url);
+        return false;
+    });
 });
 
 function UpdateOrderStatus (id, statusId) {
@@ -213,3 +221,100 @@ function ApproveOrder (id) {
     });
 }
 
+function AddOrderNotes (hashedId) 
+{
+    $('#selectedForNotesOrderId').val(hashedId);
+    $('#modal-note-order').modal();
+}
+
+function OpenOrderNotes (hashedId) 
+{
+    OpenPreloader ('modal-order-notes-list-preloader');
+    $('#modal-order-notes-list').html('');
+    $.ajax({
+        type: "GET",
+        url: baseUrl+"/api/orders/"+hashedId+"/notes",
+        dataType: "json",
+        success: function (response) {
+            if (response.status == 200) 
+            {
+                $.each(response.model, function( index, value ) {
+
+                    var displayNotes = '<div id="modal-order-notes-div-'+value.hashedid+'" class="card" style="border: 1px  solid #dee2e6;">'+
+                            '<div class="card-header" style="background: #f8f9fa; color: #495057;">'+
+                                '<div class="card-tools">'+
+                                    '<a href="javascript:void(0);" class="btn btn-sm btn-tool font12px" onClick="modalEditNotes(\''+value.hashedid+'\')">'+
+                                        '<i class="fas fa-edit"></i>'+
+                                    '</a>'+
+                                    '<a href="javascript:void(0);" class="btn btn-sm btn-tool font12px" onClick="modalDeleteNotes(\''+value.hashedid+'\')">'+
+                                        '<i class="fas fa-trash"></i>'+
+                                    '</a>'+
+                                '</div>'+
+                            '</div>'+
+                            '<div class="card-body" style="background: #f8f9fa; color: #495057;">'+
+                                '<div id="modal-order-notes-'+value.hashedid+'">'+value.notes+'</div>'+
+                                '<div id="modal-order-notes-edit-'+value.hashedid+'"></div>'+
+                                '<div id="modal-order-notes-date-'+value.hashedid+'" class="pull-right font12px">'+
+                                    '<b><i>Date Posted: </i></b> <i class="fas fa-calendar"></i> <i>'+value.display_created_at+'</i>'+
+                                '</div>'+
+                            '</div>'+
+                            '<div class="modal-order-notes-preloader-'+value.hashedid+'"></div>'+
+                        '</div>';
+
+                    $('#modal-order-notes-list').append(displayNotes);
+                    $('#order-storage-device').append('<option value="'+value.id+'" selected="selected">'+value.title+'</option>');
+                });
+                ClosePreloader ('modal-order-notes-list-preloader');
+            }
+        }
+    });
+    $('#modal-note-list-order').modal();
+}
+
+function modalEditNotes (hashedId) 
+{
+    $('#modal-order-notes-'+hashedId).addClass('hideme');
+    $('#modal-order-notes-date-'+hashedId).addClass('hideme');
+    var noteValue = $('#modal-order-notes-'+hashedId).html();
+
+    var generateNoteField = '<textarea id="modal-order-notes-textfield-'+hashedId+'" rows="4" class="form-control form-control-sm">'+noteValue+'</textarea>';
+    generateNoteField += '<button type="button" class="btn btn-sm btn-primary pull-right" onClick="UpdateOrderNotes(\''+hashedId+'\')">Update Note</button>';
+    $('#modal-order-notes-edit-'+hashedId).html(generateNoteField);
+    return false;
+}
+
+function UpdateOrderNotes (hashedId) 
+{
+    OpenPreloaderModal ('modal-order-notes-preloader-'+hashedId);
+    var data = {
+        'hashedid' : hashedId,
+        'notes' : $('#modal-order-notes-textfield-'+hashedId+'').val()
+    }
+    var form_url = baseUrl+"/api/orders/"+hashedId+"/notes";
+    doAjaxProcess('PUT', '', data, form_url);
+    $('#modal-order-notes-'+hashedId).html($('#modal-order-notes-textfield-'+hashedId+'').val());
+    ClosePreloader ('modal-order-notes-preloader-'+hashedId);
+    $('#modal-order-notes-edit-'+hashedId).html('');
+    $('#modal-order-notes-'+hashedId).removeClass('hideme');
+    $('#modal-order-notes-date-'+hashedId).removeClass('hideme');
+}
+
+function modalDeleteNotes (hashedId)
+{
+    var form_url = baseUrl+"/api/orders/"+hashedId+"/notes";
+	swal({
+		title: "Are you sure?",
+		text: "Once deleted, you will not be able to recover this data!",
+		icon: "warning",
+		// buttons: true,
+		buttons: ["No", "Yes"],
+		dangerMode: true,
+	})
+	.then((willDelete) => {
+		if (willDelete) {
+			doAjaxProcess('DELETE', '', {}, form_url);
+            $('#modal-order-notes-div-'+hashedId).html('');
+            $('#modal-order-notes-div-'+hashedId).attr('style', '');
+		}
+	});
+}
