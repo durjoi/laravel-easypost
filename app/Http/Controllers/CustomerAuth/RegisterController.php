@@ -13,6 +13,7 @@ use App\Models\Customer\CustomerAddress;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Models\TableList;
+use App\Repositories\Customer\StateRepositoryEloquent as State;
 
 class RegisterController extends Controller
 {
@@ -36,15 +37,17 @@ class RegisterController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
     protected $tablelist;
+    protected $stateRepo;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(TableList $tablelist)
+    public function __construct(TableList $tablelist, State $stateRepo)
     {
         $this->tablelist = $tablelist;
+        $this->stateRepo = $stateRepo;
         $this->middleware('guest:customer');
     }
 
@@ -108,6 +111,7 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         $data['recaptcha'] = $this->tablelist->recaptcha_test;
+        $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['cartcount'] = Cart::count();
         return view('customer.register', $data);
     }

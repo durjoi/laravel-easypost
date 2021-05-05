@@ -182,3 +182,17 @@ body {
 .w95px {
     width: 95px;
 }
+
+
+
+.romw-badge .romw-badge-lj6Va39nDtC6vl9e0eurxMZ2SFK7tUBgDYYxuplFXijsC25OZU p, 
+.romw-badge .romw-badge-lj6Va39nDtC6vl9e0eurxMZ2SFK7tUBgDYYxuplFXijsC25OZU p a {
+    /* display: none !important;
+    visibility: hidden !important; */
+    color: #fff;
+    position:fixed;
+}
+.romw-badge-single {
+    width: 300px !important;
+    margin: 20px 0;
+}

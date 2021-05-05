@@ -35,7 +35,7 @@
                                     <div class="card-body">
                                         <!-- <div id="my-cart-details" class="hideme"></div> -->
                                         <div class="media-body" id="checkout-div">
-                                        <div>
+                                            <div>
                                                 <div id="chk-offer"></div>
                                                 <form action="{{ url('device') }}" id="form-checkout" method="POST">
                                                     @csrf
