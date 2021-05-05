@@ -107,7 +107,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-        $data['recaptcha'] = $this->tablelist->recaptcha;
+        $data['recaptcha'] = $this->tablelist->recaptcha_test;
         $data['cartcount'] = Cart::count();
         return view('customer.register', $data);
     }

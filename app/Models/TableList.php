@@ -12,7 +12,12 @@ class Tablelist extends Model
         'site_key' => '6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK', 
         'secret_key' => '6Lfvv8caAAAAAF7BL1Cd6SEjn1KpYXb0gxN1T7HQ'
     ];
+    public $recaptcha_test = [
+        'site_key' => '6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV', 
+        'secret_key' => '6Le2wMcaAAAAAGHUtmMuYKJGlplS9iShGypgKJmQ'
+    ];
 
+    
     public $plivo_credentials = [
         'url' => 'https://console.plivo.com/dashboard/',
         'auth_id' => 'MAMTDJN2Q2Y2Q3NJY5MJ',
