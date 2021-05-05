@@ -12,6 +12,7 @@ use Saperemarketing\SCart\Facades\Cart;
 use App\Models\Customer\CustomerAddress;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\TableList;
 
 class RegisterController extends Controller
 {
@@ -34,14 +35,16 @@ class RegisterController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+    protected $tablelist;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(TableList $tablelist)
     {
+        $this->tablelist = $tablelist;
         $this->middleware('guest:customer');
     }
 
@@ -104,6 +107,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
+        $data['recaptcha'] = $this->tablelist->recaptcha;
         $data['cartcount'] = Cart::count();
         return view('customer.register', $data);
     }
