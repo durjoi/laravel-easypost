@@ -6,7 +6,7 @@
                 <div class="col-lg-7">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ url('customer/auth/register') }}" method="POST">
+                            <form action="{{ url('customer/auth/register') }}" id="registration-form" method="POST">
                                 @csrf
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -94,7 +94,7 @@
     <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
     <script>
         function onSubmit(token) {
-            document.getElementById("demo-form").submit();
+            document.getElementById("registration-form").submit();
         }
     </script>
 @ensection
