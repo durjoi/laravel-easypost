@@ -94,11 +94,11 @@ class RegisterController extends Controller
         print_r($test);
         echo '</pre>';
         
-        if($test->success == true && $test->score > 0.5){
-            echo "Succes!";
-        }else{
-            echo "You are a Robot!!";
-        }
+        // if($test->success == true && $test->score > 0.5){
+        //     echo "Succes!";
+        // }else{
+        //     echo "You are a Robot!!";
+        // }
         
         exit;
 
