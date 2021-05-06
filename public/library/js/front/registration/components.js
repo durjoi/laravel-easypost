@@ -142,31 +142,31 @@ grecaptcha.ready(function() {
         document.getElementById('recaptcha').value=token;
     });
 });
-function getRecaptcha (recaptchaSecretKey) 
-{
+// function getRecaptcha (recaptchaSecretKey) 
+// {
 
-    $.ajax({
-        type: "POST",
-        url: 'https://www.google.com/recaptcha/api/siteverify?secret=6Lfvv8caAAAAAF7BL1Cd6SEjn1KpYXb0gxN1T7HQ&response='+recaptchaSecretKey+'',
-        dataType: "json",
-        success: function (response) {
-            console.log(response);
-            // if (response.status == 1001) {
-            //     swalWarning ("Oops!", response.error, "warning", "Close");
-            //     return false;
-            // } else {
-            //     var countryCode = $('.selected-dial-code').html();
-            //     var phone = $('input[name=phone]').val();
-            //     var generatePhone = countryCode + '' + phone;
-            //     $('input[name=phone]').val(generatePhone);
-            //     alert(generatePhone);
-            //     onClick();
-            // }
-            // return false;
-        }
-    });
+//     $.ajax({
+//         type: "POST",
+//         url: 'https://www.google.com/recaptcha/api/siteverify?secret=6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK&response='+recaptchaSecretKey+'',
+//         dataType: "json",
+//         success: function (response) {
+//             console.log(response);
+//             // if (response.status == 1001) {
+//             //     swalWarning ("Oops!", response.error, "warning", "Close");
+//             //     return false;
+//             // } else {
+//             //     var countryCode = $('.selected-dial-code').html();
+//             //     var phone = $('input[name=phone]').val();
+//             //     var generatePhone = countryCode + '' + phone;
+//             //     $('input[name=phone]').val(generatePhone);
+//             //     alert(generatePhone);
+//             //     onClick();
+//             // }
+//             // return false;
+//         }
+//     });
     
-}
+// }
 
 /**
  * Registration
@@ -176,7 +176,7 @@ function getRecaptcha (recaptchaSecretKey)
  $(function () {
      
     $('#registration-form').on('submit', function () {
-        getRecaptcha($('#recaptcha').val());
+        // getRecaptcha($('#recaptcha').val());
         alert($('#recaptcha').val());
 
         // if ($('input[name=fname]').val() == '') {
@@ -226,7 +226,7 @@ function getRecaptcha (recaptchaSecretKey)
         //         // return false;
         //     }
         // });
-        return false;
+        // return false;
     });
 
 
