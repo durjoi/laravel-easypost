@@ -52,7 +52,7 @@
                                         <input type="email" name="email" placeholder="Email Address">
                                     </div>
                                 </div>
-                                @if($activate_recaptcha != false)
+                                @if($activate_recaptcha == false)
                                     <button type="submit">
                                         Sign Up
                                     </button>

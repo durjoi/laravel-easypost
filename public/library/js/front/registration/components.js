@@ -105,6 +105,7 @@ function onClick(e) {
                         swalWarning ("Oops!", response.error, "warning", "Close");
                         return false;
                     }
+                    return false;
                 }
             });
         });
