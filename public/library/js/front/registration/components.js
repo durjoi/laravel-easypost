@@ -96,7 +96,7 @@ function onClick(e) {
             }
             $.ajax({
                 type: "PATCH",
-                url: baseUrl+'/customer/register',
+                url: baseUrl+'/customer/auth/register',
                 data: obj,
                 dataType: "json",
                 success: function (response) {
