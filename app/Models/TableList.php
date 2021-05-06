@@ -7,8 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tablelist extends Model
 {
-
-    public $recaptcha = [
+    
+    public $recaptcha_test_local = [
+        'site_key' => '6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO', 
+        'secret_key' => '6LdL88gaAAAAAPEuyF5k8qLRzu4XH9pA7g9nQI2D'
+    ];
+    public $recaptcha_live = [
         'site_key' => '6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK', 
         'secret_key' => '6Lfvv8caAAAAAF7BL1Cd6SEjn1KpYXb0gxN1T7HQ'
     ];

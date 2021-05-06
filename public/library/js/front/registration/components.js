@@ -64,38 +64,108 @@ telInput.on("keyup change", reset);
 // function onSubmit(token) {
 //     document.getElementById("registration-form").submit();
 // }
-function onClick(e) {
-    e.preventDefault();
-    grecaptcha.ready(function() {
 
-        grecaptcha.execute('6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV', {action: 'submit'}).then(function(token) {
-            if ($('input[name=fname]').val() == '') {
-                swalWarning ("Oops!", "First Name is required", "warning", "Close");
-                return false;
-            } else if ($('input[name=lname]').val() == '') {
-                swalWarning ("Oops!", "Last Name is required", "warning", "Close");
-                return false;
-            } else if ($('input[name=phone]').val() == '') {
-                swalWarning ("Oops!", "Mobile Number is required", "warning", "Close");
-                return false;
-            } else if ($('input[name=address1]').val() == '') {
-                swalWarning ("Oops!", "Address is required", "warning", "Close");
-                return false;
-            } else if ($('input[name=city]').val() == '') {
-                swalWarning ("Oops!", "City is required", "warning", "Close");
-                return false;
-            } else if ($('select[name=state_id]').val() == '') {
-                swalWarning ("Oops!", "State is required", "warning", "Close");
-                return false;
-            } else if ($('input[name=zip_code]').val() == '') {
-                swalWarning ("Oops!", "Zip Code is required", "warning", "Close");
-                return false;
-            } else if ($('input[name=email]').val() == '') {
-                swalWarning ("Oops!", "Email Address is required", "warning", "Close");
-                return false;
-            }
-        });
+// grecaptcha.ready(function() {
+
+//     // grecaptcha.execute('6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV', {action: 'submit'}).then(function(token) {
+//     grecaptcha.execute('6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO', {action: 'submit'}).then(function(token) {
+//         console.log(token);
+//         return false;
+//         // if ($('input[name=fname]').val() == '') {
+//         //     swalWarning ("Oops!", "First Name is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('input[name=lname]').val() == '') {
+//         //     swalWarning ("Oops!", "Last Name is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('input[name=phone]').val() == '') {
+//         //     swalWarning ("Oops!", "Mobile Number is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('input[name=address1]').val() == '') {
+//         //     swalWarning ("Oops!", "Address is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('input[name=city]').val() == '') {
+//         //     swalWarning ("Oops!", "City is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('select[name=state_id]').val() == '') {
+//         //     swalWarning ("Oops!", "State is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('input[name=zip_code]').val() == '') {
+//         //     swalWarning ("Oops!", "Zip Code is required", "warning", "Close");
+//         //     return false;
+//         // } else if ($('input[name=email]').val() == '') {
+//         //     swalWarning ("Oops!", "Email Address is required", "warning", "Close");
+//         //     return false;
+//         // }
+//     });
+// });
+// function onClick(e) {
+//     e.preventDefault();
+//     grecaptcha.ready(function() {
+
+//         // grecaptcha.execute('6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV', {action: 'submit'}).then(function(token) {
+//         grecaptcha.execute('6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO', {action: 'submit'}).then(function(token) {
+//             console.log(token);
+//             return false;
+//             // if ($('input[name=fname]').val() == '') {
+//             //     swalWarning ("Oops!", "First Name is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('input[name=lname]').val() == '') {
+//             //     swalWarning ("Oops!", "Last Name is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('input[name=phone]').val() == '') {
+//             //     swalWarning ("Oops!", "Mobile Number is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('input[name=address1]').val() == '') {
+//             //     swalWarning ("Oops!", "Address is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('input[name=city]').val() == '') {
+//             //     swalWarning ("Oops!", "City is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('select[name=state_id]').val() == '') {
+//             //     swalWarning ("Oops!", "State is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('input[name=zip_code]').val() == '') {
+//             //     swalWarning ("Oops!", "Zip Code is required", "warning", "Close");
+//             //     return false;
+//             // } else if ($('input[name=email]').val() == '') {
+//             //     swalWarning ("Oops!", "Email Address is required", "warning", "Close");
+//             //     return false;
+//             // }
+//         });
+//     });
+// }
+
+grecaptcha.ready(function() {
+    grecaptcha.execute('6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO', {action: 'registration'})
+    .then(function(token) {
+        //console.log(token);
+        document.getElementById('recaptcha').value=token;
     });
+});
+function getRecaptcha (recaptchaSecretKey) 
+{
+
+    $.ajax({
+        type: "POST",
+        url: 'https://www.google.com/recaptcha/api/siteverify?secret=6LdL88gaAAAAAPEuyF5k8qLRzu4XH9pA7g9nQI2D&response='+recaptchaSecretKey+'',
+        dataType: "json",
+        success: function (response) {
+            console.log(response);
+            // if (response.status == 1001) {
+            //     swalWarning ("Oops!", response.error, "warning", "Close");
+            //     return false;
+            // } else {
+            //     var countryCode = $('.selected-dial-code').html();
+            //     var phone = $('input[name=phone]').val();
+            //     var generatePhone = countryCode + '' + phone;
+            //     $('input[name=phone]').val(generatePhone);
+            //     alert(generatePhone);
+            //     onClick();
+            // }
+            // return false;
+        }
+    });
+    
 }
 
 /**
@@ -106,53 +176,56 @@ function onClick(e) {
  $(function () {
      
     $('#registration-form').on('submit', function () {
-        if ($('input[name=fname]').val() == '') {
-            swalWarning ("Oops!", "First Name is required", "warning", "Close");
-            return false;
-        } else if ($('input[name=lname]').val() == '') {
-            swalWarning ("Oops!", "Last Name is required", "warning", "Close");
-            return false;
-        } else if ($('input[name=phone]').val() == '') {
-            swalWarning ("Oops!", "Mobile Number is required", "warning", "Close");
-            return false;
-        } else if ($('input[name=address1]').val() == '') {
-            swalWarning ("Oops!", "Address is required", "warning", "Close");
-            return false;
-        } else if ($('input[name=city]').val() == '') {
-            swalWarning ("Oops!", "City is required", "warning", "Close");
-            return false;
-        } else if ($('select[name=state_id]').val() == '') {
-            swalWarning ("Oops!", "State is required", "warning", "Close");
-            return false;
-        } else if ($('input[name=zip_code]').val() == '') {
-            swalWarning ("Oops!", "Zip Code is required", "warning", "Close");
-            return false;
-        } else if ($('input[name=email]').val() == '') {
-            swalWarning ("Oops!", "Email Address is required", "warning", "Close");
-            return false;
-        }
-        $.ajax({
-            type: "PATCH",
-            url: baseUrl+'/customer/auth/register',
-            data: {
-                'email' : $('input[name=email]').val()
-            },
-            dataType: "json",
-            success: function (response) {
-                if (response.status == 1001) {
-                    swalWarning ("Oops!", response.error, "warning", "Close");
-                    return false;
-                } else {
-                    var countryCode = $('.selected-dial-code').html();
-                    var phone = $('input[name=phone]').val();
-                    var generatePhone = countryCode + '' + phone;
-                    $('input[name=phone]').val(generatePhone);
-                    alert(generatePhone);
-                    onClick();
-                }
-                // return false;
-            }
-        });
+        getRecaptcha($('#recaptcha').val());
+        alert($('#recaptcha').val());
+
+        // if ($('input[name=fname]').val() == '') {
+        //     swalWarning ("Oops!", "First Name is required", "warning", "Close");
+        //     return false;
+        // } else if ($('input[name=lname]').val() == '') {
+        //     swalWarning ("Oops!", "Last Name is required", "warning", "Close");
+        //     return false;
+        // } else if ($('input[name=phone]').val() == '') {
+        //     swalWarning ("Oops!", "Mobile Number is required", "warning", "Close");
+        //     return false;
+        // } else if ($('input[name=address1]').val() == '') {
+        //     swalWarning ("Oops!", "Address is required", "warning", "Close");
+        //     return false;
+        // } else if ($('input[name=city]').val() == '') {
+        //     swalWarning ("Oops!", "City is required", "warning", "Close");
+        //     return false;
+        // } else if ($('select[name=state_id]').val() == '') {
+        //     swalWarning ("Oops!", "State is required", "warning", "Close");
+        //     return false;
+        // } else if ($('input[name=zip_code]').val() == '') {
+        //     swalWarning ("Oops!", "Zip Code is required", "warning", "Close");
+        //     return false;
+        // } else if ($('input[name=email]').val() == '') {
+        //     swalWarning ("Oops!", "Email Address is required", "warning", "Close");
+        //     return false;
+        // }
+        // $.ajax({
+        //     type: "PATCH",
+        //     url: baseUrl+'/customer/auth/register',
+        //     data: {
+        //         'email' : $('input[name=email]').val()
+        //     },
+        //     dataType: "json",
+        //     success: function (response) {
+        //         if (response.status == 1001) {
+        //             swalWarning ("Oops!", response.error, "warning", "Close");
+        //             return false;
+        //         } else {
+        //             var countryCode = $('.selected-dial-code').html();
+        //             var phone = $('input[name=phone]').val();
+        //             var generatePhone = countryCode + '' + phone;
+        //             $('input[name=phone]').val(generatePhone);
+        //             alert(generatePhone);
+        //             onClick();
+        //         }
+        //         // return false;
+        //     }
+        // });
         return false;
     });
 

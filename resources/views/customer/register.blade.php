@@ -12,6 +12,7 @@
                         <div class="form-container sign-up-container">
                             <form action="{{ url('customer/auth/register') }}" id="registration-form" method="POST" class="page-form">
                                 @csrf
+                                <input type="hidden" name="g-recaptcha-response" id="recaptcha">
                                 <h1>Sign Up</h1>
                                 <div class="social-container">
                                     <a href="#" class="social form-a"><i class="fab fa-instagram"></i></a>
@@ -52,16 +53,20 @@
                                         <input type="email" name="email" placeholder="Email Address">
                                     </div>
                                 </div>
-                                @if($activate_recaptcha == false)
+                                    <button type="submit">
+                                        Sign Up
+                                    </button>
+                                @if($activate_recaptcha != false)
                                     <button type="submit">
                                         Sign Up
                                     </button>
                                 @else
                                         <!-- data-callback="onSubmit" 
                                         data-action="submit"  -->
+                                        <!-- data-sitekey="{{ $recaptcha['site_key'] }}"  -->
                                     <button 
                                         class="g-recaptcha" 
-                                        data-sitekey="{{ $recaptcha['site_key'] }}" 
+                                        data-sitekey="6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO" 
                                         type="submit"
                                     >
                                         Sign Up
@@ -92,7 +97,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
     <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
+    
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO"></script>
+    <!-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> -->
     <script src="{{ url('library/js/front/registration/components.js') }}"></script>
 @endsection
 
