@@ -53,25 +53,9 @@
                                         <input type="email" name="email" placeholder="Email Address">
                                     </div>
                                 </div>
-                                    <button type="submit">
-                                        Sign Up
-                                    </button>
-                                @if($activate_recaptcha != false)
-                                    <button type="submit">
-                                        Sign Up
-                                    </button>
-                                @else
-                                        <!-- data-callback="onSubmit" 
-                                        data-action="submit"  -->
-                                        <!-- data-sitekey="{{ $recaptcha['site_key'] }}"  -->
-                                    <button 
-                                        class="g-recaptcha" 
-                                        data-sitekey="6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV" 
-                                        type="submit"
-                                    >
-                                        Sign Up
-                                    </button>
-                                @endif
+                                <button type="submit">
+                                    Sign Up
+                                </button>
                             </form>
                         </div>
                         <div class="overlay-container">
@@ -96,14 +80,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    
-    <script src="https://www.google.com/recaptcha/api.js?render=6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV"></script>
-    <!-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> -->
     <script src="{{ url('library/js/front/registration/components.js') }}"></script>
 @endsection
 
 @section('page-css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet" media="screen">
     <link href="{{ url('assets/css/registration/style.css') }}" rel="stylesheet" media="screen" />
+    <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
+    <script>
+        
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
+            .then(function(token) {
+                document.getElementById('recaptcha').value=token;
+            });
+            @if (session('error'))
+                swalWarning ("Oops!", "{{ session('error') }}", "warning", "Close");
+            @endif
+        });
+    </script>
 @endsection

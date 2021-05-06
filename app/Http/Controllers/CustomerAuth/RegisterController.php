@@ -83,79 +83,79 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
+
+    private function getCaptcha($SecretKey)
+    {
+        $recaptcha = $this->tablelist->recaptcha_test_server;
+        $Response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha['secret_key']."&response={$SecretKey}");
+        $Return = json_decode($Response);
+        return $Return;
+    }
+
+
     protected function create(Request $data)
     {
-        $recaptcha = $this->tablelist->recaptcha_test;
-        // return 'https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response='.$data['g-recaptcha-response'].'';
-        // return 'https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response={$response}';
-        $response = $data["g-recaptcha-response"];
-        $tst = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha['secret_key'].'&response={$response}');
         
-        $test = json_decode($tst);
-        echo '<pre>';
-        print_r($test);
-        echo '</pre>';
-        
-        // if($test->success == true && $test->score > 0.5){
-        //     echo "Succes!";
-        // }else{
-        //     echo "You are a Robot!!";
-        // }
-        
-        exit;
+        $validateRecaptcha = $this->getCaptcha($data["g-recaptcha-response"]);
+        if($validateRecaptcha->success == true && $validateRecaptcha->score > 0.5)
+        {
+            if ($this->CheckExistingEmail($data['email']) == false) 
+            {
+                return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
+            }
 
-
-        $password = Str::random(10);
-        $customer = Customer::create([
-            'fname' => $data['fname'],
-            'lname' => $data['lname'],
-            'email' => $data['email'],
-            'username' => '',
-            'password' => Hash::make($password),
-            'authpw' => $password,
-            'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
-            'status' => 'In-Active'
-        ]);
-
-        CustomerAddress::create([
-            'customer_id' => $customer->id,
-            'address1' => $data['address1'],
-            'address2' => $data['address2'],
-            'city' => $data['city'],
-            'state' => $data['state'],
-            'zip' => $data['zip'],
-            'phone' => $data['phone']
-        ]);
-
-        Auth::guard('customer')->login($customer);
-        if(!Auth::guard('customer')->check()){
-          return redirect()->to('customer/auth/login');  
+            $password = Str::random(10);
+            $customer = Customer::create([
+                'fname' => $data['fname'],
+                'lname' => $data['lname'],
+                'email' => $data['email'],
+                'username' => '',
+                'password' => Hash::make($password),
+                'authpw' => $password,
+                'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
+                'status' => 'In-Active'
+            ]);
+    
+            CustomerAddress::create([
+                'customer_id' => $customer->id,
+                'address1' => $data['address1'],
+                'address2' => $data['address2'],
+                'city' => $data['city'],
+                'state' => $data['state'],
+                'zip' => $data['zip'],
+                'phone' => $data['phone']
+            ]);
+    
+            Auth::guard('customer')->login($customer);
+            if(!Auth::guard('customer')->check()){
+              return redirect()->to('customer/auth/login');  
+            }
+            if($data['cart']){
+                return redirect()->to('products/checkout');
+            }
+            return redirect()->to('customer/dashboard');
         }
-        if($data['cart']){
-            return redirect()->to('products/checkout');
+        else
+        {
+            return redirect('customer/auth/register')->with('error', 'Spammer Detected!');
         }
-        return redirect()->to('customer/dashboard');
     }
 
     public function showRegistrationForm()
     {
-        $data['activate_recaptcha'] = (url('/') == "http://localhost:8000") ? false : true;
-        $data['recaptcha'] = $this->tablelist->recaptcha_test;
+        $data['recaptcha'] = $this->tablelist->recaptcha_test_server;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['cartcount'] = Cart::count();
         return view('customer.register', $data);
     }
 
-    public function CheckExistingEmail (Request $request) 
+    private function CheckExistingEmail ($email) 
     {
-        $checker = $this->customerRepo->rawByWithField(['bill'], 'email = ?', [$request['email']]);
+        $checker = $this->customerRepo->rawByWithField(['bill'], 'email = ?', [$email]);
         if ($checker) {
-            $response['status'] = 1001;
-            $response['error'] = "Email Address has been already used.";
+            return false;
         } else {
-            $response['status'] = 200;
-            $response['message'] = "valid";
+            return true;
         }
-        return response()->json($response);
     }
 }
