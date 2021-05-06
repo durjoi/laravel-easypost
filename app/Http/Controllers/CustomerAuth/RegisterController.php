@@ -85,6 +85,24 @@ class RegisterController extends Controller
      */
     protected function create(Request $data)
     {
+        $recaptcha = $this->tablelist->recaptcha_live;
+        
+        $tst = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response='.$data['g-recaptcha-response'].'');
+        
+        $test = json_decode($tst);
+        echo '<pre>';
+        print_r($test);
+        echo '</pre>';
+        
+        if($test->success == true && $test->score > 0.5){
+            echo "Succes!";
+        }else{
+            echo "You are a Robot!!";
+        }
+        
+        exit;
+
+
         $password = Str::random(10);
         $customer = Customer::create([
             'fname' => $data['fname'],
