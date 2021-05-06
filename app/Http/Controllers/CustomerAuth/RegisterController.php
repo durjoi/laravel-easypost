@@ -85,12 +85,12 @@ class RegisterController extends Controller
      */
     protected function create(Request $data)
     {
-        $recaptcha = $this->tablelist->recaptcha_live;
+        $recaptcha = $this->tablelist->recaptcha_test;
         // return 'https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response='.$data['g-recaptcha-response'].'';
         $response = $data["g-recaptcha-response"];
         $tst = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response={$response}');
         
-        $test = json_decode($tst);
+        return $test = json_decode($tst);
         echo '<pre>';
         print_r($test);
         echo '</pre>';

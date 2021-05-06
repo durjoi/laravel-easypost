@@ -136,7 +136,7 @@ telInput.on("keyup change", reset);
 // }
 
 grecaptcha.ready(function() {
-    grecaptcha.execute('6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK', {action: 'registration'})
+    grecaptcha.execute('6Le2wMcaAAAAAIo15PAwm4B3zvNn4pCdXxyffSdV', {action: 'registration'})
     .then(function(token) {
         //console.log(token);
         document.getElementById('recaptcha').value=token;
@@ -175,6 +175,10 @@ grecaptcha.ready(function() {
 
  $(function () {
      
+    $('#signIn').on('click', function () {
+        window.location.href = 'login';
+    });
+
     $('#registration-form').on('submit', function () {
         // getRecaptcha($('#recaptcha').val());
         alert($('#recaptcha').val());
