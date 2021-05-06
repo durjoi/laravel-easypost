@@ -196,3 +196,7 @@ body {
     width: 300px !important;
     margin: 20px 0;
 }
+
+.intl-tel-input {
+    width: 100%;
+}

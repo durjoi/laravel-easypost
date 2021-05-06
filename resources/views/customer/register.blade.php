@@ -2,7 +2,91 @@
 @section('content')
     <div class="pt-70">
         <div class="container">
+
             <div class="row">
+                <div class="col-md-12" align="center">
+
+
+
+                    <div class="container-form container-form-register right-panel-active" id="container">
+                        <div class="form-container sign-up-container">
+                            <form action="{{ url('customer/auth/register') }}" id="registration-form" method="POST" class="page-form">
+                                @csrf
+                                <h1>Sign Up</h1>
+                                <div class="social-container">
+                                    <a href="#" class="social form-a"><i class="fab fa-instagram"></i></a>
+                                    <a href="#" class="social form-a"><i class="fab fa-google"></i></a>
+                                    <a href="#" class="social form-a"><i class="fab fa-facebook"></i></a>
+                                </div>
+                                <span>or use your email for registration</span>
+                                <div class="form-row">
+                                    <div class="col-md-12">
+                                        <input type="text" name="fname" placeholder="First Name"> 
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="lname" placeholder="Last Name">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <input id="phone" type="tel" name="phone" style="width:100%" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="address1" placeholder="Address Line 1">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="address2" placeholder="Address Line 2 (Optional)">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="city" placeholder="City"> 
+                                    </div>
+                                    <div class="col-md-12">
+                                        {!! Form::select('state_id', $stateList, '', ['class' => 'custom-select', 'placeholder' => 'State']) !!} 
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="zip_code" placeholder="Zip Code">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="email" name="email" placeholder="Email Address">
+                                    </div>
+                                </div>
+                                @if($activate_recaptcha == false)
+                                    <button type="submit">
+                                        Sign Up
+                                    </button>
+                                @else
+                                    <button 
+                                        class="g-recaptcha" 
+                                        data-sitekey="{{ $recaptcha['site_key'] }}" 
+                                        data-callback="onSubmit" 
+                                        data-action="submit"
+                                    >
+                                        Sign Up
+                                    </button>
+                                @endif
+                            </form>
+                        </div>
+                        <div class="overlay-container">
+                            <div class="overlay">
+                                <div class="overlay-panel overlay-left">
+                                    <h1>Welcome Back!</h1>
+                                    <p>Please login with your personal info</p>
+                                    <button class="ghost" id="signIn">Sign In</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+
+
+            <!-- <div class="row">
                 <div class="col-lg-7">
                     <div class="card">
                         <div class="card-body">
@@ -11,17 +95,17 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label col-form-label-sm">First Name</label>
-                                        <input type="text" name="fname" class="form-control form-control-sm"> <!-- Juan -->
+                                        <input type="text" name="fname" class="form-control form-control-sm"> 
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label col-form-label-sm">Last Name</label>
-                                        <input type="text" name="lname" class="form-control form-control-sm"> <!-- Dela Cruz -->
+                                        <input type="text" name="lname" class="form-control form-control-sm"> 
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label col-form-label-sm">Address Line 1</label>
-                                        <input type="text" name="address1" class="form-control form-control-sm"> <!-- 179 N Harbor Dr -->
+                                        <input type="text" name="address1" class="form-control form-control-sm"> 
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label col-form-label-sm">Address Line 2 (Optional)</label>
@@ -31,107 +115,18 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
                                         <label class="col-form-label col-form-label-sm">City</label>
-                                        <input type="text" name="city" class="form-control form-control-sm"> <!-- Redondo Beach -->
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="col-form-label col-form-label-sm">State</label>
-                                        {!! Form::select('state_id', $stateList, '', ['class'=>'custom-select select-sm']) !!}  <!-- CA -->
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="col-form-label col-form-label-sm">Zip Code</label>
-                                        <input type="text" name="zip_code" class="form-control form-control-sm"> <!-- 90277 -->
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Email Address</label>
-                                        <input type="email" name="email" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <label class="col-form-label col-form-label-sm">
-                                                    Phone 
-                                                </label>
-                                                <span id="valid-msg" class="hideme text-green">Valid</span>
-                                                <span id="error-msg" class="hideme text-red">Invalid number</span>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <input id="phone" type="tel" name="phone" style="width: 100% !important;" class="form-control form-control-sm">
-                                            </div>
-                                        </div>
-                                        <!-- <input type="text" name="phone" class="form-control form-control-sm"> -->
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                    
-                                        
-
-                                    </div>
-                                </div>
-                                <!-- <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">First Name</label>
-                                        <input type="text" name="fname" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Last Name</label>
-                                        <input type="text" name="lname" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Email Address</label>
-                                        <input type="email" name="email" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Username</label>
-                                        <input type="text" name="username" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Password</label>
-                                        <input type="password" name="password" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Retype Password</label>
-                                        <input type="password" name="password_confirmation" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label class="col-form-label col-form-label-sm">Street (Address)</label>
-                                        <input type="text" name="street" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label class="col-form-label col-form-label-sm">City</label>
                                         <input type="text" name="city" class="form-control form-control-sm">
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label class="col-form-label col-form-label-sm">State</label>
-                                        <input type="text" name="state" class="form-control form-control-sm">
+                                        {!! Form::select('state_id', $stateList, '', ['class'=>'custom-select select-sm']) !!} 
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label class="col-form-label col-form-label-sm">Zip Code</label>
-                                        <input type="text" name="zip" class="form-control form-control-sm">
+                                        <input type="text" name="zip_code" class="form-control form-control-sm"> 
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label class="col-form-label col-form-label-sm">Phone</label>
-                                        <input type="text" name="phone" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-
-                                    </div>
-                                </div> -->
                                 <div class="form-group">
-                                    <input type="hidden" name="cart" value="{{ $cartcount }}">
                                     <button 
                                         class="g-recaptcha btn btn-warning btn-md" 
                                         data-sitekey="{{ $recaptcha['site_key'] }}" 
@@ -145,89 +140,26 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
+
+
+
+
         </div>
     </div>
     <br />
 @endsection
 
+@section('page-js')
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
+    <script src="{{ url('library/js/front/registration/components.js') }}"></script>
+@endsection
+
 @section('page-css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet" media="screen">
-    <style>
-        .intl-tel-input {
-            width: 100%;
-        }
-    </style>
+    <link href="{{ url('assets/css/registration/style.css') }}" rel="stylesheet" media="screen" />
 @endsection
-@section('page-js')
-	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    
-    <!-- <script src="https://www.google.com/recaptcha/api.js"></script> -->
-    <!-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
-    <script>
-        var telInput = $("#phone"),
-        errorMsg = $("#error-msg"),
-        validMsg = $("#valid-msg");
-
-        // initialise plugin
-        telInput.intlTelInput({
-
-            allowExtensions: true,
-            formatOnDisplay: true,
-            autoFormat: true,
-            autoHideDialCode: true,
-            autoPlaceholder: true,
-            defaultCountry: "auto",
-            ipinfoToken: "yolo",
-
-            nationalMode: false,
-            numberType: "MOBILE",
-            //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            preferredCountries: ['sa', 'ae', 'qa','om','bh','kw','ma'],
-            preventInvalidNumbers: true,
-            separateDialCode: true,
-            initialCountry: "auto",
-            geoIpLookup: function(callback) {
-                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-                    var countryCode = (resp && resp.country) ? resp.country : "";
-                    callback(countryCode);
-                });
-            },
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"
-        });
-
-        var reset = function() {
-            telInput.removeClass("error");
-            errorMsg.addClass("hideme");
-            validMsg.addClass("hideme");
-        };
-
-        // on blur: validate
-        telInput.blur(function() {
-            reset();
-            if ($.trim(telInput.val())) {
-                if (telInput.intlTelInput("isValidNumber")) {
-                    // validMsg.removeClass("hideme");
-                } else {
-                    swalWarning ("Oops", "Mobile Number is invalid", "warning", "Close");
-                    // $('#phone').focus();
-                    // telInput.addClass("error");
-                    // errorMsg.removeClass("hideme");
-                }
-            }
-        });
-
-        // on keyup / change flag: reset
-        telInput.on("keyup change", reset);
-
-        function onSubmit(token) {
-            document.getElementById("registration-form").submit();
-        }
-        // $(function () {
-
-        // });
-    </script>
-@ensection

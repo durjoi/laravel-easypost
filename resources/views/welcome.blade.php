@@ -208,12 +208,16 @@
             <div class="container pb-50">
                 <div class="text-center hero-header pt-50 form-group">
                     <h1 class="text-black">What Others Have To Say About Us...</h1>
-                    <div data-token="lj6Va39nDtC6vl9e0eurxMZ2SFK7tUBgDYYxuplFXijsC25OZU" class="romw-badge"></div>
-                    <script src="https://reviewsonmywebsite.com/js/embedLoader.js?id=16985fd9e429040ba7c6" type="text/javascript"></script>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="https://www.trustpilot.com/review/tronicspay.com" target="_blank"><img height="300" width="280" src="https://share.trustpilot.com/images/company-rating?locale=en-US&businessUnitId=5d824c40ccaf3c0001c3029e" class="img-fluid"></a>
-                    <div id="review-container"></div>
-
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <div data-token="lj6Va39nDtC6vl9e0eurxMZ2SFK7tUBgDYYxuplFXijsC25OZU" class="romw-badge"></div>
+                            <script src="https://reviewsonmywebsite.com/js/embedLoader.js?id=16985fd9e429040ba7c6" type="text/javascript"></script>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <a href="https://www.trustpilot.com/review/tronicspay.com" target="_blank"><img height="300" width="280" src="https://share.trustpilot.com/images/company-rating?locale=en-US&businessUnitId=5d824c40ccaf3c0001c3029e" class="img-fluid"></a>
+                            <div id="review-container"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6"><img src="assets/images/reviews/2.png" class="img-fluid" /></div>

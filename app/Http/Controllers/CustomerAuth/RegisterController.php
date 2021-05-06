@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Models\TableList;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -81,17 +82,22 @@ class RegisterController extends Controller
      */
     protected function create(Request $data)
     {
+        $password = Str::random(10);
         $customer = Customer::create([
             'fname' => $data['fname'],
             'lname' => $data['lname'],
             'email' => $data['email'],
-            'username' => $data['username'],
-            'password' => Hash::make($data['password']),
+            'username' => '',
+            'password' => Hash::make($password),
+            'authpw' => $password,
+            'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
+            'status' => 'In-Active'
         ]);
 
         CustomerAddress::create([
             'customer_id' => $customer->id,
-            'street' => $data['street'],
+            'address1' => $data['address1'],
+            'address2' => $data['address2'],
             'city' => $data['city'],
             'state' => $data['state'],
             'zip' => $data['zip'],
@@ -110,6 +116,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
+        $data['activate_recaptcha'] = (url('/') == "http://localhost:8000") ? false : true;
         $data['recaptcha'] = $this->tablelist->recaptcha_test;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['cartcount'] = Cart::count();
