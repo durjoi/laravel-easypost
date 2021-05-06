@@ -52,7 +52,7 @@
                                         <input type="email" name="email" placeholder="Email Address">
                                     </div>
                                 </div>
-                                @if($activate_recaptcha == false)
+                                @if($activate_recaptcha != false)
                                     <button type="submit">
                                         Sign Up
                                     </button>
@@ -61,7 +61,7 @@
                                         class="g-recaptcha" 
                                         data-sitekey="{{ $recaptcha['site_key'] }}" 
                                         data-callback="onSubmit" 
-                                        data-action="submit"
+                                        data-action="submit" 
                                     >
                                         Sign Up
                                     </button>
@@ -78,73 +78,8 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
                 </div>
             </div>
-
-
-            <!-- <div class="row">
-                <div class="col-lg-7">
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="{{ url('customer/auth/register') }}" id="registration-form" method="POST">
-                                @csrf
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">First Name</label>
-                                        <input type="text" name="fname" class="form-control form-control-sm"> 
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Last Name</label>
-                                        <input type="text" name="lname" class="form-control form-control-sm"> 
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Address Line 1</label>
-                                        <input type="text" name="address1" class="form-control form-control-sm"> 
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label col-form-label-sm">Address Line 2 (Optional)</label>
-                                        <input type="text" name="address2" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label class="col-form-label col-form-label-sm">City</label>
-                                        <input type="text" name="city" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="col-form-label col-form-label-sm">State</label>
-                                        {!! Form::select('state_id', $stateList, '', ['class'=>'custom-select select-sm']) !!} 
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="col-form-label col-form-label-sm">Zip Code</label>
-                                        <input type="text" name="zip_code" class="form-control form-control-sm"> 
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <button 
-                                        class="g-recaptcha btn btn-warning btn-md" 
-                                        data-sitekey="{{ $recaptcha['site_key'] }}" 
-                                        data-callback="onSubmit" 
-                                        data-action="submit"
-                                    >
-                                        Register
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-
-
-
         </div>
     </div>
     <br />
@@ -155,6 +90,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
     <script src="{{ url('library/js/front/registration/components.js') }}"></script>
 @endsection
