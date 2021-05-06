@@ -87,6 +87,7 @@ class RegisterController extends Controller
     {
         $recaptcha = $this->tablelist->recaptcha_test;
         // return 'https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response='.$data['g-recaptcha-response'].'';
+        return 'https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response={$response}';
         $response = $data["g-recaptcha-response"];
         $tst = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha.'&response={$response}');
         
