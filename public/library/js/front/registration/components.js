@@ -61,9 +61,9 @@ telInput.on("keyup change", reset);
  * Re-Captcha
  */
 
-function onSubmit(token) {
-    document.getElementById("registration-form").submit();
-}
+// function onSubmit(token) {
+//     document.getElementById("registration-form").submit();
+// }
 function onClick(e) {
     e.preventDefault();
     grecaptcha.ready(function() {
@@ -94,20 +94,6 @@ function onClick(e) {
                 swalWarning ("Oops!", "Email Address is required", "warning", "Close");
                 return false;
             }
-            $.ajax({
-                type: "PATCH",
-                url: baseUrl+'/customer/auth/register',
-                data: obj,
-                dataType: "json",
-                success: function (response) {
-                    if (response.status == 1001) 
-                    {
-                        swalWarning ("Oops!", response.error, "warning", "Close");
-                        return false;
-                    }
-                    return false;
-                }
-            });
         });
     });
 }
@@ -145,6 +131,29 @@ function onClick(e) {
             swalWarning ("Oops!", "Email Address is required", "warning", "Close");
             return false;
         }
+        $.ajax({
+            type: "PATCH",
+            url: baseUrl+'/customer/auth/register',
+            data: {
+                'email' : $('input[name=email]').val()
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.status == 1001) {
+                    swalWarning ("Oops!", response.error, "warning", "Close");
+                    return false;
+                } else {
+                    var countryCode = $('.selected-dial-code').html();
+                    var phone = $('input[name=phone]').val();
+                    var generatePhone = countryCode + '' + phone;
+                    $('input[name=phone]').val(generatePhone);
+                    alert(generatePhone);
+                    onClick();
+                }
+                // return false;
+            }
+        });
+        return false;
     });
 
 

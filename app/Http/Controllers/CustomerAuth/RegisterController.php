@@ -128,7 +128,7 @@ class RegisterController extends Controller
 
     public function CheckExistingEmail (Request $request) 
     {
-        $checker = $this->orderRepo->rawByWithField(['bill'], 'email = ?', [$request['email']]);
+        $checker = $this->customerRepo->rawByWithField(['bill'], 'email = ?', [$request['email']]);
         if ($checker) {
             $response['status'] = 1001;
             $response['error'] = "Email Address has been already used.";

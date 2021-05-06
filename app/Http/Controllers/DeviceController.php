@@ -1176,7 +1176,7 @@ class DeviceController extends Controller
     }
     
 
-    private function doSMSRegistration($request, $phone) 
+    public function doSMSRegistration($request, $phone) 
     {   
         if (app('App\Http\Controllers\GlobalFunctionController')->checkSMSFeatureIfActive() == false) return false;
 

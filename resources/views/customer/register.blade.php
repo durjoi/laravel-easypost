@@ -57,11 +57,12 @@
                                         Sign Up
                                     </button>
                                 @else
+                                        <!-- data-callback="onSubmit" 
+                                        data-action="submit"  -->
                                     <button 
                                         class="g-recaptcha" 
                                         data-sitekey="{{ $recaptcha['site_key'] }}" 
-                                        data-callback="onSubmit" 
-                                        data-action="submit" 
+                                        type="submit"
                                     >
                                         Sign Up
                                     </button>
