@@ -15,6 +15,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Models\TableList;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
 use Illuminate\Support\Str;
+use App\Repositories\Customer\CustomerRepositoryEloquent as CustomerRepo;
 
 class RegisterController extends Controller
 {
@@ -39,16 +40,18 @@ class RegisterController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
     protected $tablelist;
     protected $stateRepo;
+    protected $customerRepo;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(TableList $tablelist, State $stateRepo)
+    public function __construct(TableList $tablelist, State $stateRepo, CustomerRepo $customerRepo)
     {
         $this->tablelist = $tablelist;
         $this->stateRepo = $stateRepo;
+        $this->customerRepo = $customerRepo;
         $this->middleware('guest:customer');
     }
 
@@ -121,5 +124,18 @@ class RegisterController extends Controller
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['cartcount'] = Cart::count();
         return view('customer.register', $data);
+    }
+
+    public function CheckExistingEmail (Request $request) 
+    {
+        $checker = $this->orderItemRepo->rawByWithField(['bill'], 'email = ?', [$request['email']]);
+        if ($checker) {
+            $response['status'] = 1001;
+            $response['error'] = "Email Address has been already used.";
+        } else {
+            $response['status'] = 200;
+            $response['message'] = "valid";
+        }
+        return response()->json($response);
     }
 }
