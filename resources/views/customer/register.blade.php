@@ -66,7 +66,7 @@
                                         <!-- data-sitekey="{{ $recaptcha['site_key'] }}"  -->
                                     <button 
                                         class="g-recaptcha" 
-                                        data-sitekey="6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO" 
+                                        data-sitekey="6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK" 
                                         type="submit"
                                     >
                                         Sign Up
@@ -98,7 +98,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
     <script src="https://www.google.com/recaptcha/api.js"></script>
     
-    <script src="https://www.google.com/recaptcha/api.js?render=6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK"></script>
     <!-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> -->
     <script src="{{ url('library/js/front/registration/components.js') }}"></script>
 @endsection

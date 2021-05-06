@@ -136,7 +136,7 @@ telInput.on("keyup change", reset);
 // }
 
 grecaptcha.ready(function() {
-    grecaptcha.execute('6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO', {action: 'registration'})
+    grecaptcha.execute('6Lfvv8caAAAAANVRvZfd0HSbj1dC3ZWS3qYj4JSK', {action: 'registration'})
     .then(function(token) {
         //console.log(token);
         document.getElementById('recaptcha').value=token;
@@ -147,7 +147,7 @@ function getRecaptcha (recaptchaSecretKey)
 
     $.ajax({
         type: "POST",
-        url: 'https://www.google.com/recaptcha/api/siteverify?secret=6LdL88gaAAAAAPEuyF5k8qLRzu4XH9pA7g9nQI2D&response='+recaptchaSecretKey+'',
+        url: 'https://www.google.com/recaptcha/api/siteverify?secret=6Lfvv8caAAAAAF7BL1Cd6SEjn1KpYXb0gxN1T7HQ&response='+recaptchaSecretKey+'',
         dataType: "json",
         success: function (response) {
             console.log(response);
