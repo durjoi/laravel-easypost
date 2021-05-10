@@ -363,8 +363,8 @@ class DatatableController extends Controller
             }
             return $html;
         })
-        ->editColumn('dateAdded', function ($products) {
-            return $products->display_created_at;
+        ->editColumn('dateUpdated', function ($products) {
+            return $products->display_updated_at;
         })
         ->addColumn('action', function ($products) {
             $html_out  = '';

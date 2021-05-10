@@ -8,4 +8,5 @@ Route::group(['namespace' => 'Demo', 'prefix' => 'demo'], function () { // , 'mi
     Route::get('sms', [App\Http\Controllers\FrontPageController::class, 'test']);
 
     Route::get('verification', [App\Http\Controllers\DemoController::class, 'VerificationPage']);
+    Route::get('emailsending', [App\Http\Controllers\DemoController::class, 'EmailTester']);
 });

@@ -10,7 +10,7 @@ class Product extends Model
 {
     protected $table = "products";
     protected $guarded = [];
-    protected $appends = ['dimension', 'hashedid', 'display_created_at'];
+    protected $appends = ['dimension', 'hashedid', 'display_created_at', 'display_updated_at'];
     // protected $appedns = ['dimension'];
 
     public function brand()
@@ -70,5 +70,10 @@ class Product extends Model
     public function getDisplaycreatedatAttribute()
     {
         return Carbon::parse($this->created_at)->format('M d Y');
+    }
+
+    public function getDisplayUpdatedAtAttribute()
+    {
+        return Carbon::parse($this->updated_at)->format('M d Y');
     }
 }

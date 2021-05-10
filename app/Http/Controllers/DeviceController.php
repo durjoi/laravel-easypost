@@ -666,12 +666,12 @@ class DeviceController extends Controller
     
             $from_address = Address::create([
                 "company" => "EasyPost",
-                "street1" => $request['address1'], // "118 2nd Street",
-                "street2" => $request['address2'], // "4th Floor",
-                "city"    => $request['city'], // "San Francisco", 
-                "state"   => $request['state'], // "CA",
-                "zip"     => $request['zip'], // "94105",
-                "phone"   => $request['phone'], // "415-456-7890",
+                "street1" => "118 2nd Street", // $request['address1'], // "118 2nd Street",
+                "street2" => "4th Floor", // $request['address2'], // "4th Floor",
+                "city"    => "San Francisco", // $request['city'], // "San Francisco", 
+                "state"   => "CA", // $request['state'], // "CA",
+                "zip"     => "94105", // $request['zip'], // "94105",
+                "phone"   => "415-456-7890", //$request['phone'], // "415-456-7890",
             ]);
     
             // EasyPost::setApiKey(config('account.easypost_apikey'));

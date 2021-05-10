@@ -39,11 +39,11 @@
     <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="apple-touch-icon" href="{{ url('library/images/favicon.ico') }}" sizes="180x180">
     <link rel="icon" href="{{ url('library/images/favicon.ico') }}" sizes="32x32" type="image/png">
     <link rel="icon" href="{{ url('library/images/favicon.ico') }}" sizes="16x16" type="image/png">
     <link rel="manifest" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/manifest.json">
-    <link rel="mask-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="mask-icon" href="{{ url('library/images/favicon.ico') }}" color="#7952b3">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     

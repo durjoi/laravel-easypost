@@ -182,6 +182,18 @@ class Tablelist extends Model
         'MAIL_FROM_NAME' => 'TronicsPay',
     ];
 
+    public $smtp_live = [
+        'MAIL_MAILER' => 'smtp',
+        'MAIL_HOST' => 'smtp.mailtrap.io',
+        'MAIL_PORT' => '2525',
+        'MAIL_USERNAME' => 'tronicspay@gmail.com',
+        'MAIL_PASSWORD' => 'Soccer01??',
+        'MAIL_ENCRYPTION' => 'tls',
+        'MAIL_FROM_ADDRESS' => 'tronicspay@gmail.com',
+        'MAIL_FROM_NAME' => 'TronicsPay',
+    ];
+    
+    
 	/**************************************************************/
 	/** 		https://restfulapi.net/http-status-codes/		**/
 	/**************************************************************/

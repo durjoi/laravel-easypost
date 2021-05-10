@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use Illuminate\Support\Facades\Crypt;
+use Saperemarketing\Phpmailer\Facades\Mailer;
 
 class DemoController extends Controller
 {
@@ -36,5 +37,16 @@ class DemoController extends Controller
     public function EmailTemplateEdit () 
     {
         return view('demo.emailtemplate.edit');
+    }
+
+    public function EmailTester () 
+    {
+        $email = 'aen00100@gmail.com';
+        $subject = 'email testing';
+        
+        $subject = "TronicsPay Email Confirmation";
+        $content = view('mail.demo')->render();
+        $test = Mailer::sendEmail($email, $subject, $content);
+        return $test;
     }
 }
