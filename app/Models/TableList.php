@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Tablelist extends Model
 {
     
+
+    public $credentials_trust_pilot = [
+        'username' => 'info@tronicspay.com',
+        'password' => 'Soccer01?'
+    ];
+
     public $recaptcha_test_local = [
         'site_key' => '6LdL88gaAAAAADz37QBeHlxzoqGdDKaVaBkVOiBO', 
         'secret_key' => '6LdL88gaAAAAAPEuyF5k8qLRzu4XH9pA7g9nQI2D'

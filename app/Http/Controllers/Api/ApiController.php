@@ -648,20 +648,15 @@ class ApiController extends Controller
 
     public function NotifyDay7 () 
     {
-        $email = 'f.glenn.abalos@gmail.com';
         $subject = 'TronicsPay: Order Reminder';
         
         $data['config'] = $this->configRepo->find(1);
         
-        $data['shippingFee'] = 10;
         $data['overallSubTotal'] = 0;
         $data['counter'] = 1;
 
-        // $id = 1;
-
         $dateMinusToday = date('Y-m-d', strtotime("-7 day"));
 
-        // $ordersStarted7Days = $this->orderRepo->rawByWithField('transaction_date = ?', [$dateTodayMinus7]);
         $ordersStartedDays = $this->orderRepo->rawByWithField(
                                                 [
                                                     'customer', 
@@ -675,118 +670,59 @@ class ApiController extends Controller
 
         foreach ($ordersStartedDays as $key => $value) 
         {
+            $email = $value['customer']['email'];
             $data['customer_transaction'] = $value;
+            $data['shippingFee'] = $value['shipping_fee'];
             $content = view('mail.notifyday7', $data)->render();
             Mailer::sendEmail($email, $subject, $content);
         }
         
-
-        // $data['customer_transaction'] = $this->orderRepo->rawByWithField(
-        //                                             [
-        //                                                 'customer', 
-        //                                                 'customer.bill',
-        //                                                 'order_item',
-        //                                                 'order_item.product',
-        //                                                 'order_item.product.brand',
-        //                                                 'order_item.network',
-        //                                                 'order_item.product_storage'
-        //                                             ], "id = ?", [$id]);
-
-        // $content = view('mail.notifyday7', $data)->render();
-        // Mailer::sendEmail($email, $subject, $content);
         return true;
-        return $content;
     }
 
     public function NotifyDay29 () 
     {
-        $email = 'f.glenn.abalos@gmail.com';
         $subject = 'TronicsPay: Order Cancelled';
      
         $data['config'] = $this->configRepo->find(1);
         
-        $data['shippingFee'] = 10;
         $data['overallSubTotal'] = 0;
         $data['counter'] = 1;
 
         $dateMinusToday = date('Y-m-d', strtotime("-29 day"));
 
-        // $ordersStarted7Days = $this->orderRepo->rawByWithField('transaction_date = ?', [$dateTodayMinus7]);
-        // $ordersStartedDays = $this->orderRepo->rawByWithField(
-        //                                         [
-        //                                             'customer', 
-        //                                             'customer.bill',
-        //                                             'order_item',
-        //                                             'order_item.product',
-        //                                             'order_item.product.brand',
-        //                                             'order_item.network',
-        //                                             'order_item.product_storage'
-        //                                         ], "transaction_date = ? and status_id IN (4, 11, 12)", [$dateMinusToday]);
+        $ordersStartedDays = $this->orderRepo->rawByWithField(
+                                                [
+                                                    'customer', 
+                                                    'customer.bill',
+                                                    'order_item',
+                                                    'order_item.product',
+                                                    'order_item.product.brand',
+                                                    'order_item.network',
+                                                    'order_item.product_storage'
+                                                ], "transaction_date = ? and status_id IN (4, 11, 12)", [$dateMinusToday]);
 
-        // foreach ($ordersStartedDays as $key => $value) 
-        // {
-        //     $data['customer_transaction'] = $value;
-        //     $content = view('mail.notifyday29', $data)->render();
-        //     Mailer::sendEmail($email, $subject, $content);
-        // }
-        
-
-
-        $id = 1;
-        $data['customer_transaction'] = $this->orderRepo->rawByWithField(
-                                                    [
-                                                        'customer', 
-                                                        'customer.bill',
-                                                        'order_item',
-                                                        'order_item.product',
-                                                        'order_item.product.brand',
-                                                        'order_item.network',
-                                                        'order_item.product_storage'
-                                                    ], "id = ?", [$id]);
-
-        $content = view('mail.notifyday29', $data)->render();
-        Mailer::sendEmail($email, $subject, $content);
+        foreach ($ordersStartedDays as $key => $value) 
+        {
+            $email = $value['customer']['email'];
+            $data['customer_transaction'] = $value;
+            $data['shippingFee'] = $value['shipping_fee'];
+            $content = view('mail.notifyday29', $data)->render();
+            Mailer::sendEmail($email, $subject, $content);
+        }
         return true;
-        return $content;
     }
 
     
     public function NotifyCustomerOrder () 
     {
-        $email = 'f.glenn.abalos@gmail.com';
         $subject = 'TronicsPay:  - Order Reminder';
         
         $data['config'] = $this->configRepo->find(1);
-        
-        $data['shippingFee'] = 10;
-        $data['overallSubTotal'] = 0;
-        $data['counter'] = 1;
-
-        $id = 1;
-
-        $data['customer_transaction'] = $this->orderRepo->rawByWithField(
-                                                    [
-                                                        'customer', 
-                                                        'customer.bill',
-                                                        'order_item',
-                                                        'order_item.product',
-                                                        'order_item.product.brand',
-                                                        'order_item.network',
-                                                        'order_item.product_storage', 
-                                                        'status'
-                                                    ], "id = ?", [$id]);
-
-        $content = view('mail.customerorder', $data)->render();
-        $subject = 'TronicsPay Reminder: Order # '.$data['customer_transaction']['order_no'];
-        Mailer::sendEmail($email, $subject, $content);
-        return $content;
-
-
-        // start: correct
 
         $dateMinusToday = date('Y-m-d', strtotime("-7 day"));
 
-        return $ordersStartedDays = $this->orderRepo->rawByWithField(
+        $ordersStartedDays = $this->orderRepo->rawByWithField(
                                                 [
                                                     'customer', 
                                                     'customer.bill',
@@ -799,9 +735,10 @@ class ApiController extends Controller
 
         foreach ($ordersStartedDays as $key => $value) 
         {
+            $email = $value['customer']['email'];
             $data['customer_transaction'] = $value;
             $content = view('mail.customerorder', $data)->render();
-            // Mailer::sendEmail($email, $subject, $content);
+            Mailer::sendEmail($email, $subject, $content);
             return $content;
         }
         
