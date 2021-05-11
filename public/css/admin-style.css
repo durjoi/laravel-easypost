@@ -80,7 +80,9 @@ body {
 .nav-pills .nav-link.active {
     background: #cd9901 !important;
 }
-
+.background-theme {
+    background: #cd9901 !important;
+}
 .modal-header {
     color: #fff;
 }

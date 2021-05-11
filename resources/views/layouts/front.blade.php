@@ -69,7 +69,7 @@
 						<a href="{{ url('/contact-us') }}" class=" fontGray2 font14px">Contact Us</a>
 					</div>
 					<div class="form-group footer-left-button">
-						<a href="{{ url('products/sell') }}" class="btn btn-warning btn-md btn-footer hvr-shrink">
+						<a href="{{ url('products/sell') }}" class="btn btn-warning btn-md btn-footer hvr-shrink fontWhite">
 							Sell Your Phone
 						</a>
 					</div>
@@ -121,14 +121,15 @@
 				</div>
 				<div class="col-lg-4 col-md-6 column-5 form-group">
 					<div class="footer-title"><h4 class="footer-subtitle">Subscribe</h4></div>
-					<div class="top-margin social-column">
+					<div class="top-margin social-column  fontGray2 font14px">
 						Don't miss to subscribe to our new feeds, kindly fill the form below.
+						<br />
 						<form action="#">
 							
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<div class="input-group-text btn-warning" id="btnGroupAddon">
-										<i class="fab fa-telegram-plane"></i>
+										<i class="fab fa-telegram-plane fontWhite"></i>
 									</div>
 								</div>
 								<input type="email" class="form-control" placeholder="Email Address" aria-label="Subscription" aria-describedby="btnGroupAddon">
@@ -145,22 +146,22 @@
 						background: #eee;
 					}
 				</style>
-				<div class="copyright-area pt15">
+				<div class="copyright-area pt15 background-theme">
 					<div class="container">
 						<div class="row">
 							<div class="col-xl-6 col-lg-4 text-center text-lg-left">
-								<div class="copyright-text">
+								<div class="copyright-text fontWhite">
 									<p>Copyright &copy;All Rights Reserved</p>
 								</div>
 							</div>
 							<div class="col-xl-6 col-lg-8 d-none d-lg-block text-right">
 								<div class="footer-menu">
-									<a href="{{ url('/') }}" class="fontYellow font14px">Home</a> | 
-									<a href="{{ url('/about-us') }}" class="fontYellow font14px">About Us</a> | 
-									<a href="{{ url('/how-it-works') }}" class="fontYellow font14px">How It Works</a> | 
-									<a href="{{ url('/contact-us') }}" class="fontYellow font14px">Contact Us</a> | 
-									<a href="{{ url('/terms-condition') }}" class="fontYellow font14px">Terms & Condition</a> | 
-									<a href="{{ url('/privacy-policy') }}" class="fontYellow font14px">Privacy Policy</a>
+									<a href="{{ url('/') }}" class="fontWhite font14px">Home</a> | 
+									<a href="{{ url('/about-us') }}" class="fontWhite font14px">About Us</a> | 
+									<a href="{{ url('/how-it-works') }}" class="fontWhite font14px">How It Works</a> | 
+									<a href="{{ url('/contact-us') }}" class="fontWhite font14px">Contact Us</a> | 
+									<a href="{{ url('/terms-condition') }}" class="fontWhite font14px">Terms & Condition</a> | 
+									<a href="{{ url('/privacy-policy') }}" class="fontWhite font14px">Privacy Policy</a>
 								</div>
 							</div>
 						</div>
