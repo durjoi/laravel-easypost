@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Tablelist extends Model
 {
     
+    public $credentials_easypost = [
+        'easypost_apikey' => 'EZAKcbb80e8d2b574b219ce3c2e1b8e7fff8JK7InBsXweHd3J84ZFYJUg'
+    ];
+
+    public $credentials_easypost_test = [
+        'easypost_apikey' => 'EZTKe79ac23e1a734b99b4bbf7bcd51a029e0w9CV5oFxE7dlVRg3kOlEg'
+    ];
 
     public $credentials_trust_pilot = [
         'username' => 'info@tronicspay.com',

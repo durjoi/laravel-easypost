@@ -18,7 +18,7 @@
                 <div class="row mt-50">
                     @if(isset($rowone))
                         @foreach($rowone as $row)
-                        <div class="col-lg-2 col-md-4 device-link">
+                        <div class="col-lg-2 col-md-4 col-6 device-link">
                             <a href="{{ url('products/category', $row->name) }}" class="hvr-shrink">
                                 <img src="{{ url($row->photo) }}" class="img-fluid" />
                                 <h4 class="device-name">{{ $row->name }}</h4>
@@ -31,7 +31,7 @@
                     <div class="col-lg-1"></div>
                     @if(isset($rowtwo))
                         @foreach($rowtwo as $row)
-                        <div class="col-lg-2 col-md-4 device-link">
+                        <div class="col-lg-2 col-md-4 col-6 device-link">
                             <a href="{{ url('products/brand', $row->name) }}" class="hvr-shrink">
                                 <img src="{{ url($row->photo) }}" class="img-fluid" />
                                 <h4 class="device-name">{{ $row->name }}</h4>
@@ -50,7 +50,7 @@
                     <div class="col-lg-1"></div>
                     @if(isset($rowtri))
                         @foreach($rowtri as $row)
-                        <div class="col-lg-2 col-md-4 device-link" style="align-items: center; display: flex;">
+                        <div class="col-lg-2 col-md-4 col-6 device-link" style="align-items: center; display: flex;">
                             <a href="{{ url('products/brand', $row->name) }}" class="hvr-shrink">
                                 <img src="{{ url($row->photo) }}" class="img-fluid" />
                                 <h4 class="device-name">{{ $row->name }}</h4>
@@ -69,34 +69,9 @@
                     </div>
                 </div>
                 <div class="row pb-50">
-                    <div class="col-md-2">
+                    <div class="col-md-12">
                         <div class="text-center">
-                            <img src="{{ url('assets/images/payments/1.png') }}" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="text-center">
-                            <img src="{{ url('assets/images/payments/2.png') }}" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="text-center">
-                            <img src="{{ url('assets/images/payments/3.png') }}" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="text-center">
-                            <img src="{{ url('assets/images/payments/4.png') }}" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="text-center">
-                            <img src="{{ url('assets/images/payments/5.png') }}" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="text-center">
-                            <img src="{{ url('assets/images/payments/6.png') }}" class="img-fluid">
+                            <img src="{{ url('assets/images/payments/payment-services.png') }}" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -105,7 +80,7 @@
         <section class="section-grey">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-8 col-md-6 parallax-1" id="iviglp"></div>
+                    <div class="col-lg-8 col-md-6 parallax-1 d-none d-sm-block" id="iviglp"></div>
                     <div class="col-lg-4 col-md-6 right-content">
                         <div class="card">
                             <div class="card-body">

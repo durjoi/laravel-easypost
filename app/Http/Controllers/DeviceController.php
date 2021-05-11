@@ -592,7 +592,6 @@ class DeviceController extends Controller
     }
     
 
-    // public function store(SellRequest $request)
     public function store(Request $request)
     {
         $response['status'] = 200;

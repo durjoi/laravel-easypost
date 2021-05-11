@@ -9,4 +9,6 @@ Route::group(['namespace' => 'Demo', 'prefix' => 'demo'], function () { // , 'mi
 
     Route::get('verification', [App\Http\Controllers\DemoController::class, 'VerificationPage']);
     Route::get('emailsending', [App\Http\Controllers\DemoController::class, 'EmailTester']);
+    Route::get('easypost/checkshipment', [App\Http\Controllers\DemoController::class, 'CheckEasyPostShipment']);
+    Route::get('easypost/createshipment', [App\Http\Controllers\DemoController::class, 'CreateShipment']);
 });
