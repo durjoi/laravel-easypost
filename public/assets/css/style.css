@@ -145,7 +145,10 @@ strong {
 }
 .section-footer {
     background-color: #fff;
-    padding: 50px 0;
+    padding: 50px 0 0 0;
+}
+.footer-left-button {
+    text-align: center;
 }
 .footer-title {
     display: -webkit-box;

@@ -58,11 +58,44 @@
 	<footer class="section-footer">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-2 col-md-6 column-1">
+				<div class="col-lg-4 col-md-12 column-1">
+					<div class="form-group">
+						<img src="{{ url('assets/images/footer-logo.png') }}" class="img-fluid" />
+					</div>
+					<div class="form-group">
+						<a href="{{ url('/') }}" class=" fontGray2 font14px">Home</a> | 
+						<a href="{{ url('/about-us') }}" class=" fontGray2 font14px">About Us</a> | 
+						<a href="{{ url('/how-it-works') }}" class=" fontGray2 font14px">How It Works</a> | 
+						<a href="{{ url('/contact-us') }}" class=" fontGray2 font14px">Contact Us</a>
+					</div>
+					<div class="form-group footer-left-button">
+						<a href="{{ url('products/sell') }}" class="btn btn-warning btn-md btn-footer hvr-shrink">
+							Sell Your Phone
+						</a>
+					</div>
+					<div class="form-group">
+						<div class=""><h4 class="footer-subtitle">Follow us</h4></div>
+						<div class="top-margin social-column">
+							<a href="#" class="hvr-shrink">
+								<img src="{{ url('assets/images/social/facebook.png') }}" class="social-icons" />
+							</a>
+							<a href="#" class="hvr-shrink">
+								<img src="{{ url('assets/images/social/twitter.png') }}" class="social-icons" />
+							</a>
+							<a href="#" class="hvr-shrink">
+								<img src="{{ url('assets/images/social/instagram.png') }}" class="social-icons" />
+							</a>
+							<a href="#" class="hvr-shrink">
+								<img src="{{ url('assets/images/social/youtube.png') }}" class="social-icons" />
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6 column-2">
 					<div class="footer-title"><h4 class="footer-subtitle">Contact Us</h4></div>
 					<div class="top-margin">
-						<div class="media">
-							<i class="far fa-fw fa-clock"></i>
+						<div class="media padding5">
+							<i class="far fa-fw fa-clock fontYellow"></i>
 							<div class="media-body footer-column">
 								<p>
 									10:00AM - 7:00PM <br />
@@ -73,73 +106,64 @@
 							</div>
 						</div>
 						<div class="media">
-							<i class="fas fa-fw fa-map-marker-alt"></i>
+							<i class="fas fa-fw fa-map-marker-alt fontYellow"></i>
 							<div class="media-body footer-column"><p>1214 S Noland Rd, Independence, MO 64055</p></div>
 						</div>
 						<div class="media">
-							<i class="fas fa-fw fa-phone-alt"></i>
+							<i class="fas fa-fw fa-phone-alt fontYellow"></i>
 							<div class="media-body footer-column"><p>1-816-886-7285</p></div>
 						</div>
 						<div class="media">
-							<i class="far fa-fw fa-envelope"></i>
+							<i class="far fa-fw fa-envelope fontYellow"></i>
 							<div class="media-body footer-column"><p>tronicspay@gmail.com</p></div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-2 col-md-6 column-2">
-					<div class="footer-title"><h4 class="footer-subtitle">Navigation</h4></div>
-					<div class="top-margin">
-						<ul class="list-footer">
-							@if(isset($footermenus))
-								@foreach($footermenus as $menu)
-								<li><a href="{{ url($menu->menu_url) }}" class="hvr-shrink">{{ $menu->name }}</a></li>
-								@endforeach
-								@if(isset($isValidAuthentication)) 
-									@if(isset($isValidAuthentication) && $isValidAuthentication == false)
-									<li><a href="{{ url('customer/auth/login') }}" class="hvr-shrink">Member Login</a></li>
-									@elseif(isset($isValidAuthentication) && $isValidAuthentication == true)
-									<li><a href="{{ url('customer/dashboard') }}" class="hvr-shrink">Back to Dashboard</a></li>
-									@endif
-								@endif
-							@endif
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-4 col-md-12 column-3">
-					<img src="{{ url('assets/images/footer-logo.png') }}" class="img-fluid" />
-					<div class="footer-center"><a href="{{ url('products/sell') }}" class="btn btn-warning btn-md btn-footer hvr-shrink">Sell Your Phone</a></div>
-				</div>
-				<div class="col-lg-2 col-md-6 column-4">
-					<div class="footer-title"><h4 class="footer-subtitle">Sell Your Device</h4></div>
-					<div class="top-margin">
-						<ul class="list-footer">
-							<li><a href="#" class="hvr-shrink">Apple</a></li>
-							<li><a href="#" class="hvr-shrink">Samsung</a></li>
-							<li><a href="#" class="hvr-shrink">LG</a></li>
-							<li><a href="#" class="hvr-shrink">HTC</a></li>
-							<li><a href="#" class="hvr-shrink">Nokia</a></li>
-							<li><a href="#" class="hvr-shrink">Sony</a></li>
-							<li><a href="#" class="hvr-shrink">Smart Watches</a></li>
-							<li><a href="#" class="hvr-shrink">Tablets</a></li>
-							<li><a href="#" class="hvr-shrink">Ipods</a></li>
-							<li><a href="#" class="hvr-shrink">Gaming Devices</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-2 col-md-6 column-5">
-					<div class="footer-title"><h4 class="footer-subtitle">Stay Connected</h4></div>
+				<div class="col-lg-4 col-md-6 column-5 form-group">
+					<div class="footer-title"><h4 class="footer-subtitle">Subscribe</h4></div>
 					<div class="top-margin social-column">
-						<a href="#" class="hvr-shrink"><img src="{{ url('assets/images/social/facebook.png') }}" class="img-fluid icon-social" /></a><a href="#" class="hvr-shrink"><img src="{{ url('assets/images/social/twitter.png') }}" class="img-fluid icon-social" /></a>
-						<a href="#" class="hvr-shrink"><img src="{{ url('assets/images/social/instagram.png') }}" class="img-fluid icon-social" /></a><a href="#" class="hvr-shrink"><img src="{{ url('assets/images/social/youtube.png') }}" class="img-fluid icon-social" /></a>
-						<p style="padding-top: 15px;"><img src="{{ url('assets/images/reviews/1.png') }}" class="img-fluid" /><img src="{{ url('assets/images/reviews/8.png') }}" class="img-fluid" /></p>
+						Don't miss to subscribe to our new feeds, kindly fill the form below.
+						<form action="#">
+							
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<div class="input-group-text btn-warning" id="btnGroupAddon">
+										<i class="fab fa-telegram-plane"></i>
+									</div>
+								</div>
+								<input type="email" class="form-control" placeholder="Email Address" aria-label="Subscription" aria-describedby="btnGroupAddon">
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
-			<div class="row pt-50">
-				<div class="col-lg-12">
-					<div class="text-center">
-						<p class="footer-bottom">© 2020 TronicsPay, All Rights Reserved | FAQ | Contact</p>
-						<p class="footer-bottom">Copyrights, trademarks, and branding are the property of their respective manufacturers.</p>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<style>
+					.copyright-area {
+						background: #eee;
+					}
+				</style>
+				<div class="copyright-area pt15">
+					<div class="container">
+						<div class="row">
+							<div class="col-xl-6 col-lg-4 text-center text-lg-left">
+								<div class="copyright-text">
+									<p>Copyright &copy;All Rights Reserved</p>
+								</div>
+							</div>
+							<div class="col-xl-6 col-lg-8 d-none d-lg-block text-right">
+								<div class="footer-menu">
+									<a href="{{ url('/') }}" class="fontYellow font14px">Home</a> | 
+									<a href="{{ url('/about-us') }}" class="fontYellow font14px">About Us</a> | 
+									<a href="{{ url('/how-it-works') }}" class="fontYellow font14px">How It Works</a> | 
+									<a href="{{ url('/contact-us') }}" class="fontYellow font14px">Contact Us</a> | 
+									<a href="{{ url('/terms-condition') }}" class="fontYellow font14px">Terms & Condition</a> | 
+									<a href="{{ url('/privacy-policy') }}" class="fontYellow font14px">Privacy Policy</a>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
