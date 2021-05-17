@@ -1,7 +1,9 @@
 /node_modules
 /public/hot
 /public/storage
-/public/uploads
+/public/uploads/brands
+/public/uploads/pages
+/public/uploads/products
 /storage/*.key
 /vendor
 .env
