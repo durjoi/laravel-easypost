@@ -331,7 +331,7 @@ class PageBuilderController extends Controller
         return $html;
     }
 
-    public function grapeJsGetTemplate ($id) 
+    public function grapeJsGetTemplate (Request $request, $id) 
     {
         $data['pageTemplate'] = $this->pageTemplateRepo->find($id);
         return $request->all();

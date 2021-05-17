@@ -124,6 +124,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ url('admin/settings/phone-carriers') }}" class="nav-link {{ (isset($module) && $module == 'brand') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Phone Carriers</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ url('admin/settings/users') }}" class="nav-link {{ (isset($module) && $module == 'user') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Users</p>

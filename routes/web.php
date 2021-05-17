@@ -97,6 +97,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
             Route::get('/', [\App\Http\Controllers\Admin\PageViewerController::class, 'Brands']);
             Route::post('/', [\App\Http\Controllers\Api\ApiController::class, 'StoreBrands']);
         });
+
+        // Routes for Settings Phone Carriers
+        Route::name('admin.settings.phone_carriers.')->group(function(){
+            Route::get('phone-carriers',[App\Http\Controllers\Admin\NetworkController::class,'index'])->name('index');
+            Route::prefix('api/phone-carriers')->group(function(){
+                Route::post('create',[App\Http\Controllers\Admin\NetworkController::class,'store'])->name('store');
+                Route::patch('edit/{id}',[App\Http\Controllers\Admin\NetworkController::class,'update'])->name('update');
+                Route::delete('delete/{id}',[App\Http\Controllers\Admin\NetworkController::class,'delete'])->name('delete');
+            });
+        });
         
     });
 
@@ -189,8 +199,8 @@ Route::group(['prefix' => 'api'], function() {
         Route::get('admin/payment', [App\Http\Controllers\Admin\PaymentPaypalController::class, 'Payment']);
         Route::get('admin/payment/status', [App\Http\Controllers\Admin\PaymentPaypalController::class, 'GetPaymentStatus']);
         // Route::get('payment', 'PayPalController@payment')->name('payment');
-        Route::get('admin/payment/cancel', 'PayPalController@cancel')->name('api.admin.payment.cancel');
-        Route::get('admin/payment/success', 'PayPalController@success')->name('api.admin.payment.success');
+        Route::get('admin/payment/cancel', [App\Http\Controllers\PaypalController::class] ,'cancel')->name('api.admin.payment.cancel');
+        Route::get('admin/payment/success', [App\Http\Controllers\PaypalController::class] ,'success')->name('api.admin.payment.success');
     });
 });
 
