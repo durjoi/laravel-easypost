@@ -248,6 +248,17 @@
                                                 </table>
                                             </div>
                                             <br />
+                                            <br />
+                                            <br />
+                                            <p>
+                                                <span class="page-sub-header">7-days price guarantee</span>
+                                                <br />
+                                                <br />
+                                                <span class="font12">
+                                                    Price may decline / decrease after the 7 day price guarantee. We do not want you to miss out on higher prices.
+                                                </span>
+                                            </p>
+                                            <br />
                                             <div style="margin-left: 15px;">
                                                 <table width="100%">
                                                     <tbody>
