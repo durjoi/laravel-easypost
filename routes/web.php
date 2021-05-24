@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('try', [App\Http\Controllers\Admin\DashboardController::class, 'trying_view']);
 Auth::routes();
-
 Route::get('/admin/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('home');
 Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     Route::group(['prefix' => 'settings'], function() {
@@ -105,6 +105,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
                 Route::post('create',[App\Http\Controllers\Admin\NetworkController::class,'store'])->name('store');
                 Route::patch('edit/{id}',[App\Http\Controllers\Admin\NetworkController::class,'update'])->name('update');
                 Route::delete('delete/{id}',[App\Http\Controllers\Admin\NetworkController::class,'delete'])->name('delete');
+            });
+        });
+
+        // Routes for Settings Phone Storages
+        Route::name('admin.settings.phone_storages.')->group(function(){
+            Route::get('phone-storages',[App\Http\Controllers\Admin\SettingsStorageController::class,'index'])->name('index');
+            Route::prefix('api/phone-storages')->group(function(){
+                Route::post('create',[App\Http\Controllers\Admin\SettingsStorageController::class,'store'])->name('store');
+                Route::patch('edit/{id}',[App\Http\Controllers\Admin\SettingsStorageController::class,'update'])->name('update');
+                Route::delete('delete/{id}',[App\Http\Controllers\Admin\SettingsStorageController::class,'destroy'])->name('delete');
             });
         });
         
