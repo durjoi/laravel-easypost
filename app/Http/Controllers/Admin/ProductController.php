@@ -18,6 +18,8 @@ use App\Repositories\Admin\ProductNetworkEloquentRepository as ProductNetwork;
 use App\Repositories\Admin\ProductStorageEloquentRepository as ProductStorage;
 use App\Repositories\Admin\SettingsCategoryEloquentRepository as SettingsCategory;
 use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
+use App\Repositories\Admin\SettingsStorageEloquentRepository as PhoneStorage;
+
 use App\Models\TableList as Tablelist;
 
 class ProductController extends Controller
@@ -32,6 +34,7 @@ class ProductController extends Controller
     protected $settingsCategoryRepo;
     protected $productCategoryRepo;
     protected $tablelist;
+    protected $phone_storage;
 
     function __construct(
                         Brand $brandRepo, 
@@ -43,7 +46,8 @@ class ProductController extends Controller
                         ProductStorage $productStorageRepo, 
                         SettingsCategory $settingsCategoryRepo,
                         ProductCategory $productCategoryRepo,
-                        Tablelist $tablelist
+                        Tablelist $tablelist,
+                        PhoneStorage $phone_storage
                         )
     {
         $this->brandRepo = $brandRepo;
@@ -56,16 +60,21 @@ class ProductController extends Controller
         $this->settingsCategoryRepo = $settingsCategoryRepo;
         $this->productCategoryRepo = $productCategoryRepo;
         $this->tablelist = $tablelist;
+        $this->phone_storage = $phone_storage;
     }
 
     public function index()
     {
+        $phone_storages = $this->phone_storage->all('label','asc',['id','capacity','label']);
         $data['tvproducts'] = true;
-        $data['storageList'] = [''=>'--','32GB', '64GB','128GB','256GB','512GB'];
+        $data['storageList'] = [''=>'--'];
         $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
+        foreach($phone_storages as $phone_storage){
+            $data['storageList']["{$phone_storage->capacity}{$phone_storage->label}"] = "{$phone_storage->capacity}{$phone_storage->label}";
+        }
         return view('admin.products.index', $data);
     }
 
@@ -122,22 +131,30 @@ class ProductController extends Controller
 
     public function create()
     {
+        $phone_storages = $this->phone_storage->all('label','asc',['id','capacity','label']);
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
-        $data['storageList'] = $this->tablelist->storageList;
+        $data['storageList'] = [''=>'--'];
         $data['categoryList'] = $this->settingsCategoryRepo->all();
         $data['networkList'] = $this->networkRepo->all();
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         $data['tvproducts'] = true;
+        foreach($phone_storages as $phone_storage){
+            $data['storageList']["{$phone_storage->capacity}{$phone_storage->label}"] = "{$phone_storage->capacity}{$phone_storage->label}";
+        }
+
         return view('admin.products.create', $data);
     }
 
     public function update(Request $request, $hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        return response()->json([
+            "id" => $id,
+        ]);
         $device_type = $request['device_type'];
         $user_id = Auth::user()->id;
         $product = $this->productRepo->find($id);
@@ -207,11 +224,12 @@ class ProductController extends Controller
     public function edit($hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $phone_storages = $this->phone_storage->all('label','asc',['id','capacity','label']);
         $data['product'] = $this->productRepo->findWith($id, ['photo', 'networks.network', 'storages']);
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
-        $data['storageList'] = $this->tablelist->storageList;
+        $data['storageList'] = [''=>'--'];
         $data['categoryList'] = $this->settingsCategoryRepo->all();
         $data['networkList'] = $this->networkRepo->all();
         $data['config'] = $this->configRepo->find(1);
@@ -219,6 +237,10 @@ class ProductController extends Controller
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         $data['tvproducts'] = true;
+        foreach($phone_storages as $phone_storage){
+            $data['storageList']["{$phone_storage->capacity}{$phone_storage->label}"] = "{$phone_storage->capacity}{$phone_storage->label}";
+        }
+
         return view('admin.products.edit', $data);
     }
 
