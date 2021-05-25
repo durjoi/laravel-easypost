@@ -183,14 +183,26 @@
                                                             >
                                                                 <i class="fa fa-edit"></i>
                                                             </a>
-                                                            <a 
-                                                                href="javascript:void(0);" 
-                                                                class="delete-row-product-storage btn btn-danger btn-xs" 
-                                                                data-attr-saved="true" 
-                                                                data-attr-id="{{ $sVal['hashedId']}}"
-                                                            >
-                                                                <i class="fa fa-trash"></i>
-                                                            </a>
+                                                            @if(Route::current()->getName() != 'products.edit')
+                                                                <a 
+                                                                    href="javascript:void(0);" 
+                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
+                                                                    data-attr-saved="true" 
+                                                                    data-attr-id="{{ $sVal['hashedId']}}"
+                                                                >
+                                                                    <i class="fa fa-trash"></i>
+                                                                </a>
+                                                                @else
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}')"
+                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
+                                                                    data-attr-saved="true" 
+                                                                    data-attr-id="{{ $sVal['hashedId']}}"
+                                                                >
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endif
@@ -245,14 +257,19 @@
                                                             <td align="center">{{ $sVal['title'] }}</td>
                                                             <td align="right">${{ number_format($sVal['amount'], 2, '.', ',') }}</td>
                                                             <td align="center">
-                                                                <a 
-                                                                    href="javascript:void(0);" 
-                                                                    class="edit-row-product-storage btn btn-primary btn-xs" 
+                                                                <button
+                                                                    type="button"
+                                                                    class="edit-row-product-sell btn btn-primary btn-xs"
+                                                                    data-target="#edit-modal-product-sell"
+                                                                    data-toggle="modal" 
                                                                     data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
+                                                                    data-storage="{{ $sVal->title }}"
+                                                                    data-amount="{{ $sVal->amount }}"
+                                                                    data-id="{{ $sVal['hashedId']}}"
                                                                 >
                                                                     <i class="fa fa-edit"></i>
-                                                                </a>
+                                                                </button>
+                                                                @if(Route::current()->getName() != 'products.edit')
                                                                 <a 
                                                                     href="javascript:void(0);" 
                                                                     class="delete-row-product-storage btn btn-danger btn-xs" 
@@ -261,6 +278,17 @@
                                                                 >
                                                                     <i class="fa fa-trash"></i>
                                                                 </a>
+                                                                @else
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}',true)"
+                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
+                                                                    data-attr-saved="true" 
+                                                                    data-attr-id="{{ $sVal['hashedId']}}"
+                                                                >
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                                @endif
                                                             </td>
                                                         </tr>
                                                     @endif

@@ -63,6 +63,9 @@
 @section('page-js')
     @include('admin.modals.products.sell.modal')
     @include('admin.modals.products.buy.modal')
+    <script>
+        var product_hashed_id = "{{ $product_id }}";
+    </script>
     {!! JsValidator::formRequest('App\Http\Requests\Admin\ProductRequest') !!}
     <script src="{{ url('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
     <script src="{{ url('library/js/admin/products/components.js') }}"></script>
@@ -102,6 +105,5 @@
                 }
             });
         });
-
     </script>
 @endsection

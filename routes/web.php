@@ -51,7 +51,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     });
 
     
-    Route::group(['prefix' => 'products'], function() {
+    Route::group(['prefix' => 'products','name' => 'products.'], function() {
         Route::get('list-all/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'listfile']);
         Route::post('getproduct', [\App\Http\Controllers\Api\DatatableController::class, 'GetProduct']);
         Route::post('postproduct', [\App\Http\Controllers\Admin\ProductController::class, 'postproduct']);
@@ -61,12 +61,18 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::post('checkduplicatedevice', [\App\Http\Controllers\Admin\ProductController::class, 'checkduplicatedevice']);
         Route::post('storeduplicate', [\App\Http\Controllers\Admin\ProductController::class, 'storeduplicate']);
         Route::put('{hashedId}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
-        Route::get('products/storage/{hashedId}/find', [\App\Http\Controllers\Admin\ProductController::class, 'findProductStorage']);
-
+        Route::get('storage/{hashedId}/find', [\App\Http\Controllers\Admin\ProductController::class, 'findProductStorage']);
+        Route::post('edit/add-storage-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"add_storage_price"]);
+        Route::patch('edit/product-storage/{product_storage_id}',[\App\Http\Controllers\Admin\ProductController::class,"edit_storage_price"])->name('edit.product_storage');
+        Route::delete('delete/add-storage-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"delete_storage_price"]);
+        Route::post('edit/add-device-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"add_device_price"]);
+        Route::patch('edit/edit-selling-device/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"edit_selling_device"]);
+        Route::delete('edit/delete-device-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"delete_device_price"]);
         Route::get('map/condition', [\App\Http\Controllers\Admin\PageViewerController::class, 'ProductMaps']);
     });
 
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
+
 
     Route::group(['prefix' => 'templates'], function() {
         Route::group(['prefix' => 'email'], function() {

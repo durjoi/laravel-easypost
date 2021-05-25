@@ -237,6 +237,7 @@ class ProductController extends Controller
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         $data['tvproducts'] = true;
+        $data['product_id'] = $hashedId;
         foreach($phone_storages as $phone_storage){
             $data['storageList']["{$phone_storage->capacity}{$phone_storage->label}"] = "{$phone_storage->capacity}{$phone_storage->label}";
         }
@@ -618,5 +619,255 @@ class ProductController extends Controller
             'user_update' => Auth::user()->id
         ];
     }
+    
+    /**
+     * Add a storage price on edit
+     * products
+     * 
+     * @param int device_id
+     * @param Illuminate\Http\Request
+     * 
+     * @return response json
+     */
+    public function add_storage_price($id,Request $request)
+    {
+        try{
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($id);
+            $product = $this->productRepo->find($id);
+            
+            if(!$product){
+                return response()->json([
+                    "status" => false,
+                    "message" => "No device found",
+                ]);
+            }
+            
+            // Check if specs already exist
 
+            $existing = $this->productStorageRepo
+            ->rawByField('product_id=? AND title=? AND amount=NULL',[$id,$request->get('title')]);
+            
+            if($existing){
+                return response()->json([
+                    "status" => false,
+                    "message" => "This kind of spec already exist",
+                ]);
+            }
+            $this->productStorageRepo->create([
+                "product_id"        => $id,
+                "title"             => $request->get('title'),
+                "excellent_offer"   => $request->get('excellent_offer'),
+                "good_offer"        => $request->get('good_offer'),
+                "fair_offer"        => $request->get('fair_offer'),
+                "poor_offer"        => $request->get('poor_offer'),
+                "amount"            => $request->get('amount'),
+            ]);
+            
+            return response()->json([
+                "status" => true,
+                "message" => "Successfully added!",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "message" => $e->getMessage(),
+            ],200);
+        }
+    }
+
+    /**
+     * Delete storage price on edit
+     * 
+     * @param int device_id
+     * 
+     * @return response json
+     */
+    public function delete_storage_price($hashedId)
+    {
+        try {
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+            $product = $this->productStorageRepo->find($id);
+
+            if(!$product){
+                return response()->json([
+                    "status" => false,
+                    "message" => "No record found",
+                ]);
+            }
+
+            $product->delete();
+
+            return response()->json([
+                "status" => true,
+                "message" => "Successfully deleted",
+            ]);
+
+        } catch (\Exception $e){
+            Log::error($e->getMessage());
+
+            return response()->json([
+                "status" => false,
+                "message" => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Edit storage price
+     * 
+     * @param int device_id
+     * @param Illuminate\Http\Request
+     * 
+     * @return response json
+     */
+    public function edit_storage_price($storage_id,Request $request){
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($storage_id);
+        $product_storage = $this->productStorageRepo->find($id);
+
+        if(!$product_storage){
+            return response()->json([
+                "status" => false,
+                "message" => "Record not found",
+            ]);
+        }
+
+        $existing = $this->productStorageRepo
+        ->rawByField("product_id=? AND title=? AND id!=? AND amount=NULL",[$product_storage->product_id,$request->get('title'),$id]);
+
+        if($existing){
+            return response()->json([
+                "status" => false,
+                "message" => "Device with this kind of specification already exist",
+            ]);
+        }
+
+        $product_storage->update([
+            "title"             => $request->get('title'),
+            "excellent_offer"   => $request->get('excellent_offer'),
+            "good_offer"        => $request->get('good_offer'),
+            "fair_offer"        => $request->get('fair_offer'),
+            "poor_offer"        => $request->get('poor_offer'),
+            "amount"            => $request->get('amount'),
+        ]);
+
+        return response()->json([
+            "status" => true,
+            "message" => "successfully updated",
+        ]);
+    }
+
+    /**
+     * Add device selling price
+     * 
+     * @param int product_id
+     * @param Illuminate\Http\Request
+     * 
+     * @return response json
+     */
+    public function add_device_price($hashId,Request $request)
+    {
+        try{
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashId);
+            $product = $this->productRepo->find($id);
+            
+            if(!$product){
+                return response()->json([
+                    "status" => false,
+                    "message" => "No device found",
+                ]);
+            }
+            
+            // Check if specs already exist
+            $existing = $this->productStorageRepo
+            ->rawByField('product_id=? AND title=? AND amount IS NOT NULL',[$id,$request->get('title')]);
+            
+            if($existing){
+                return response()->json([
+                    "status" => false,
+                    "message" => "This kind of spec already exist",
+                ]);
+            }
+
+            $this->productStorageRepo->create([
+                "product_id"        => $id,
+                "title"             => $request->get('title'),
+                "amount"            => $request->get('amount'),
+            ]);
+            
+            return response()->json([
+                "status" => true,
+                "message" => "Successfully added!",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "message" => $e->getMessage(),
+            ],200);
+        }
+    }
+
+    /**
+     * Dellete selling device
+     * 
+     * @param int product_id
+     * 
+     * @return response json
+     */
+    public function delete_device_price($hashId){
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashId);
+        $selling_device = $this->productStorageRepo->find($id);
+
+        // Check if selling device exist
+        if(!$selling_device){
+            return response()->json([
+                "status" => false,
+                "message" => "No device found",
+            ]);
+        }
+
+        $selling_device->delete();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Successfully deleted",
+        ]);
+    }
+
+    /**
+     * Update Selling Device
+     * 
+     * @param int product_id
+     * @param Illuminate\Http\Response
+     * 
+     * @return response json
+     */
+    public function edit_selling_device($hashId,Request $request)
+    {
+        try {
+            $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashId);
+            $selling_device = $this->productStorageRepo->find($id);
+
+            if(!$selling_device){
+                return response()->json([
+                    "status" => false,
+                    "message" => "No device found"
+                ]); 
+            }
+
+            $selling_device->update([
+                "title" => $request->get('title'),
+                "amount" => $request->get('amount'),
+            ]);
+
+            return response()->json([
+                "status" => true,
+                "message" => "Successfully updated",
+            ],200);
+        } catch (\Exception $e){
+            return response()->json([
+                "status" => false,
+                "message" => $e->getMessage(),
+            ]);
+        }
+    }
 }
