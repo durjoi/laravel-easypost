@@ -70,9 +70,9 @@
     </div>
 @endsection
 
-@section('page-css')
-<link rel="stylesheet" href="{{ url('assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}">
-@endsection
+{{-- @section('page-css') --}}
+{{-- <link rel="stylesheet" href="{{ url('assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}"> --}}
+{{-- @endsection --}}
 
 @section('page-js')
 @include('admin.modals.pagebuilder.index')
