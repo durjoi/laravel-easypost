@@ -57,7 +57,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::post('postproduct', [\App\Http\Controllers\Admin\ProductController::class, 'postproduct']);
         Route::post('storephoto', [\App\Http\Controllers\Admin\ProductController::class, 'storephoto']);
         Route::post('deletephoto', [\App\Http\Controllers\Admin\ProductController::class, 'deletephoto']);
-        Route::post('checkduplicate', [\App\Http\Controllers\Admin\ProductController::class, 'checkduplicate']);
+        Route::post('checkduplicate', [\App\Http\Controllers\Admin\ProductController::class, 'checkduplicate'])->withoutMiddleware(['web','auth:web']);
         Route::post('checkduplicatedevice', [\App\Http\Controllers\Admin\ProductController::class, 'checkduplicatedevice']);
         Route::post('storeduplicate', [\App\Http\Controllers\Admin\ProductController::class, 'storeduplicate']);
         Route::put('{hashedId}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);

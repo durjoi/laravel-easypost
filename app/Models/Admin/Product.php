@@ -5,9 +5,11 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Vinkla\Hashids\HashidsManager;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    // use SoftDeletes;
     protected $table = "products";
     protected $guarded = [];
     protected $appends = ['dimension', 'hashedid', 'display_created_at', 'display_updated_at'];

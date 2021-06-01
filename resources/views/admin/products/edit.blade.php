@@ -63,6 +63,7 @@
 @section('page-js')
     @include('admin.modals.products.sell.modal')
     @include('admin.modals.products.buy.modal')
+    @include('admin.modals.products.buy.edit')
     <script>
         var product_hashed_id = "{{ $product_id }}";
     </script>

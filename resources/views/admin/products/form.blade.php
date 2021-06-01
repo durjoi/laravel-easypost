@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    {{-- <div class="form-group col-md-6">
                         <label class="col-form-label col-form-label-sm">Network</label>
                         <select name="network[]" class="form-control" multiple>
                             @if(count($networkList) >= 1)
@@ -107,7 +107,7 @@
                                 @endforeach
                             @endif
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="form-group col-md-6">
                         <label class="col-form-label col-form-label-sm">Categories</label>
                         <select name="categories[]" class="form-control" multiple>
@@ -152,10 +152,11 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped text-nowrap table-sm">
+                                    <table class="table table-bordered table-striped text-nowrap table-sm" id="parent-table-product-buy">
                                         <thead>
                                             <tr>
                                                 <th width="20%"><center>Storage</center></th>
+                                                <th width="20%"><center>Network</center></th>
                                                 <th width="16%"><center>Excellent Offer</center></th>
                                                 <th width="16%"><center>Good Offer</center></th>
                                                 <th width="16%"><center>Fair Offer</center></th>
@@ -170,19 +171,31 @@
                                                     @if($sVal['amount'] == '')
                                                     <tr class="tr-id-{{ $sVal['hashedId']}}" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
                                                         <td align="center">{{ $sVal['title'] }}</td>
+                                                        <td align="center">{{ optional($sVal->network)->title }}</td>
                                                         <td align="right">${{ number_format($sVal['excellent_offer'], 2, '.', ',') }}</td>
                                                         <td align="right">${{ number_format($sVal['good_offer'], 2, '.', ',') }}</td>
                                                         <td align="right">${{ number_format($sVal['fair_offer'], 2, '.', ',') }}</td>
                                                         <td align="right">${{ number_format($sVal['poor_offer'], 2, '.', ',') }}</td>
                                                         <td align="center">
-                                                            <a 
-                                                                href="javascript:void(0);" 
-                                                                class="edit-row-product-storage btn btn-primary btn-xs" 
-                                                                data-attr-saved="true" 
-                                                                data-attr-id="{{ $sVal['hashedId']}}"
-                                                            >
-                                                                <i class="fa fa-edit"></i>
-                                                            </a>
+                                                            @if(Route::current()->getName() == 'products.edit')
+                                                                <a 
+                                                                    href="javascript:void(0);" 
+                                                                    class="edit-row-product-storage btn btn-primary btn-xs" 
+                                                                    data-attr-saved="true" 
+                                                                    data-attr-id="{{ $sVal['hashedId']}}"
+                                                                >
+                                                                    <i class="fa fa-edit"></i>
+                                                                </a>
+                                                            @else
+                                                                <a 
+                                                                    href="javascript:void(0);" 
+                                                                    class="edit-row-product-storage btn btn-primary btn-xs" 
+                                                                    data-attr-saved="true" 
+                                                                    data-attr-id="{{ $sVal['hashedId']}}"
+                                                                >
+                                                                    <i class="fa fa-trash"></i>
+                                                                </a>
+                                                            @endif
                                                             @if(Route::current()->getName() != 'products.edit')
                                                                 <a 
                                                                     href="javascript:void(0);" 
@@ -192,11 +205,11 @@
                                                                 >
                                                                     <i class="fa fa-trash"></i>
                                                                 </a>
-                                                                @else
+                                                            @else
                                                                 <button 
                                                                     type="button"
                                                                     onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}')"
-                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
+                                                                    class="btn btn-danger btn-xs" 
                                                                     data-attr-saved="true" 
                                                                     data-attr-id="{{ $sVal['hashedId']}}"
                                                                 >
@@ -213,9 +226,9 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="javascript:void(0);" id="btn-product-buy" class="btn btn-sm btn-primary">
+                                        <button type="button" id="btn-product-buy" class="btn btn-sm btn-primary">
                                             Add Storage Prices
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -240,11 +253,12 @@
                             </div>
                             <div class="col-md-12 fn">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped text-nowrap table-sm">
+                                    <table class="table table-bordered table-striped text-nowrap table-sm" id="parent-table-product-sell">
                                         <thead>
                                             <tr>
-                                                <th width="45%"><center>Storage</center></th>
-                                                <th width="45%"><center>Price</center></th>
+                                                <th width="30%"><center>Storage</center></th>
+                                                <th width="30%"><center>Network</center></th>
+                                                <th width="30%"><center>Price</center></th>
                                                 <!-- <th width="14%"><center>Amount</center></th> -->
                                                 <th width="10%"></th>
                                             </tr>
@@ -255,6 +269,7 @@
                                                     @if($sVal['amount'] != '')
                                                         <tr class="tr-id-{{ $sVal['hashedId']}}" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
                                                             <td align="center">{{ $sVal['title'] }}</td>
+                                                            <td align="center">{{ optional($sVal->network)->title }}</td>
                                                             <td align="right">${{ number_format($sVal['amount'], 2, '.', ',') }}</td>
                                                             <td align="center">
                                                                 <button
@@ -265,6 +280,7 @@
                                                                     data-attr-saved="true" 
                                                                     data-storage="{{ $sVal->title }}"
                                                                     data-amount="{{ $sVal->amount }}"
+                                                                    data-network_id="{{ $sVal->network_id }}"
                                                                     data-id="{{ $sVal['hashedId']}}"
                                                                 >
                                                                     <i class="fa fa-edit"></i>
@@ -282,7 +298,7 @@
                                                                 <button 
                                                                     type="button"
                                                                     onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}',true)"
-                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
+                                                                    class="btn btn-danger btn-xs" 
                                                                     data-attr-saved="true" 
                                                                     data-attr-id="{{ $sVal['hashedId']}}"
                                                                 >

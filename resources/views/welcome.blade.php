@@ -20,7 +20,7 @@
                         @foreach($rowone as $row)
                         <div class="col-lg-2 col-md-4 col-6 device-link">
                             <a href="{{ url('products/category', $row->name) }}" class="hvr-shrink">
-                                <img src="{{ url($row->photo) }}" class="img-fluid" />
+                                <img src="{{ url($row->photo) }}" class="img-fluid" style="height: 150px !important;" />
                                 <h4 class="device-name">{{ $row->name }}</h4>
                             </a>
                         </div>
@@ -33,7 +33,7 @@
                         @foreach($rowtwo as $row)
                         <div class="col-lg-2 col-md-4 col-6 device-link">
                             <a href="{{ url('products/brand', $row->name) }}" class="hvr-shrink">
-                                <img src="{{ url($row->photo) }}" class="img-fluid" />
+                                <img src="{{ url($row->photo) }}" class="img-fluid" style="height: 150px !important;" />
                                 <h4 class="device-name">{{ $row->name }}</h4>
                             </a>
                         </div>

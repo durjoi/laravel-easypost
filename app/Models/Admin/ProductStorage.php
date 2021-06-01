@@ -15,4 +15,9 @@ class ProductStorage extends Model
     {
         return \Hashids::encode($this->id);
     }
+
+    public function network()
+    {
+        return $this->hasOne(Network::class,'id','network_id');
+    }
 }

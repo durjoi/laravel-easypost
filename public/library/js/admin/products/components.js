@@ -182,21 +182,25 @@ $(function() {
         const storage = button.dataset.storage;
         const amount = button.dataset.amount;
         const product_id = button.dataset.id;
+        const network_id = button.dataset.network_id;
         const url = `${baseUrl}/admin/products/edit/edit-selling-device/${product_id}`;
 
         $(this).find('.modal-body #amount').val(amount);
         $(this).find('.modal-body select[name=storage]').val(storage);
         $(this).find('#edit-product-sell-form').attr('action',url);
+        $(this).find('select[name=product_network]').val(network_id);
     });
 
     $("#edit-product-sell-form").on("submit",function(e){
         e.preventDefault();
         let data = $(this).serializeArray();
+
         $.ajax($(this).attr('action'),{
             method: "PATCH",
             data: {
                 title: data[1].value,
-                amount: data[2].value,
+                network_id: data[2].value,
+                amount: data[3].value,
             },
             success: res => {
                 if(res.status) {
@@ -233,10 +237,20 @@ $(function() {
     //     $('#modal-product-sell').modal('show');
     // });
 
+
+    var edit_selected_network = "";
+    $("#sell-network").on('change',function(e){
+        edit_selected_network = this.options[this.selectedIndex].text
+    });
+
+    $("#modal_product_sell_network").on('change',function(e){
+        edit_selected_network = this.options[this.selectedIndex].text
+    });
+    
     $('#product-sell-submit').click(function () {
         var data = $('#product-sell-form').serializeArray();
         // return false;
-        var setId = (data[2].value == 0) ? 0 : data[2].value;
+        var setId = (data[3].value == 0) ? 0 : data[3].value;
         if ($('#isSellForEdit').val() == "true") {
             var tempId = $('#fieldBuyId').val();
             var newRecord = '<td align="center"><input type="hidden" name="product-storage-id[]" value="'+setId+'">'+data[0].value+' <input type="hidden" name="storage[]" value="'+data[0].value+'"><input type="hidden" name="storage_sell[]" value="'+data[0].value+'"></td>'+
@@ -254,50 +268,96 @@ $(function() {
                 
             $('.tr-id-'+tempId).html(newRecord);
         } else {
-            console.log(data);
-            $.ajax(`${baseUrl}/admin/products/edit/add-device-price/${product_hashed_id}`,{
-                method: "POST",
-                data: {
-                    title: data[0].value,
-                    amount: data[1].value
-                },
-                success: res => {
-                    console.log(res);
-                    if(res.status){
-                        swal({
-                            title: "Successfully added",
-                            text: "Record added",
-                            icon: "success",
-                        });
-                    } else {
-                        swal({
-                            title: "Error",
-                            text: res.message ?? "Something went wrong",
-                            icon: "error",
-                        });
-                    }
-                },
-                error: function(err){
-                    console.log(err);
-                }
-            });
-            var newRecord = '<tr class="tr-id" data-attr-saved="false" data-attr-id="'+uuidv4()+'">'+
-                '<td align="center"><input type="hidden" name="product-storage-id[]" value="'+setId+'">'+data[0].value+' <input type="hidden" name="storage[]" value="'+data[0].value+'"><input type="hidden" name="storage_sell[]" value="'+data[0].value+'"></td>'+
-                '<td align="right">$'+data[1].value+' <input type="hidden" name="amount[]" value="'+data[1].value+'"></td>'+
-                '<td align="center">'+
-                    '<a href="javascript:void(0);" class="delete-row-product-storage btn btn-primary btn-xs" data-attr-id="'+uuidv4()+'">'+
-                        '<i class="fa fa-edit"></i>'+
-                    '</a>'+
-                    '<a href="javascript:void(0);" class="delete-row-product-storage btn btn-danger btn-xs" data-attr-id="'+uuidv4()+'">'+
-                        '<i class="fa fa-trash"></i>'+
-                    '</a>'+
-                '</td>'+
-            '</tr>';
+            var newRecord = `
+            <tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
+                <td align="center">
+                    <input type="hidden" name="product-storage-id[]" value="${setId}">
+                    ${data[0].value}
+                    <input type="hidden" name="storage[]" value="${data[0].value}">
+                    <input type="hidden" name="storage_sell[]" value="${data[0].value}">
+                </td>
+                <td align="right">
+                    ${edit_selected_network}
+                    <input type="hidden" name="network_id[]" value="${data[1].value}">
+                </td>
+                <td align="right">
+                    $${data[2].value}
+                    <input type="hidden" name="amount[]" value="${data[2].value}">
+                </td>
+                <td align="center">
+                    <button type="button" class="btn btn-primary btn-xs"
+                    data-attr-id="${uuidv4()}" data-toggle="modal" data-target="#modal-edit-product-sell"
+                    data-network="${data[1].value}" data-storage="${data[0].value}"
+                    data-amount="${data[2].value}">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="delete-row-sell-product btn btn-danger btn-xs"
+                    data-attr-id="${uuidv4()}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
             $('#table-product-sell').append(newRecord);
         }
         $('#modal-product-sell').modal('hide');
     });
 
+    $("#modal-edit-product-sell").on('show.bs.modal',function(e){
+        const button = e.relatedTarget;
+        const modal = $(this);
+        modal.find('#rowIndex').val(e.relatedTarget.parentElement.parentElement.rowIndex);
+        modal.find('select[name=storage]').val(button.dataset.storage)
+        modal.find('#modal_product_sell_network').val(button.dataset.network)
+        modal.find('#modal_product_amount').val(button.dataset.amount)
+    });
+
+    $("#modal-product-button-submit").on('click',function(){
+        var data = $('#modal-product-sell-form').serializeArray();
+        console.log(data);
+        var newRecord = `
+            <tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
+                <td align="center">
+                    <input type="hidden" name="product-storage-id[]" value="0">
+                    ${data[1].value}
+                    <input type="hidden" name="storage[]" value="${data[1].value}">
+                    <input type="hidden" name="storage_sell[]" value="${data[1].value}">
+                </td>
+                <td align="right">
+                    ${edit_selected_network}
+                    <input type="hidden" name="network_id[]" value="${data[2].value}">
+                </td>
+                <td align="right">
+                    $${data[3].value}
+                    <input type="hidden" name="amount[]" value="${data[3].value}">
+                </td>
+                <td align="center">
+                    <button type="button" class="btn btn-primary btn-xs"
+                    data-attr-id="${uuidv4()}" data-toggle="modal" data-target="#modal-edit-product-sell"
+                    data-network="${data[2].value}" data-storage="${data[1].value}"
+                    data-amount="${data[3].value}">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="delete-row-sell-product btn btn-danger btn-xs"
+                    data-attr-id="${uuidv4()}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+        $('#table-product-sell').append(newRecord);
+        document.getElementById('parent-table-product-sell').deleteRow($('#rowIndex').val());
+        $("#modal-edit-product-sell").modal('hide');
+    });
+
+    $(document).on('click','button.delete-row-sell-product',function(e){
+        if(confirm('Delete this data?')){
+            const tableRow = e.target.parentElement.parentElement
+            if(tableRow.rowIndex !== undefined){
+                tableRow.remove();
+            } else {
+                tableRow.parentElement.remove();
+            }
+        }
+    });
 
     $('.edit-row-product-storage').click(function () {
         $('#isBuyForEdit, #fieldBuyId').val('');
@@ -314,6 +374,7 @@ $(function() {
                 success: function (response) {
                     if(response.status == 200){
                         $('.input-product-storage').val(response.result.title);
+                        $('#network').val(response.result.network_id);
                         $('#excellent_offer').val(response.result.excellent_offer);
                         $('#good_offer').val(response.result.good_offer);
                         $('#fair_offer').val(response.result.fair_offer);
@@ -325,29 +386,42 @@ $(function() {
         }
     });
 
-    $('#btn-product-buy').click(function () {
+    $('#btn-product-buy').click(function (e) {
+        // let hashed_id = e.target.dataset.hashed_id ?? 0;
         $('#fieldBuyId').val(0);
-        $('#isBuyForEdit').val('');
+        // $("#fieldBuyId").val(hashed_id);
         $('#modal-product-buy').modal();
     });
     
+    var selected_network = "";
+    $("#network").on('change',function(e){
+        selected_network = this.options[this.selectedIndex].text
+    });
 
-    $('#product-buy-submit').click(function () {
+    $("#edit-network").on('change',function(e){
+        selected_network = this.options[this.selectedIndex].text
+    });
+
+
+    $('#product-buy-submit').click(function (e) {
         var data = $('#product-buy-form').serializeArray();
-        var setId = (data[5].value == 0) ? 0 : data[5].value;
+        var setId = (data[6].value == 0) ? 0 : data[6].value;
         if ($('#isBuyForEdit').val() == "true") {
+            console.log('ajax');
             var tempId = $('#fieldBuyId').val();
             $.ajax(`${baseUrl}/admin/products/edit/product-storage/${setId}`,{
                 type: "PATCH",
                 data: {
                     title: data[0].value,
-                    excellent_offer: data[1].value,
-                    good_offer: data[2].value,
-                    fair_offer: data[3].value,
-                    poor_offer: data[4].value,
+                    network_id: data[1].value,
+                    excellent_offer: data[2].value,
+                    good_offer: data[3].value,
+                    fair_offer: data[4].value,
+                    poor_offer: data[5].value,
                 },
                 success: function(res){
                     $('#modal-product-buy').modal('hide');
+                    console.log(res);
                     if(res.status){
                         swal({
                             title: "Success",
@@ -390,61 +464,85 @@ $(function() {
                 
             // $('.tr-id-'+tempId).html(newRecord);
         } else {
-            $.ajax({
-                method:"POST",
-                url: `${baseUrl}/admin/products/edit/add-storage-price/${product_hashed_id}`,
-                data: {
-                    title: data[0].value,
-                    excellent_offer: data[1].value,
-                    good_offer: data[2].value,
-                    fair_offer: data[3].value,
-                    poor_offer: data[4].value,
-                },
-                async: true,
-                success: function(res){
-                    if(res.status){
-                        swal({
-                            title: "Success",
-                            text: "Successfully added",
-                            icon: "success",
-                        }).isConfirmed(function(){
-                            alert('confirmed');
-                        });
-                    } else {
-                        swal({
-                            title: "Already Exist!",
-                            text: res.message,
-                            icon: "error",
-                        }).isConfirmed(function(){
-                            alert('confirmed');
-                        });
-                    }
-                    $('#modal-product-buy').modal('hide');
-                },
-                error: function(err){
-                    console.log(err);
-                    $('#modal-product-buy').modal('hide');
-                }
-            })
-            var newRecord = '<tr class="tr-id" data-attr-saved="false" data-attr-id="'+uuidv4()+'">'+
-                '<td align="center"><input type="hidden" name="product-storage-id[]" value="'+setId+'">'+data[0].value+' <input type="hidden" name="storage[]" value="'+data[0].value+'"><input type="hidden" name="storage_buy[]" value="'+data[0].value+'"></td>'+
-                '<td align="right">$'+data[1].value+' <input type="hidden" name="excellent_offer[]" value="'+data[1].value+'"></td>'+
-                '<td align="right">$'+data[2].value+' <input type="hidden" name="good_offer[]" value="'+data[2].value+'"></td>'+
-                '<td align="right">$'+data[3].value+' <input type="hidden" name="fair_offer[]" value="'+data[3].value+'"></td>'+
-                '<td align="right">$'+data[4].value+' <input type="hidden" name="poor_offer[]" value="'+data[4].value+'"></td>'+
-                // '<td align="right">$'+data[6].value+' <input type="hidden" name="amount[]" value="'+data[6].value+'"></td>'+
-                '<td align="center">'+
-                    '<a href="javascript:void(0);" class="delete-row-product-storage btn btn-primary btn-xs" data-attr-id="'+uuidv4()+'">'+
-                        '<i class="fa fa-edit"></i>'+
-                    '</a>'+
-                    '<a href="javascript:void(0);" class="delete-row-product-storage btn btn-danger btn-xs" data-attr-id="'+uuidv4()+'">'+
-                        '<i class="fa fa-trash"></i>'+
-                    '</a>'+
-                '</td>'+
-            '</tr>';
+            var newRecord = `<tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
+                <td align="center">
+                    <input type="hidden" name="product-storage-id[]" value="${setId}">
+                    ${data[0].value}
+                    <input type="hidden" name="storage[]" value="${data[0].value}">
+                    <input type="hidden" name="storage_buy[]" value="${data[0].value}">
+                </td>'+
+                <td align="right">${selected_network}<input type="hidden" name="network[]" value="${data[1].value}"></td>
+                <td align="right">$${data[2].value}<input type="hidden" name="excellent_offer[]" value="${data[2].value}"></td>
+                <td align="right">$${data[3].value}<input type="hidden" name="good_offer[]" value="${data[3].value}"></td>
+                <td align="right">$${data[4].value}<input type="hidden" name="fair_offer[]" value="${data[4].value}"></td>
+                <td align="right">$${data[5].value}<input type="hidden" name="poor_offer[]" value="${data[5].value}"></td>
+                <td align="center">
+                    <button type="button"
+                    class="edit-row-product-storage btn btn-primary btn-xs"
+                    data-toggle="modal" data-target="#edit-modal-product-buy"
+                    data-excellent="${data[2].value}" data-good="${data[3].value}"
+                    data-fair="${data[4].value}" data-poor="${data[5].value}" data-network=${data[1].value}
+                    data-storage="${data[0].value}">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="delete-row-product-storage btn btn-danger btn-xs">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
             $('#table-product-buy').append(newRecord);
             $('#modal-product-buy').modal('hide');
         }
+    });
+
+    $("#edit-modal-product-buy").on("show.bs.modal",function(e){
+        var data = $('#edit-product-buy-form').serializeArray();
+        console.log(data);
+        const button = e.relatedTarget;
+        let tr = button.parentElement.parentElement;
+        const modal = $(this);
+        console.log(button.dataset.storage);
+        console.log(button.dataset.network);
+        modal.find('select[name=storage]').val(button.dataset.storage)
+        modal.find('#edit-network').val(button.dataset.network)
+        modal.find('#edit_excellent_offer').val(button.dataset.excellent)
+        modal.find('#edit_good_offer').val(button.dataset.good)
+        modal.find('#edit_fair_offer').val(button.dataset.fair)
+        modal.find('#edit_poor_offer').val(button.dataset.poor)
+        modal.find('#replacing-row-index').val(tr.rowIndex);
+    });
+
+    $("#edit-product-buy-submit").on("click",function(){
+        document.getElementById('parent-table-product-buy').deleteRow($('#replacing-row-index').val());
+        var data = $('#edit-product-buy-form').serializeArray();
+        console.log(data);
+        var newRecord = `<tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
+                <td align="center">
+                    ${data[1].value}
+                    <input type="hidden" name="storage[]" value="${data[1].value}">
+                    <input type="hidden" name="storage_buy[]" value="${data[1].value}">
+                </td>'+
+                <td align="right">${selected_network}<input type="hidden" name="network[]" value="${data[2].value}"></td>
+                <td align="right">${data[3].value}<input type="hidden" name="excellent_offer[]" value="${data[3].value}"></td>
+                <td align="right">$${data[4].value}<input type="hidden" name="good_offer[]" value="${data[4].value}"></td>
+                <td align="right">$${data[5].value}<input type="hidden" name="fair_offer[]" value="${data[5].value}"></td>
+                <td align="right">$${data[6].value}<input type="hidden" name="poor_offer[]" value="${data[6].value}"></td>
+                <td align="center">
+                    <button type="button"
+                    class="edit-row-product-storage btn btn-primary btn-xs"
+                    data-toggle="modal" data-target="#edit-modal-product-buy"
+                    data-excellent="${data[3].value}" data-good="${data[4].value}"
+                    data-fair="${data[5].value}" data-poor="${data[6].value}" data-network=${data[2].value}
+                    data-storage="${data[1].value}">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="delete-row-product-storage btn btn-danger btn-xs">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+            $('#table-product-buy').append(newRecord);
+            $("#edit-modal-product-buy").modal('hide');
     });
 
     $('#excellent_offer').keyup(function(){
@@ -452,9 +550,31 @@ $(function() {
             var good = percent($('#excellent_offer').val(), 'good');
             var fair = percent($('#excellent_offer').val(), 'fair');
             var poor = percent($('#excellent_offer').val(), 'poor');
-            $('#good_offer').val(good);
-            $('#fair_offer').val(fair);
-            $('#poor_offer').val(poor);
+            $('#good_offer').val(good.toFixed(2));
+            $('#fair_offer').val(fair.toFixed(2));
+            $('#poor_offer').val(poor.toFixed(2));
+        }
+    });
+
+    $('#edit_excellent_offer').keyup(function(){
+        if($('#edit_offer_type').prop('checked')){
+            var good = percent($('#edit_excellent_offer').val(), 'good');
+            var fair = percent($('#edit_excellent_offer').val(), 'fair');
+            var poor = percent($('#edit_excellent_offer').val(), 'poor');
+            $('#edit_good_offer').val(good.toFixed(2));
+            $('#edit_fair_offer').val(fair.toFixed(2));
+            $('#edit_poor_offer').val(poor.toFixed(2));
+        }
+    });
+
+    $(document).on('click','button.delete-row-product-storage',function(event){
+        if(confirm('Remove this data?')){
+            const tableRow = event.target.parentElement.parentElement
+            if(tableRow.rowIndex != undefined){
+                tableRow.remove();
+            } else {
+            tableRow.parentElement.remove();
+            }
         }
     });
 
@@ -470,20 +590,43 @@ $(function() {
         }
     });
 
-    $('#network').change(function(){
-        var data = $('#productForm').serializeArray();
-        $.ajax({
-            type: "POST",
-            url: baseUrl+"/admin/products/checkduplicate",
-            data: data,
-            dataType: "json",
-            success: function (response) {
-                if(response.duplicate){
-                    $('#network-exist-error').css('display', 'inline');
-                }
-            }
-        });
+    $('#edit_offer_type').on('change', function() {
+        if($(this).prop('checked'))
+        {
+        console.log('sad');
+            var good = percent($('#edit_excellent_offer').val(), 'good');
+            var fair = percent($('#edit_excellent_offer').val(), 'fair');
+            var poor = percent($('#edit_excellent_offer').val(), 'poor');
+            $('#edit_good_offer').val(good);
+            $('#edit_fair_offer').val(fair);
+            $('#edit_poor_offer').val(poor);
+        }
     });
+
+    // $('#network').change(function(){
+    //     var data = $('#productForm').serializeArray();
+    //     console.log(data);
+    //     form_data = {
+    //         name: data[4].value,
+    //         brand_id: data[3].value,
+    //         storage: $('select[name=storage]').val(),
+    //         network_id: $(this).val(),
+    //         id: data[11].value
+    //     };
+    //     console.log(form_data);
+    //     $.ajax({
+    //         type: "POST",
+    //         url: baseUrl+"/admin/products/checkduplicate",
+    //         data: form_data,
+    //         dataType: "json",
+    //         success: function (response) {
+    //             console.log(response);
+    //             if(response.duplicate){
+    //                 $('#network-exist-error').css('display', 'inline');
+    //             }
+    //         }
+    //     });
+    // });
 
     $('.input-storage').change(function(){
         var data = $('#productForm').serializeArray();

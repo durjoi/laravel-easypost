@@ -24,7 +24,9 @@ use App\Repositories\Customer\CustomerSellRepositoryEloquent as CustomerSell;
 use App\Repositories\Admin\OrderRepositoryEloquent as Order;
 use App\Repositories\Admin\OrderItemRepositoryEloquent as OrderItem;
 use App\Repositories\Customer\CustomerTransactionRepositoryEloquent as CustomerTransaction;
+use App\Repositories\Admin\NetworkRepositoryEloquent as Network;
 use App\Models\Admin\Product as ModelProduct;
+use App\Models\Admin\ProductStorage as StorageProduct;
 use App\Models\TableList as Tablelist;
 use Illuminate\Support\Facades\Auth;
 use PDF;
@@ -54,6 +56,8 @@ class DeviceController extends Controller
     protected $orderRepo;
     protected $orderItemRepo;
     protected $tablelist;
+    protected $network;
+    protected $storageProduct;
 
     function __construct(Brand $brandRepo, 
                         Product $productRepo, 
@@ -69,7 +73,9 @@ class DeviceController extends Controller
                         ModelProduct $product, 
                         Order $orderRepo, 
                         OrderItem $orderItemRepo, 
-                        TableList $tablelist)
+                        TableList $tablelist,
+                        Network $network,
+                        StorageProduct $storageProduct)
     {
         $this->brandRepo = $brandRepo;
         $this->productRepo = $productRepo;
@@ -86,6 +92,8 @@ class DeviceController extends Controller
         $this->orderRepo = $orderRepo;
         $this->orderItemRepo = $orderItemRepo;
         $this->tablelist = $tablelist;
+        $this->network = $network;
+        $this->storageProduct = $storageProduct;
     }
 
 
@@ -97,15 +105,18 @@ class DeviceController extends Controller
         $data['paymentList'] = $this->tablelist->payment_list;
         $brandDetails = $this->brandRepo->findByField('name', $brand);
         $data['chkproduct'] = $this->productRepo->rawCount("brand_id = ?", [$brandDetails->id]);
-        $data['networks'] =  $this->productRepo->queryTable()->whereRaw("brand_id = ? and device_type IN ('Buy', 'Both')", [$brandDetails->id])->groupBy('network')->get();
+        $data['networks'] =  $this->productRepo->queryTable()->whereRaw("brand_id = ? AND status = 'active' AND device_type IN ('Buy', 'Both')", [$brandDetails->id])->groupBy('network')->get();
         $data['brandDetails'] = $brandDetails;
         $allProducts = $this->productRepo->rawByWithFieldAll(['photo'], "brand_id = ?", [$brandDetails->id], 'model');
         $data['products'] = [];
         foreach ($allProducts as $key => $val) 
         {
-            if ($this->product->find($val['id'])->storagesForBuying()->count() >= 1) {
-                $data['products'][$key] = $val;
-                $data['products'][$key]['storages'] = $this->product->find($val['id'])->storagesForBuying()->get();
+            $product = $this->product->where('status','active')->find($val['id']);
+            if($product){
+                if ($product->storagesForBuying()->count() >= 1) {
+                    $data['products'][$key] = $val;
+                    $data['products'][$key]['storages'] = $this->product->find($val['id'])->storagesForBuying()->get();
+                }
             }
         }
 
@@ -153,6 +164,7 @@ class DeviceController extends Controller
 
     public function filterByStorageCondition (Request $request) 
     {
+        $data = [];
         // return $request->all();
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
         // $network = $request['network'];
@@ -160,7 +172,6 @@ class DeviceController extends Controller
         $result = $this->productRepo->findWith($id, ['photo', 'networks.network']);
         $storagelist = '';
         // $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$id]);
-        
         if (isset($request['storage']) && $request['storage'] != null) {
             $getProductStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$id, $request['storage']]);
         } else {
@@ -235,8 +246,9 @@ class DeviceController extends Controller
     
     public function brandModel($brand, $model)
     {
+        $brand = $brand == "brand" ? $model : $brand;
         $brandData = $this->brandRepo->findByField('name', $brand);
-        $result = $this->productRepo->rawByWithField(['photo', 'networks.network'], 'model = ? and brand_id = ?', [$model, $brandData->id]);
+        $result = $brandData ? $this->productRepo->rawByWithField(['photo', 'networks.network'], 'model = ? and brand_id = ?', [$model, $brandData->id]) : null;
         if ($result) 
         {
             $id = $result['id'];
@@ -251,68 +263,90 @@ class DeviceController extends Controller
             $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$result->id]);
             $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
             $data['paymentList'] = $this->tablelist->payment_list;
-            
+            // dd($data['product']->hashedid);
             $getProductStorage = $data['productStorage'][0];
 
-            foreach ($data['productStorage'] as $psKey => $psVal) 
-            {
-                $active = ($psKey == 0) ? ' active' : '';
-                $checked = ($psKey == 0) ? ' checked' : '';
-                $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
-                $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$psVal->title.'" onchange="storage(\''.$psVal->title.'\')" autocomplete="off"'.$checked.'> '.$psVal->title;
-                $storagelist .= '</label>';
+            $network_ids = [];
+            foreach($data['productStorage'] as $storage){
+                array_push($network_ids,$storage->network_id);
             }
-            $data['storagelist'] = $storagelist;
-            if($device_type == 1){
-                $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
-                $condition .= '<div class="card-body" style="font-size: 14px;">';
-                $condition .= 'If ALL of the following are true:';
-                $condition .= '<ul>';
-                $condition .= '<li>Fully functional</li>';
-                $condition .= '<li>Appears to be brand new</li>';
-                $condition .= '<li>No scratches, scuffs or marks</li>';
-                $condition .= '<li>Phone has a good ESN /IMEI</li>';
-                $condition .= '</ul>';
-                $condition .= '</div>';
+
+            $data['networks'] = $this->network->getWhereIn('id',$network_ids,null,null,['id','title','image']);
+
+            $data['specs'] = [];
+            foreach($network_ids as $network){
+                $fetched_data = $this->storageProduct->query()
+                        ->where('network_id',$network)
+                        ->where('product_id',$result->id)
+                        ->where('amount',null)
+                        ->get();
+                $data['specs'][$network] = $fetched_data;
             }
-            if($device_type == 2){
-                $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
-                $condition .= '<div class="card-body" style="font-size: 14px;">';
-                $condition .= 'If ALL of the following are true:';
-                $condition .= '<ul>';
-                $condition .= '<li>Fully functional</li>';
-                $condition .= '<li>No major scratches, scuffs or nicks</li>';
-                $condition .= '<li>No cracks or broken hardware</li>';
-                $condition .= '<li>Phone has a good ESN / IMEI</li>';
-                $condition .= '</ul>';
-                $condition .= '</div>';
-            }
-            if($device_type == 3){
-                $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
-                $condition .= '<div class="card-body" style="font-size: 14px;">';
-                $condition .= 'If ANY of the following are true:';
-                $condition .= '<ul>';
-                $condition .= '<li>Cracked back</li>';
-                $condition .= '<li>Defective buttons</li>';
-                $condition .= '<li>Significant wear and tear</li>';
-                $condition .= '<li>Housing damage</li>';
-                $condition .= '</ul>';
-                $condition .= '</div>';
-            }
-            if($device_type == 4){
-                $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
-                $condition .= '<div class="card-body" style="font-size: 14px;">';
-                $condition .= 'If ANY of the following are true:';
-                $condition .= '<ul>';
-                $condition .= '<li>Does NOT power on</li>';
-                $condition .= '<li>Damaged LCD</li>';
-                $condition .= '<li>Missing parts or bent frame</li>';
-                $condition .= '<li>Any Password lock</li>';
-                $condition .= '</ul>';
-                $condition .= '</div>';
-            }
-            $data['condition'] = $condition;
-            $data['amount'] = $amount;
+
+            // foreach($data['specs'] as $key=>$spec){
+            //     dump($spec[0]->title);
+            // }
+            // die();
+            // dd($data['specs']);
+            // foreach ($data['productStorage'] as $psKey => $psVal) 
+            // {
+            //     $active = ($psKey == 0) ? ' active' : '';
+            //     $checked = ($psKey == 0) ? ' checked' : '';
+            //     $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
+            //     $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$psVal->title.'" onchange="storage(\''.$psVal->title.'\')" autocomplete="off"'.$checked.'> '.$psVal->title;
+            //     $storagelist .= '</label>';
+            // }
+            // $data['storagelist'] = $storagelist;
+            // if($device_type == 1){
+            //     $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
+            //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+            //     $condition .= 'If ALL of the following are true:';
+            //     $condition .= '<ul>';
+            //     $condition .= '<li>Fully functional</li>';
+            //     $condition .= '<li>Appears to be brand new</li>';
+            //     $condition .= '<li>No scratches, scuffs or marks</li>';
+            //     $condition .= '<li>Phone has a good ESN /IMEI</li>';
+            //     $condition .= '</ul>';
+            //     $condition .= '</div>';
+            // }
+            // if($device_type == 2){
+            //     $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
+            //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+            //     $condition .= 'If ALL of the following are true:';
+            //     $condition .= '<ul>';
+            //     $condition .= '<li>Fully functional</li>';
+            //     $condition .= '<li>No major scratches, scuffs or nicks</li>';
+            //     $condition .= '<li>No cracks or broken hardware</li>';
+            //     $condition .= '<li>Phone has a good ESN / IMEI</li>';
+            //     $condition .= '</ul>';
+            //     $condition .= '</div>';
+            // }
+            // if($device_type == 3){
+            //     $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
+            //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+            //     $condition .= 'If ANY of the following are true:';
+            //     $condition .= '<ul>';
+            //     $condition .= '<li>Cracked back</li>';
+            //     $condition .= '<li>Defective buttons</li>';
+            //     $condition .= '<li>Significant wear and tear</li>';
+            //     $condition .= '<li>Housing damage</li>';
+            //     $condition .= '</ul>';
+            //     $condition .= '</div>';
+            // }
+            // if($device_type == 4){
+            //     $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
+            //     $condition .= '<div class="card-body" style="font-size: 14px;">';
+            //     $condition .= 'If ANY of the following are true:';
+            //     $condition .= '<ul>';
+            //     $condition .= '<li>Does NOT power on</li>';
+            //     $condition .= '<li>Damaged LCD</li>';
+            //     $condition .= '<li>Missing parts or bent frame</li>';
+            //     $condition .= '<li>Any Password lock</li>';
+            //     $condition .= '</ul>';
+            //     $condition .= '</div>';
+            // }
+            // $data['condition'] = $condition;
+            // $data['amount'] = $amount;
 
 
 
@@ -333,7 +367,11 @@ class DeviceController extends Controller
         {
             $data['status'] = 404;
             $data['error'] = $brand.' - '.$model.' not found';
+            $data['brand'] = $brand;
+            $data['product'] = null;
+            $data['model'] = $model;
         }
+
         return view('front.device.brandmodel', $data);
         
         // $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
@@ -594,6 +632,17 @@ class DeviceController extends Controller
 
     public function store(Request $request)
     {
+        // return $request->all();
+        // $cart = $request->cart[0];
+        // $brand = $this->brandRepo->findByField('name', $cart['brand']);
+        // $product = $this->productRepo->rawByField("brand_id = ? and model = ?", [$brand->id, $cart['model']]);
+        // $storage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$product->id, $cart['storage']]);
+        // return response()->json([
+        //     "cart_storage" => $cart['storage'],
+        //     "storage_price" => $storage[$cart['device_type']],
+        //     "storage_device" => $storage,
+        // ]);
+        // return $storage[$cart['storage']];
         $response['status'] = 200;
         if (Auth::guard('customer')->check() != null) {
             $customer = Auth::guard('customer')->user();
@@ -818,7 +867,8 @@ class DeviceController extends Controller
                         'network_id' => $value['carrier_id'],
                         'order_id' => $order->id,
                         'product_storage_id' => $productStorage['id'], 
-                        'amount' => $value['amount'],
+                        // 'amount' => $value['amount'],
+                        'amount' => $productStorage[$value['device_type']],
                         'quantity' => $value['quantity'], 
                         'device_type' => $value['device_type']
                     ];
@@ -1186,5 +1236,30 @@ password: '.$request['authpw'].'
 Your verification code: '.$request['verification_code'];
         return app('App\Http\Controllers\GlobalFunctionController')->doSmsSending($phone, $message);
         return true;
+    }
+
+
+    public function storages_api($product_id)
+    {
+        $id = (app('App\Http\Controllers\GlobalFunctionController'))->decodeHashid($product_id);
+        $product = $this->productRepo->findWith($id,['storagesForBuying']);
+        
+        $network_ids = [];
+        foreach($product->storagesForBuying as $storage){
+            array_push($network_ids,$storage->network_id);
+        }
+
+        $data['specs'] = [];
+        foreach($network_ids as $network){
+            $fetched_data = $this->storageProduct->query()
+                    ->where('network_id',$network)
+                    ->where('product_id',$product->id)
+                    ->where('amount',null)
+                    ->get(['id','title','excellent_offer','good_offer',"fair_offer","poor_offer"]);
+            $data['specs'][$network] = $fetched_data;
+        }
+
+        $data['status'] = true;
+        return response()->json($data);
     }
 }

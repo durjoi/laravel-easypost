@@ -291,6 +291,7 @@
                     data: obj,
                     dataType: "json",
                     success: function (response) {
+                        console.log(response);
                         if (response.status == 200) {
                             $('#checkoutCompleted').html(response.message);
                             $('#checkoutInProgress').html('');

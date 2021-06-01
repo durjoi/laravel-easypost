@@ -316,7 +316,7 @@ class FrontPageController extends Controller
 
 
         $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-        $data['page'] = $this->pageBuilderRepo->findByField('url', $uri);
+        $data['page'] = $this->pageBuilderRepo->findByField('route', $uri);
         if ($data['page']) {
             $data['page_id'] = $data['page']->id;
             $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";

@@ -21,6 +21,7 @@ use App\Repositories\Admin\ProductCategoryEloquentRepository as ProductCategory;
 use App\Repositories\Admin\SettingsStorageEloquentRepository as PhoneStorage;
 
 use App\Models\TableList as Tablelist;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -80,12 +81,12 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
-        // return $request->all();
+        // dd($request->all());
         $device_type = $request['device_type'];
         $user_id = Auth::user()->id;
         // $chkdup = $this->productRepo->rawCount("brand_id = ? and device_type = ? and model = ? and color = ?", [$request['brand_id'], $request['device_type'], $request['name'], $request['color']]);
         $chkdup = $this->productRepo->rawCount("brand_id = ? and model = ? and color = ?", [$request['brand_id'], $request['name'], $request['color']]);
-        
+
         $makeRequest = $this->makeProductRequest($request);
         
         if($chkdup == 0){
@@ -93,11 +94,11 @@ class ProductController extends Controller
             if ($hasfile) 
             {
                 $product = $this->productRepo->create($makeRequest);
-                if(isset($request['network']) && $request['network'] != null) {
-                    foreach ($request['network'] as $nKey => $nVal) {
-                        $this->createProductNetwork($product->id, $nVal);
-                    }
-                }
+                // if(isset($request['network']) && $request['network'] != null) {
+                //     foreach ($request['network'] as $nKey => $nVal) {
+                //         $this->createProductNetwork($product->id, $nVal);
+                //     }
+                // }
 
                 if(isset($request['categories']) && $request['categories'] != null) {
                     foreach ($request['categories'] as $cKey => $cVal) {
@@ -126,7 +127,7 @@ class ProductController extends Controller
             $data['response'] = 1;
             return redirect()->to('admin/products')->with('msg', 'New device has been added!');
         }
-        return redirect()->back()->with('errormsg', 'This device is already exists!');
+        return redirect('/admin/products/create')->with('errormsg', 'This device is already exists!');
     }
 
     public function create()
@@ -137,24 +138,22 @@ class ProductController extends Controller
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
         $data['storageList'] = [''=>'--'];
         $data['categoryList'] = $this->settingsCategoryRepo->all();
-        $data['networkList'] = $this->networkRepo->all();
+        $data['networkList'] = $this->networkRepo->all(null,null,['id','title']);
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         $data['tvproducts'] = true;
+
         foreach($phone_storages as $phone_storage){
             $data['storageList']["{$phone_storage->capacity}{$phone_storage->label}"] = "{$phone_storage->capacity}{$phone_storage->label}";
         }
-
+        
         return view('admin.products.create', $data);
     }
 
     public function update(Request $request, $hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
-        return response()->json([
-            "id" => $id,
-        ]);
         $device_type = $request['device_type'];
         $user_id = Auth::user()->id;
         $product = $this->productRepo->find($id);
@@ -167,13 +166,13 @@ class ProductController extends Controller
         $makeRequest = $this->makeProductRequest($request);
         if($chkdup == 0){
 
-            if(isset($request['network']) && $request['network'] != null) {
-                foreach ($request['network'] as $nKey => $nVal) {
-                    if ($this->productNetworkRepo->rawCount("product_id = ? and network_id = ?", [$id, $nVal]) == 0){
-                        $this->createProductNetwork($product->id, $nVal);
-                    }
-                }
-            }
+            // if(isset($request['network']) && $request['network'] != null) {
+            //     foreach ($request['network'] as $nKey => $nVal) {
+            //         if ($this->productNetworkRepo->rawCount("product_id = ? and network_id = ?", [$id, $nVal]) == 0){
+            //             $this->createProductNetwork($product->id, $nVal);
+            //         }
+            //     }
+            // }
 
             if(isset($request['categories']) && $request['categories'] != null) {
                 foreach ($request['categories'] as $cKey => $cVal) {
@@ -225,7 +224,8 @@ class ProductController extends Controller
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $phone_storages = $this->phone_storage->all('label','asc',['id','capacity','label']);
-        $data['product'] = $this->productRepo->findWith($id, ['photo', 'networks.network', 'storages']);
+        $data['product'] = $this->productRepo->findWith($id, ['photo', 'networks.network', 'storages','storages.network']);
+        // dd($data['product']);
         $data['brandList'] = $this->brandRepo->selectlist('name', 'id');
         $data['statusList'] = [''=>'Choose Status', 'Active'=>'Active', 'Draft'=>'Draft', 'Inactive'=>'Inactive'];
         $data['typeList'] = [''=>'--', 'Sell'=>'I want to sell this device', 'Buy'=>'I want to buy this kind of device', 'Both'=>'I want to buy and sell this device'];
@@ -362,16 +362,26 @@ class ProductController extends Controller
 
     public function checkduplicate(Request $request)
     {
-        $model = $request['name'];
-        $brand_id = $request['brand_id'];
-        $storage = $request['storage'];
-        $id = $request['id'];
-        if($id){
-            $data['duplicate'] = $this->productRepo->rawCount("model = ? and brand_id = ? and storage = ? and id != ?", [$model, $brand_id, $storage, $id]);
+        try {
+
+            $model = $request['name'];
+            $brand_id = $request['brand_id'];
+            $storage = $request['storage'];
+            $id = $request['id'];
+            $network_id = $request->get('network_id');
+            if($id){
+                $data['duplicate'] = $this->productRepo->rawCount("model = ? and brand_id = ? and storage = ? and id != ?", [$model, $brand_id, $storage, $id]);
+                return response()->json($data);
+            }
+            $data['duplicate'] = $this->productRepo->rawCount("model = ? and brand_id = ? and storage = ?", [$model, $brand_id, $storage]);
             return response()->json($data);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                "status" => false,
+                "message" => $e->getMessage(),
+            ],200);
         }
-        $data['duplicate'] = $this->productRepo->rawCount("model = ? and brand_id = ? and storage = ?", [$model, $brand_id, $storage]);
-        return response()->json($data);
     }
 
     public function checkduplicatedevice(Request $request)
@@ -491,13 +501,23 @@ class ProductController extends Controller
                     'product_id' => $product_id, 
                     'title' => $sVal,
                     'excellent_offer' => $arr_storage['excellent_offer'][$sKey],
+                    'network_id' => $arr_storage['network'][$sKey],
                     'good_offer' => $arr_storage['good_offer'][$sKey],
                     'fair_offer' => $arr_storage['fair_offer'][$sKey],
                     'poor_offer' => $arr_storage['poor_offer'][$sKey]
                 ];
+
                 if ($arr_storage['product-storage-id'][$sKey] === "0") 
                 {
-                    $this->productStorageRepo->create($storageRequest);
+                    $exist = $this->productStorageRepo
+                         ->rawByField('network_id = ? AND product_id = ? AND title = ? AND amount IS NULL',[
+                            $storageRequest['network_id'],
+                            $storageRequest['product_id'],
+                            $storageRequest['title']
+                        ]);
+                    if(!$exist){
+                        $this->productStorageRepo->create($storageRequest);
+                    }
                 }
                 else 
                 {
@@ -517,11 +537,18 @@ class ProductController extends Controller
                 $storageRequest = [
                     'product_id' => $product_id, 
                     'title' => $sVal,
+                    'network_id' => $arr_storage['network_id'][$sKey],
                     'amount' => $arr_storage['amount'][$sKey]
                 ];
                 if ($arr_storage['product-storage-id'][$sKey] === "0") 
                 {
-                    $this->productStorageRepo->create($storageRequest);
+                    $exist = $this->productStorageRepo
+                                  ->rawByField('product_id = ? AND title = ? AND network_id = ? AND amount IS NOT NULL',[
+                                      $storageRequest['product_id'],
+                                      $storageRequest['title'],
+                                      $storageRequest['network_id']
+                                  ]);
+                    !$exist ? $this->productStorageRepo->create($storageRequest) : null;
                 }
                 else 
                 {
@@ -748,6 +775,7 @@ class ProductController extends Controller
             "fair_offer"        => $request->get('fair_offer'),
             "poor_offer"        => $request->get('poor_offer'),
             "amount"            => $request->get('amount'),
+            "network_id"        => $request->get('network_id'),
         ]);
 
         return response()->json([
@@ -767,6 +795,9 @@ class ProductController extends Controller
     public function add_device_price($hashId,Request $request)
     {
         try{
+            return response()->json([
+                "id" => $hashId,
+            ]);
             $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashId);
             $product = $this->productRepo->find($id);
             
@@ -857,6 +888,7 @@ class ProductController extends Controller
             $selling_device->update([
                 "title" => $request->get('title'),
                 "amount" => $request->get('amount'),
+                "network_id" => $request->get('network_id'),
             ]);
 
             return response()->json([

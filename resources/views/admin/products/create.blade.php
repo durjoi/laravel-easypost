@@ -29,6 +29,9 @@
             </form>
         </section>
     </div>
+    @include('admin.modals.products.sell.modal')
+    @include('admin.modals.products.buy.modal')
+    @include('admin.modals.products.buy.edit')
 @endsection
 
 @section('page-css')
@@ -50,8 +53,6 @@
 @endsection
 
 @section('page-js')
-    @include('admin.modals.products.sell.modal')
-    @include('admin.modals.products.buy.modal')
 {!! JsValidator::formRequest('App\Http\Requests\Admin\ProductRequest') !!}
 <script src="{{ url('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
 <script src="{{ url('library/js/admin/products/components.js') }}"></script>

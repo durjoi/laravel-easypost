@@ -26,6 +26,7 @@ Route::post('/products/sell/payment-method', [App\Http\Controllers\FrontPageCont
 Route::post('/products', [App\Http\Controllers\FrontPageController::class, 'productsearch']);
 
 Route::get('products/category/{brand}', [App\Http\Controllers\DeviceController::class, 'checkout']);
+Route::get('products/storages/{product_id}',[App\Http\Controllers\DeviceController::class,'storages_api'])->withoutMiddleware(['web']);
 Route::get('products/{brand}/{model}', [App\Http\Controllers\DeviceController::class, 'brandModel']);
 Route::post('products/model', [App\Http\Controllers\DeviceController::class, 'model']);
 Route::post('products/model/filter', [App\Http\Controllers\DeviceController::class, 'filterByStorageCondition']);
