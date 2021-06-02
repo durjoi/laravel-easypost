@@ -186,11 +186,14 @@ class ProductController extends Controller
                 $this->createProductStorageList($request, $product->id);
             }
 
-            foreach ($this->productNetworkRepo->findByFieldAll('product_id', $id) as $pnrKey => $pnrVal) {
-                if (!in_array($pnrVal['network_id'], $request['network'])) {
-                    $this->productNetworkRepo->delete($pnrVal['id']);
-                }
-            }
+            // foreach ($this->productNetworkRepo->findByFieldAll('product_id', $id) as $pnrKey => $pnrVal) {
+            //     if(is_array($request['network'])){
+            //         if (!in_array($pnrVal['network_id'], $request['network'])) {
+            //             $this->productNetworkRepo->delete($pnrVal['id']);
+            //         }
+            //     }
+            // }
+
             foreach ($this->productCategoryRepo->findByFieldAll('product_id', $id) as $pcrKey => $pcrVal) {
                 if (!in_array($pcrVal['category_id'], $request['categories'])) {
                     $this->productCategoryRepo->delete($pcrVal['id']);
