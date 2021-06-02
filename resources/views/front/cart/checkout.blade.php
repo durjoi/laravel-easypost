@@ -1,7 +1,7 @@
 @extends('layouts.front')
 @section('content')
 
-    <div class="pt-70 pb50">
+    <div class="pt-70 pb50 d-none" id="whole-content">
         <div class="container pt-50">
             <div class="row">
                 <div class="col-lg-8">
@@ -193,9 +193,26 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
     <script>
+        if(document.readyState == "loading"){
+            if(!localStorage.getItem('sessionCart')){
+                localStorage.setItem("cart-empty","Please add some item in your cart first");
+                window.location.href = '../../';
+            } else {
+                var cart = JSON.parse(decryptData(localStorage.getItem("sessionCart")));
+                if(cart.length < 0){
+                    window.location.href = '../../';
+                }
+            }   
+        }
+
+        window.onload =  function(){
+            $("#whole-content").removeClass("d-none");
+        }
+
         var telInput = $("#phone"),
         errorMsg = $("#error-msg"),
         validMsg = $("#valid-msg");
+
 
         // initialise plugin
         telInput.intlTelInput({

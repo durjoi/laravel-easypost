@@ -234,5 +234,11 @@
 @endsection
 @section('page-js')
     <script>
+        window.onload = function(){
+            if(localStorage.getItem('cart-empty')){
+                alert(`Please add some item in your cart first`);
+                localStorage.removeItem('cart-empty');
+            }
+        }
     </script>
 @endsection
