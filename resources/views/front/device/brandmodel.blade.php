@@ -22,17 +22,22 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-12">
+                                                    <div class="col-md-12 text-center" id="network-section-loading-label">
+                                                        <h3>Loading...</h3>
+                                                    </div>
+                                                    <div class="col-md-12 d-none text-center" id="network-section">
                                                         <div class="btn-group-toggle" data-toggle="buttons">
-                                                            @foreach ($networks as $network)
-                                                            <label class="btn btn-outline-warning radio-btn btn-carrier" id="" data-network_id="{{ $network->id }}" onClick="selectDeviceCarrier({{ $network->id }})">
-                                                                <img style="width: 90px; height: 50px;" src="{{ asset('/uploads/phone-carriers/'.$network->image) }}" class="img-fluid">
-                                                            </label>
-                                                            @endforeach
+                                                            @forelse ($networks as $network)
+                                                                <label class="btn btn-outline-warning radio-btn btn-carrier" id="" data-network_id="{{ $network->id }}" onClick="selectDeviceCarrier({{ $network->id }})">
+                                                                    <img style="width: 90px; height: 50px;" src="{{ asset('/uploads/phone-carriers/'.$network->image) }}" class="img-fluid">
+                                                                </label>
+                                                            @empty
+                                                                <h3>Sorry we don't have available device at the moment</h3>
+                                                            @endforelse
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row mt-3 d-none" id="device-condition-title">
+                                                <div class="row mt-1 d-none" id="device-condition-title">
                                                     <div class="col-md-12">
                                                         <h3>What condition is your device in?</h3>
                                                         <hr>
@@ -53,6 +58,19 @@
                                                             <label class="btn btn-outline-warning radio-btn">
                                                                 <input type="radio" class="radio-device" id="condition-broken-button" name="device_type" value="poor_offer" autocomplete="off"> Broken
                                                             </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 mt-1 d-none" id="condition-status">
+                                                        <div class="form-group">
+                                                            <div class="card">
+                                                                <div class="card-body" style="font-size: 14px;">
+                                                                    If ALL of the following are true:
+                                                                    <ul id="description-list">
+
+                                                                    </ul>
+                                                                </div>
+                                                                {{-- {!! $condition !!} --}}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -79,26 +97,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row d-none" id="device-description-section">
-                                                    <div class="col-md-7">
-                                                        <div class="form-group">
-                                                            <div class="card">
-                                                                <div class="card-body" style="font-size: 14px;">
-                                                                    If ALL of the following are true:
-                                                                    <ul id="description-list">
-
-                                                                    </ul>
-                                                                </div>
-                                                                {{-- {!! $condition !!} --}}
-                                                            </div>
+                                                    <div class="row d-none mt-3" id="device-description-section">
+                                                        <div class="col-md-12 text-center">
+                                                            <h5>Your Cash Offer</h5>
+                                                            <div class="ml-auto" style="font-size: 40px; padding-bottom: 15px; font-weight: bold;" id="device-amount"><b id="cash-offer">$</b></div>
+                                                            {{-- <a href="javascript:void(0)" id="addToCart" class="btn btn-warning btn-md btn-block">Add to Cart</a> --}}
+                                                            <button id="addToCart" class="btn btn-warning btn-md btn-block">Add to Cart</button>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <h5>Your Cash Offer</h5>
-                                                        <div style="font-size: 40px; padding-bottom: 15px; font-weight: bold;" id="device-amount"><b id="cash-offer">$</b></div>
-                                                        {{-- <a href="javascript:void(0)" id="addToCart" class="btn btn-warning btn-md btn-block">Add to Cart</a> --}}
-                                                        <button id="addToCart" class="btn btn-warning btn-md btn-block">Add to Cart</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -245,12 +250,15 @@
             let size = null;
 
             // Sections
+            var network_section_loading_label = $("#network-section-loading-label");
+            var network_section = $("#network-section");
             var size_section = $("#device-size-section");
             var size_section_title = $("#device-size-title");
             var size_buttons = $("#device-size-buttons")
             var condition_section = $("#device-condition-section");
             var condition_section_title = $("#device-condition-title");
             var description_section = $("#device-description-section");
+            var condition_status = $("#condition-status");
             var sections = [size_section,size_section_title,condition_section,condition_section_title];
 
             // Condition buttons
@@ -271,6 +279,8 @@
                     method: "GET",
                     success: res => {
                         specs = res.specs;
+                        network_section_loading_label.remove();
+                        network_section.removeClass('d-none');
                     },
                     error: err => {
                     }
@@ -307,6 +317,7 @@
                 var network = '<?php echo ($status == 200) ? $product->hashedid : '' ?>';
                 var id = '<?php echo ($status == 200) ? $product->hashedid : '' ?>';
                 condition = this.value;
+                condition_status.removeClass('d-none');
                 showDescription();
                 // $.ajax({
                 //     type: "POST",
@@ -335,8 +346,7 @@
             
 
             function showDescription(){
-                if(size && condition){
-                    description_section.removeClass('d-none');
+                if(condition){
                     let items = [];
                     switch(condition){
                         case 'excellent_offer': items = ['Fully functional','Appears to be brand new','No Scratches, scuffess or marks','Phone has agood ESN/IMEI']; break;
@@ -349,7 +359,9 @@
                         let list_item = `<li>${item}</li>`;
                         $('#description-list').append(list_item);
                     })
-                    
+                }
+                if(size && condition){
+                    description_section.removeClass('d-none');
                     if(network_id){
                         specs[network_id].map(spec => {
                             if(spec.title == size){
