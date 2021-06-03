@@ -31,7 +31,7 @@
                     <div class="col-lg-1"></div>
                     @if(isset($rowtwo))
                         @foreach($rowtwo as $row)
-                        <div class="col-lg-2 col-md-4 col-6 device-link">
+                        <div class="col-lg-2 col-md-4 col-6 device-link mb-2">
                             <a href="{{ url('products/brand', $row->name) }}" class="hvr-shrink">
                                 <img src="{{ url($row->photo) }}" class="img-fluid" style="height: 150px !important;" />
                                 <h4 class="device-name">{{ $row->name }}</h4>
@@ -46,8 +46,7 @@
                         <div class="text-center"><h1 class="hero-header">Other Devices</h1></div>
                     </div>
                 </div>
-                <div class="row mt-50 pb-50">
-                    <div class="col-lg-2"></div>
+                {{-- <div class="row mt-50 pb-50">
                     @if(isset($rowtri))
                         @foreach($rowtri as $row)
                         <div class="col-lg-2 col-md-4 col-6 device-link" style="align-items: center; display: flex;">
@@ -58,7 +57,16 @@
                         </div>
                         @endforeach
                     @endif
-                    <div class="col-lg-1"></div>
+                </div> --}}
+                <div class="d-flex flex-row flex-wrap justify-content-center mt-50 pb-50">
+                    @foreach($rowtri as $other_device)
+                        <div class="device-link" style="width: 15rem;">
+                            <a href="{{ url('products/brand', $other_device->name) }}" class="hvr-shrink">
+                            <img src="{{ url($other_device->photo) }}" alt="other_device_product_image" style="height: 150px !important; width: 150px !important">
+                            <h4 class="device-name">{{ $other_device->name }}</h4>
+                        </a>
+                        </div> 
+                    @endforeach
                 </div>
                 <div class="row mt-50 pb-50">
                     <div class="col-lg-12">
