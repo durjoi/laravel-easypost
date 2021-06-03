@@ -30,6 +30,8 @@ class SettingsStorageController extends Controller
     public function index()
     {
         $data['phone_storages'] = $this->phone_storages->all('label','asc',array('id','capacity','label'));
+        $data['module'] = "phone-storages";
+        $data['tvsettings'] = true;
 
         return view('admin.settings.storages.index',$data);
     }

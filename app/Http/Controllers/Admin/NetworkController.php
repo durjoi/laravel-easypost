@@ -27,6 +27,8 @@ class NetworkController extends Controller
     public function index()
     {
         $data['carriers'] = $this->phone_carrier->all('id','ASC');
+        $data['module'] = "phone-carriers";
+        $data['tvsettings'] = true;
         // $data['carriers'] = $this->phone_carrier->paginate(10,'created_at','DESC',['id','name','created_at']);
 
         return view('admin.settings.phone-carriers.index',$data);

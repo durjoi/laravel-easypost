@@ -124,13 +124,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('admin/settings/phone-carriers') }}" class="nav-link {{ (isset($module) && $module == 'brand') ? 'active' : '' }}">
+                            <a href="{{ url('admin/settings/phone-carriers') }}" class="nav-link {{ (isset($module) && $module == 'phone-carriers') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Phone Carriers</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('admin/settings/phone-storages') }}" class="nav-link {{ (isset($module) && $module == 'category') ? 'active' : '' }}">
+                            <a href="{{ url('admin/settings/phone-storages') }}" class="nav-link {{ (isset($module) && $module == 'phone-storages') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Phone Storages</p>
                             </a>
