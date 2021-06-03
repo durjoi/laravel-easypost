@@ -10,7 +10,7 @@
                             @if(count($products) > 0)
                                 @foreach($products as $key => $val)
                                     <div class="col-md-4 col-6 col-lg-3">
-                                        <div class="card tronics">
+                                        <div class="card tronics" style="min-height: 15rem;">
                                             <div class="card-body tronics-wrap">
                                                 <div class="text-center">
                                                     @if($val->photo != null)
