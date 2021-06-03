@@ -47,6 +47,7 @@
             </div>
         </section>
     </div>
+    @include('admin.modals.brands.modal')
 @endsection
 
 @section('page-css')
@@ -56,8 +57,6 @@
 @endsection
 
 @section('page-js')
-    @include('admin.modals.brands.modal')
-    {!! JsValidator::formRequest('App\Http\Requests\Admin\SettingsBrandRequest') !!}
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -151,4 +150,5 @@
             doAjaxConfirmProcessing('DELETE', '', {}, form_url);
         }
     </script>
+    {!! JsValidator::formRequest('App\Http\Requests\Admin\SettingsBrandRequest') !!}
 @endsection

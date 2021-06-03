@@ -25,7 +25,7 @@ class SettingsBrandRequest extends FormRequest
     {
         $id = $this->input('id');
         return [
-            'name' => 'required|unique:brands,name,'.(($id) ? $id : null).',id',
+            'name' => 'required|unique:settings_brands,name,'.(($id) ? $id : null).',id',
             'device_type' => 'required'
         ];
     }

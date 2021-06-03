@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="row mt-50 pb-50">
-                    <div class="col-lg-1"></div>
+                    <div class="col-lg-2"></div>
                     @if(isset($rowtri))
                         @foreach($rowtri as $row)
                         <div class="col-lg-2 col-md-4 col-6 device-link" style="align-items: center; display: flex;">
