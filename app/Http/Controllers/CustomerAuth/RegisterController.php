@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\CustomerAuth;
 
 use App\Models\Customer;
+use App\Models\TableList;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -12,9 +14,8 @@ use Saperemarketing\SCart\Facades\Cart;
 use App\Models\Customer\CustomerAddress;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use App\Models\TableList;
+use App\Http\Requests\Customer\CreateCustomerRequest;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
-use Illuminate\Support\Str;
 use App\Repositories\Customer\CustomerRepositoryEloquent as CustomerRepo;
 
 class RegisterController extends Controller
@@ -93,44 +94,44 @@ class RegisterController extends Controller
     }
 
 
-    protected function create(Request $data)
+    protected function create(CreateCustomerRequest $request)
     {
-        
-        $validateRecaptcha = $this->getCaptcha($data["g-recaptcha-response"]);
+        dd($_REQUEST);
+        $validateRecaptcha = $this->getCaptcha($request["g-recaptcha-response"]);
         if($validateRecaptcha->success == true && $validateRecaptcha->score > 0.5)
         {
-            if ($this->CheckExistingEmail($data['email']) == false) 
+            if ($this->CheckExistingEmail($request['email']) == false) 
             {
                 return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
             }
 
             $password = Str::random(10);
             $customer = Customer::create([
-                'fname' => $data['fname'],
-                'lname' => $data['lname'],
-                'email' => $data['email'],
+                'fname' => $request['first_name'],
+                'lname' => $request['last_name'],
+                'email' => $request['email'],
                 'username' => '',
                 'password' => Hash::make($password),
                 'authpw' => $password,
                 'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
-                'status' => 'In-Active'
+                'status' => 'inactive'
             ]);
     
             CustomerAddress::create([
                 'customer_id' => $customer->id,
-                'address1' => $data['address1'],
-                'address2' => $data['address2'],
-                'city' => $data['city'],
-                'state' => $data['state'],
-                'zip' => $data['zip'],
-                'phone' => $data['phone']
+                'address1' => $request['address1'],
+                'address2' => $request['address2'],
+                'city' => $request['city'],
+                'state' => $request['state'],
+                'zip' => $request['zip'],
+                'phone' => $request['phone']
             ]);
     
             Auth::guard('customer')->login($customer);
             if(!Auth::guard('customer')->check()){
               return redirect()->to('customer/auth/login');  
             }
-            if($data['cart']){
+            if($request['cart']){
                 return redirect()->to('products/checkout');
             }
             return redirect()->to('customer/dashboard');

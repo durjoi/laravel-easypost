@@ -5,9 +5,6 @@
 
             <div class="row">
                 <div class="col-md-12" align="center">
-
-
-
                     <div class="container-form container-form-register right-panel-active" id="container">
                         <div class="form-container sign-up-container">
                             <form action="{{ url('customer/auth/register') }}" id="registration-form" method="POST" class="page-form">
@@ -22,10 +19,19 @@
                                 <span>or use your email for registration</span>
                                 <div class="form-row">
                                     <div class="col-md-12">
-                                        <input type="text" name="fname" placeholder="First Name"> 
+                                        <input class="bg-input-gray form-control {{ $errors->has('first_name') ? 'is-invalid' : '' }}" type="text" name="first_name" placeholder="First Name"> 
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" name="lname" placeholder="Last Name">
+                                        <input class="bg-input-gray form-control {{ $errors->has('last_name') ? 'is-invalid' : '' }}" type="text" name="last_name" placeholder="Last Name">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input class="bg-input-gray form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" type="email" name="email" placeholder="Email Address">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input class="bg-input-gray form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" type="password" name="password" placeholder="{{ $errors->has('password') ? $errors->first('password') : 'Password' }}">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input class="bg-input-gray form-control {{ $errors->has('confirm_password') ? 'is-invalid' : '' }}" type="password" name="confirm_password" placeholder="{{ $errors->has('confirm_password') ? $errors->first('confirm_password') : 'Confirm Password' }}">
                                     </div>
                                     <div class="col-md-12">
                                         <div class="row">
@@ -35,22 +41,19 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" name="address1" placeholder="Address Line 1">
+                                        <input class="bg-input-gray form-control {{ $errors->has('address1') ? 'is-invalid' : '' }}" type="text" name="address1" placeholder="Address Line 1">
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" name="address2" placeholder="Address Line 2 (Optional)">
+                                        <input class="bg-input-gray form-control {{ $errors->has('address2') ? 'is-invalid' : '' }}" type="text" name="address2" placeholder="Address Line 2 (Optional)">
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" name="city" placeholder="City"> 
+                                        <input class="bg-input-gray form-control {{ $errors->has('city') ? 'is-invalid' : '' }}" type="text" name="city" placeholder="City"> 
                                     </div>
                                     <div class="col-md-12">
                                         {!! Form::select('state_id', $stateList, '', ['class' => 'custom-select', 'placeholder' => 'State']) !!} 
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" name="zip_code" placeholder="Zip Code">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <input type="email" name="email" placeholder="Email Address">
+                                        <input class="bg-input-gray form-control {{ $errors->has('zip_code') ? 'is-invalid' : '' }}" type="text" name="zip_code" placeholder="Zip Code">
                                     </div>
                                 </div>
                                 <button type="submit">
@@ -86,9 +89,13 @@
 @section('page-css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet" media="screen">
     <link href="{{ url('assets/css/registration/style.css') }}" rel="stylesheet" media="screen" />
+    <style>
+        .bg-input-gray{
+            background-color: #eee !important;
+        }
+    </style>
     <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
     <script>
-        
         grecaptcha.ready(function() {
             grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
             .then(function(token) {
