@@ -32,8 +32,8 @@
 					<span class="info-box-icon bg-info"><i class="fas fa-mobile-alt"></i></span>
 
 					<div class="info-box-content">
-						<span class="info-box-text">Products</span>
-						<span class="info-box-number">{{ $products_percentage }}<small>%</small></span>
+						<span class="info-box-text">Active Products Percentage</span>
+						<span class="info-box-number">{{ number_format($products_percentage,"2",".") }}<small>%</small></span>
 					</div>
 				</div>
 			</div>
