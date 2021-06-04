@@ -21,6 +21,7 @@
                                             <div class="form-group">
                                                 <select id="comment" required="required" aria-required="true" class="custom-select">
                                                     <option value="">Please Select</option>
+                                                    <option value="Customer Service">Customer Service</option>
                                                     <option value="Comments">Comments</option>
                                                     <option value="Business Buy Back">Business Buy Back</option>
                                                     <option value="Sell In Bulk">Sell In Bulk</option>
@@ -43,7 +44,7 @@
                                                 <input id="phone" type="text" placeholder="Phone Number" required="required" aria-required="true" class="form-control">
                                             </div>
                                             <div class="form-group">
-                                                <textarea id="message" placeholder="Message" required="required" rows="5" wrap="soft" aria-required="true" class="form-control"></textarea>
+                                                <textarea id="message" placeholder="Messages" required="required" rows="5" wrap="soft" aria-required="true" class="form-control"></textarea>
                                             </div>
                                             <form>
                                                 <div id="group-comment" role="group" class="form-group"></div>
