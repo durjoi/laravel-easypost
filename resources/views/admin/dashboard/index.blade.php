@@ -33,7 +33,7 @@
 
 					<div class="info-box-content">
 						<span class="info-box-text">Active Products Percentage</span>
-						<span class="info-box-number">{{ number_format($products_percentage,"2",".") }}<small>%</small></span>
+						<span class="info-box-number">{{ floor($products_percentage) == $products_percentage ? $products_percentage : number_format($products_percentage,2,".","") }}<small>%</small></span>
 					</div>
 				</div>
 			</div>
