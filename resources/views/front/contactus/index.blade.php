@@ -21,7 +21,7 @@
                                             <div class="form-group">
                                                 <select id="comment" required="required" aria-required="true" class="custom-select">
                                                     <option value="">Please Select</option>
-                                                    <option value="Customer Service">Customer Service</option>
+                                                    <option value="Customer Support">Customer Support</option>
                                                     <option value="Comments">Comments</option>
                                                     <option value="Business Buy Back">Business Buy Back</option>
                                                     <option value="Sell In Bulk">Sell In Bulk</option>
