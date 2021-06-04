@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Order;
+use App\Models\Admin\Product;
+use App\Models\Admin\ProductStorage;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use Carbon\Carbon;
@@ -25,6 +29,11 @@ class DashboardController extends Controller
     public function index()
     {
         $data['module'] = 'dashboard';
+        $total_products_count = Product::count();
+        $data['products_percentage'] = $total_products_count ? (Product::where('status','active')->count() / $total_products_count) * 100 : 0;
+        $data['orders_count'] = Order::count();
+        $data['customers_count'] = Customer::count();
+        $data['selling_devices_count'] = ProductStorage::whereNotNull('amount')->count();
         $config = $this->configRepo->find(1);
         $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.dashboard.index', $data);
@@ -89,7 +98,7 @@ class DashboardController extends Controller
         //     'order_item.product_storage'
         //     ]);
 
-            $data['config'] = $this->configRepo->find(1);
+        $data['config'] = $this->configRepo->find(1);
 
         $data['shippingFee'] = 10;
         $data['overallSubTotal'] = 0;

@@ -29,22 +29,22 @@
 		<div class="row">
 			<div class="col-md-3 col-sm-6 col-xs-12">
 				<div class="info-box">
-					<span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+					<span class="info-box-icon bg-info"><i class="fas fa-mobile-alt"></i></span>
 
 					<div class="info-box-content">
 						<span class="info-box-text">Products</span>
-						<span class="info-box-number">90<small>%</small></span>
+						<span class="info-box-number">{{ $products_percentage }}<small>%</small></span>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-md-3 col-sm-6 col-xs-12">
 				<div class="info-box">
-					<span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+					<span class="info-box-icon bg-red"><i class="ion ion-ios-cart-outline"></i></span>
 
 					<div class="info-box-content">
 						<span class="info-box-text">Orders</span>
-						<span class="info-box-number">41,410</span>
+						<span class="info-box-number">{{ number_format($orders_count,null,null,",") }}</span>
 					</div>
 				</div>
 			</div>
@@ -53,22 +53,22 @@
 
 			<div class="col-md-3 col-sm-6 col-xs-12">
 				<div class="info-box">
-					<span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
+					<span class="info-box-icon bg-green"><i class="fas fa-user-friends"></i></span>
 
 					<div class="info-box-content">
-						<span class="info-box-text">Customer</span>
-						<span class="info-box-number">760</span>
+						<span class="info-box-text">Customers</span>
+						<span class="info-box-number">{{ number_format($customers_count,null,null,",") }}</span>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-md-3 col-sm-6 col-xs-12">
 				<div class="info-box">
-					<span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+					<span class="info-box-icon bg-yellow"><i class="fas fa-tablet-alt"></i></span>
 
 					<div class="info-box-content">
-						<span class="info-box-text">Customers</span>
-						<span class="info-box-number">2,000</span>
+						<span class="info-box-text">Selling Devices</span>
+						<span class="info-box-number">{{ $selling_devices_count }}</span>
 					</div>
 				</div>
 			</div>
