@@ -38,7 +38,7 @@
                                                 <input id="lname" type="text" placeholder="Last Name" required="required" aria-required="true" class="form-control">
                                             </div>
                                             <div class="form-group">
-                                                <input id="email" type="email" placeholder="Enter email address" required="required" aria-required="true" class="form-control">
+                                                <input id="email" type="email" placeholder="Email address" required="required" aria-required="true" class="form-control">
                                             </div>
                                             <div class="form-group">
                                                 <input id="phone" type="text" placeholder="Phone Number" required="required" aria-required="true" class="form-control">
