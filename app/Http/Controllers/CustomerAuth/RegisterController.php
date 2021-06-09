@@ -96,7 +96,6 @@ class RegisterController extends Controller
 
     protected function create(CreateCustomerRequest $request)
     {
-        dd($_REQUEST);
         $validateRecaptcha = $this->getCaptcha($request["g-recaptcha-response"]);
         if($validateRecaptcha->success == true && $validateRecaptcha->score > 0.5)
         {
