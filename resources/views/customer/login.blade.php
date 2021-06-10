@@ -26,8 +26,8 @@
                                 @if(session()->has('msg'))
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="alert alert-success alert-dismissible">
-                                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                            <div class="alert alert-{{ session('type') }} alert-dismissible">
+                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
                                                 {{ session('msg') }}
                                             </div>
                                         </div>
@@ -40,10 +40,20 @@
                                     <a href="#" class="social form-a"><i class="fab fa-facebook"></i></a>
                                 </div>
                                 <span>or use your account</span>
-                                <input type="email" name="email" placeholder="Email" />
+                                <input type="text" name="email" placeholder="Email" value="{{ old('email') }}" />
+                                @error("email")
+                                <div class="w-100 text-left">
+                                    <small class="text-danger text-left">{{ $errors->first('email') }}</small>
+                                </div>
+                                @enderror
                                 <!-- <input type="email" placeholder="Email" /> -->
                                 <!-- <input type="password" placeholder="Password" /> -->
                                 <input type="password" name="password" placeholder="Password">
+                                @error("password")
+                                <div class="w-100 text-left">
+                                    <small class="text-danger text-left">{{ $errors->first('password') }}</small>
+                                </div>
+                                @enderror
                                 <input type="hidden" name="activecart" value="{{ (session()->has('activecart')) ? session('activecart') : '' }}">
                                 <!-- <a href="#" class="form-a">Forgot your password?</a> -->
                                 <!-- <button onclick="return false;">Sign In</button> -->

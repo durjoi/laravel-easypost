@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -29,28 +30,65 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $this->validateLogin($request);
+        // Old method
+        // $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
-        if (method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)) {
-            $this->fireLockoutEvent($request);
+        // if (method_exists($this, 'hasTooManyLoginAttempts') &&
+        //     $this->hasTooManyLoginAttempts($request)) {
+        //     $this->fireLockoutEvent($request);
 
-            return $this->sendLockoutResponse($request);
-        }
+        //     return $this->sendLockoutResponse($request);
+        // }
 
-        if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
-        }
+        // if ($this->attemptLogin($request)) {
+        //     return $this->sendLoginResponse($request);
+        // }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
-        $this->incrementLoginAttempts($request);
+        // $this->incrementLoginAttempts($request);
 
-        return $this->sendFailedLoginResponse($request);
+        // return $this->sendFailedLoginResponse($request);
+
+
+        $validator = Validator::make($request->all(),[
+            "email"     => "required|email",
+            "password"  => "required",
+        ]);
+
+        if($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $credentials = [
+            "email"     => $request->get('email'),
+            "password"  => $request->get('password'),
+        ];
+
+        if(!Auth::guard('customer')->attempt($credentials)){
+            session()->flash('type','error');
+            session()->flash('msg',"wrong login credentials");
+            return redirect()->back();
+        }
+
+        // if(Auth::guard('customer')->check()){
+        if($request['cart']){
+            return redirect()->back();
+        }
+        if ($request['from_email'] == true) {
+            return redirect()->to($request['redirect_to_custom_url']);
+        }
+        if (Auth::guard('customer')->user()->status == "In-Active" && Auth::guard('customer')->user()->is_verified == 0) 
+        {
+            return redirect()->to('customer/verification');
+        }
+        return redirect()->to($this->redirectTo);
+        // }
+
     }
 
     protected function validateLogin(Request $request)
