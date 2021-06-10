@@ -87,7 +87,7 @@ class RegisterController extends Controller
 
     private function getCaptcha($SecretKey)
     {
-        $recaptcha = $this->tablelist->recaptcha_test_server;
+        $recaptcha = $this->tablelist->recaptcha_test_local;
         $Response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha['secret_key']."&response={$SecretKey}");
         $Return = json_decode($Response);
         return $Return;
@@ -110,8 +110,8 @@ class RegisterController extends Controller
                 'lname' => $request['last_name'],
                 'email' => $request['email'],
                 'username' => '',
-                'password' => Hash::make($password),
-                'authpw' => $password,
+                'password' => Hash::make($request->get('password')),
+                'authpw' => null,
                 'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
                 'status' => 'inactive'
             ]);
