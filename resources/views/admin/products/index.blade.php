@@ -26,10 +26,25 @@
                             <div class="float-left">
                                 <h4 id="table-header">Product List</h4>
                             </div>
-                            <div class="card-tools">
+                            <div class="card-tools card-actions">
                                 <div>
+                                    <div class="dropdown mr-2">
+                                        <button class="btn btn-info dropdown-toggle"
+                                        type="button" id="dropdownMenuButton"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                          Actions button
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            {{-- <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-copy-modal">Copy</button> --}}
+                                            <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-delete-modal">Delete</button>
+                                        </div>
+                                      </div>
+                                    </div>
                                     <a class="btn btn-primary btn-sm" href="{{ url('admin/products/create') }}">Create Product</a>
-                                </div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -37,7 +52,10 @@
                                 <table class="table-hover table-striped text-nowrap table-sm" id="product-table">
                                     <thead>
                                         <tr>
-                                            <th></th>
+                                            <th>No.</th>
+                                            <th>
+                                                <input type="checkbox" name="select_all" id="select_all">
+                                            </th>
                                             <th class="text-center">Photo</th>
                                             <th>Brand</th>
                                             <th>Model</th>
@@ -56,12 +74,20 @@
             </div>
         </section>
     </div>
+    @include('admin.modals.products.bulk.delete')
 @endsection
 
 @section('page-css')
     <link rel="stylesheet" href="{{ url('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ url('assets/plugins/datatables-keytable/css/keyTable.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ url('assets/plugins/datatables-responsive/css/responsive.bootstrap4.css') }}">
+    <style>
+        .card-actions{
+            display: flex !important;
+            flex-flow: row;
+            justify-content: center;
+        }
+    </style>
 @endsection
 
 @section('page-js')
@@ -95,8 +121,16 @@
                         width:'2%', searchable: false, orderable: false,
                         render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
-                    }, 
-                    className: "text-center"
+                        }, 
+                        className: "text-center"
+                    },
+                    {
+                        width: "2%",
+                        searchable: false,
+                        orderable: false,
+                        render: function(data,type,row,meta){
+                            return `<input type="checkbox" name="ids[]" value="${row.id}" />`;
+                        },
                     },
                     { data: 'photo', name: 'photo', searchable: false, orderable: false, width:'10%', className: "text-center" },
                     { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'14%' },
@@ -105,7 +139,7 @@
                     { data: 'otherInfo', name: 'otherInfo', searchable: false, orderable: false, width:'25%' },
                     { data: 'dateUpdated', name: 'dateUpdated', searchable: true, orderable: true, width:'4%' },
                     { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
-                ]
+                ],
             });
 
             // $('#chk-buying').change(function(){
@@ -138,6 +172,18 @@
             //     }
             // });
 
+            $("#select_all").on("click",function(){
+                if(this.checked){
+                    $("input[name='ids[]']").each(function(){
+                        $(this).prop('checked',true);
+                    })
+                } else {
+                    $("input[name='ids[]']").each(function(){
+                        $(this).prop('checked',false);
+                    })
+                }
+            });
+
             $('#excellent_offer').keyup(function(){
                 if($('#offer_type').prop('checked')){
                     var good = percent($('#excellent_offer').val(), 'good');
@@ -147,6 +193,23 @@
                     $('#fair_offer').val(fair);
                     $('#poor_offer').val(poor);
                 }
+            });
+
+            $("#bulk-delete-modal").on("show.bs.modal",function(){
+                const form = $(this).find("#bulk-delete-form");
+                $("input[name='deleting_ids[]']").each(function(){
+                    $(this).remove();
+                });
+
+                $("input[name='ids[]']:checked").each(function(){
+                    let new_input = `<input name="deleting_ids[]" type="hidden" value="${$(this).val()}" />`;
+                    form.append(new_input);
+                });
+            });
+
+            $("#bulk_delete_submit").on("click",function(){
+                console.log('clicked');
+                $("#bulk-delete-form").submit();
             });
 
             $('#offer_type').change(function() {

@@ -34,6 +34,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
     Route::get('customers', [\App\Http\Controllers\Admin\PageViewerController::class, 'Customers']);
 
     
+    Route::prefix('orders')->name('orders.')->group(function(){
+        Route::patch('/bulk-order-update/{type?}',[\App\Http\Controllers\Admin\OrderController::class, 'bulk_update'])->name('bulk_update');
+    });
+
     Route::get('orders/{hashedId}/generatePDF', [\App\Http\Controllers\Admin\OrderController::class, 'generatePDF']);
     Route::get('orders/{hashedId}/orderItem', [\App\Http\Controllers\Admin\OrderController::class, 'getOrderItem']);
     Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
@@ -67,8 +71,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:web']], function() {
         Route::delete('delete/add-storage-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"delete_storage_price"]);
         Route::post('edit/add-device-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"add_device_price"]);
         Route::patch('edit/edit-selling-device/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"edit_selling_device"]);
-        Route::delete('edit/delete-device-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"delete_device_price"]);
         Route::get('map/condition', [\App\Http\Controllers\Admin\PageViewerController::class, 'ProductMaps']);
+        Route::delete('edit/delete-device-price/{phone_id}',[\App\Http\Controllers\Admin\ProductController::class,"delete_device_price"]);
+        Route::delete('bulk-delete',[\App\Http\Controllers\Admin\ProductController::class,'bulk_delete'])->name('bulk_delete');
     });
 
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);

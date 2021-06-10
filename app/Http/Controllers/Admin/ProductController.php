@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\BulkDeleteProductRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Http\Requests\Admin\ProductDupRequest;
+use App\Models\Admin\Product as AdminProduct;
 use App\Repositories\Admin\SettingsBrandRepositoryEloquent as Brand;
 use App\Repositories\Admin\ConfigRepositoryEloquent as Config;
 use App\Repositories\Admin\ProductRepositoryEloquent as Product;
@@ -904,5 +906,25 @@ class ProductController extends Controller
                 "message" => $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Bulk delete of products
+     * 
+     * @return view product index
+     */
+    public function bulk_delete(BulkDeleteProductRequest $request)
+    {
+        foreach ($request->get('deleting_ids') as  $id) {
+            $product = AdminProduct::find($id);
+            if($product){
+                $product->update([
+                    "status" => "inactive"
+                ]);
+            }
+            continue;
+        }
+        
+        return redirect()->route('products.index');
     }
 }

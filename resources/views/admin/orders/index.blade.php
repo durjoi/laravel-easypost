@@ -22,17 +22,50 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
+                        <div class="card-header">
+                            <div class="float-left">
+                                <h4 id="table-header">Orders List</h4>
+                            </div>
+                            <div class="card-tools card-actions">
+                                <div>
+                                    <div class="dropdown mr-2">
+                                        <button class="btn btn-info dropdown-toggle"
+                                        type="button" id="dropdownMenuButton"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                          Actions button
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-complete-modal">Make all complete</button>
+                                            {{-- <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-transit-modal">Make all In Transit</button>
+                                            <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-onhold-modal">Make all On Hold</button>
+                                            <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-comment-modal">Must have comments</button>
+                                            <button class="dropdown-item" type="button" data-toggle="modal"
+                                            data-target="#bulk-for-approval-modal">Make All For Approval</button> --}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body table-responsive">
                             <table class="table-hover table-striped text-nowrap table-sm" id="order-table">
                                 <thead>
                                     <tr>
                                         <th></th>
+                                        <th>
+                                            <input type="checkbox" name="select_all" id="select_all" value="" />
+                                        </th>
                                         <th class="text-center">Tracking Code</th>
                                         <th class="text-center">Transaction ID</th>
-                                        <th>Customer</th>
+                                        <th class="text-center">Customer</th>
                                         <th class="text-center">Status</th>
-                                        <th class="text-center"><center>Transaction Date</center></th>
-                                        <th class="text-center"><center>Notes</center></th>
+                                        <th class="text-center">Transaction Date</th>
+                                        <th class="text-center">Notes</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -43,6 +76,42 @@
             </div>
         </section>
     </div>
+    @include('admin.modals.order.bulk.complete')
+
+    <x-order-bulk-modal
+        modal-id="bulk-transit-modal"
+        modal-title="Mark all as In Transmit"
+        message="This will mark all the selected items as"
+        status="In Transmit"
+        form-action="{{ route('orders.bulk_update',['type' => 'in-transit']) }}"
+        form-id="bulk-in-transmit-form"
+    />
+    <x-order-bulk-modal
+        modal-id="bulk-onhold-modal"
+        modal-title="Mark all as On Hold"
+        message="This will mark all the selected items as"
+        status="On Hold"
+        form-action="{{ route('orders.bulk_update',['type' => 'on-hold']) }}"
+        form-id="bulk-on-hold-form"
+    />
+    <x-order-bulk-modal
+        modal-id="bulk-comment-modal"
+        modal-title="Mark all as must have COMMENTS"
+        message="This will mark all the selected items must have"
+        status="COMMENTS"
+        form-action="{{ route('orders.bulk_update',['type' => 'have-comments']) }}"
+        form-id="bulk-must-have-comment-form"
+    />
+
+    <x-order-bulk-modal
+        modal-id="bulk-for-approval-modal"
+        modal-title="Mark all as For Approval"
+        message="This will mark all the selected items to be"
+        status="FOR APPROVAL"
+        form-action="{{ route('orders.bulk_update',['type' => 'for-approval']) }}"
+        form-id="bulk-for-approval-form"
+    />
+
 @endsection
 
 @section('page-css')
@@ -88,15 +157,83 @@
                         return meta.row + meta.settings._iDisplayStart + 1;
                         }, className: "text-center align-top"
                     },
-                    { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: true, width:'22%' },
-                    { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'20%' },
-                    { data: 'seller_name', name: 'seller_name', searchable: true, orderable: true, width:'18%' },
+                    {
+                        width: '2%',
+                        searchable: false,
+                        orderable: false,
+                        render: function (data,type,row,meta){
+                            return `<input type="checkbox" name="ids[]" value="${row.id}" />`
+                        },
+                    },
+                    { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: true, width:'22%', className: "text-center" },
+                    { data: 'order_no', name: 'order_no', searchable: true, orderable: true, width:'20%', className: "text-center" },
+                    { data: 'seller_name', name: 'seller_name', searchable: true, orderable: true, width:'18%', className: "text-center" },
                     { data: 'status', name: 'status', searchable: true, orderable: true, width:'14%', className: "text-center align-top" },
                     { data: 'transaction_date', name: 'transaction_date', searchable: true, orderable: false, width:'8%', className: "text-right align-top" },
-                    { data: 'order_notes', name: 'order_notes', searchable: false, orderable: false, width:'6%' },
+                    { data: 'order_notes', name: 'order_notes', searchable: false, orderable: false, width:'6%', className: "text-center" },
                     { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
                 ]
             });
         });
+
+        $("#select_all").on("change",function(){
+            if(this.checked){
+                $("input[name='ids[]']").each(function(){
+                    $(this).prop('checked',true);
+                });
+            } else {
+                $("input[name='ids[]']").each(function(){
+                    $(this).prop('checked',false);
+                });
+            }
+        });
+
+        
+        $("#bulk-complete-modal").on("show.bs.modal",function(){
+            const form = $(this).find("#bulk-complete-form");
+            fillSeletcedIds(form);
+        });
+
+        $("#bulk-transit-modal").on("show.bs.modal",function(){
+            const form = $(this).find("#bulk-in-transmit-form");
+            fillSeletcedIds(form);
+        });
+
+        $("#bulk-onhold-modal").on("show.bs.modal",function(){
+            const form = $(this).find("#bulk-on-hold-form");
+            fillSeletcedIds(form);
+        });
+
+        $("#bulk-comment-modal").on("show.bs.modal",function(){
+            const form = $(this).find("#bulk-must-have-comment-form");
+            fillSeletcedIds(form);
+        });
+
+        $("#bulk-for-approval-modal").on("show.bs.modal",function(){
+            const form = $(this).find("#bulk-for-approval-form");
+            fillSeletcedIds(form);
+        });
+
+
+        function fillSeletcedIds(form)
+        {
+            clearAllIds();
+            appendAllIds(form);
+        }
+        function clearAllIds()
+        {
+            $("input[name='form_ids[]']").each(function(){
+                $(this).remove();
+            });
+        }
+
+        function appendAllIds(form)
+        {
+            $("input[name='ids[]']:checked").each(function(){
+                let new_input = `<input name="form_ids[]" type="hidden" value="${$(this).val()}" />`;
+                form.append(new_input);
+            });
+        }
+
     </script>
 @endsection

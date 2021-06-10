@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\BulkCompleteRequest;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Admin\OrderRepositoryEloquent as Order;
@@ -343,5 +344,43 @@ class OrderController extends Controller
         $data['productDetails']['storages'] = $data['productDetails']->storagesForBuying()->get();
         $config = $this->configRepo->find(1);
         return $data;
+    }
+
+
+    /**
+     * Bulk change status to complete
+     * 
+     * @param Illuminate\Http\Request
+     * 
+     * @return view
+     */
+    public function bulk_update(BulkCompleteRequest $request,$type = null)
+    {
+        $status_id = null;
+        switch($type){
+            case 'complete'     : $status_id = 5; break;
+            case 'in-transit'   : $status_id = 3; break;
+            case 'on-hold'      : $status_id = 4; break;
+            case 'have-comments': $status_id = 2; break;
+            case 'for-approval' : $status_id = 1; break;
+            default: $status_id = null;
+        }
+
+        if(!$status_id){
+            session()->flash("notification-status","error");
+            session()->flash("notification-message","Something went wrong!");
+            return redirect()->route('orders.index');
+        }
+
+        foreach ($request->get('form_ids') as $id) {
+            $order = $this->orderRepo->find($id);
+            if($order) {
+                $order->update([
+                    "status_id" => $status_id
+                ]);
+            }
+        }
+
+        return redirect()->route('orders.index');
     }
 }
