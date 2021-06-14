@@ -314,7 +314,7 @@
             const search_loader = $("#search-loader");
             const list_result = $("#search-result-list");
             let data = [];
-            let main_url = 'http://localhost:8000';
+            let main_url = window.location.origin;
             if(localStorage.getItem('cart-empty')){
                 alert(`Please add some item in your cart first`);
                 localStorage.removeItem('cart-empty');
@@ -322,17 +322,16 @@
 
 
             $("#search-input").keyup(function(){
-                if(data.length == 0){
-                    search_result_container.css("height","50px");
+                if($(this).val().length > 0){
+                    // search_result_container.css("height","50px");
                     search_result_container.removeClass('d-none');
                 }
                 let search = $(this).val();
                 if(search){
-                    $.ajax(`http://localhost:8000/api/search?search=${search}`,{
+                    $.ajax(`${main_url}/api/search?search=${search}`,{
                         method: "GET",
                         async: true,
                         success: res => {
-                            console.log(res);
                             data = res.products;
                             list_result.empty();
                             update_search_result();
@@ -353,7 +352,6 @@
             }
 
             function append_result(){
-                console.log(data);
                 data.map(phone => {
                     let li =`<li>
                                 <a href="${phone.link}">
