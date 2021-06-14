@@ -160,7 +160,7 @@
 									<a href="{{ url('/about-us') }}" class="fontWhite font14px">About Us</a> | 
 									<a href="{{ url('/how-it-works') }}" class="fontWhite font14px">How It Works</a> | 
 									<a href="{{ url('/contact-us') }}" class="fontWhite font14px">Contact Us</a> | 
-									<a href="{{ url('/terms-condition') }}" class="fontWhite font14px">Terms & Condition</a> | 
+									<a href="{{ url('/terms-and-conditions') }}" class="fontWhite font14px">Terms & Condition</a> | 
 									<a href="{{ url('/privacy-policy') }}" class="fontWhite font14px">Privacy Policy</a>
 								</div>
 							</div>
