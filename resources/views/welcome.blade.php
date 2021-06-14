@@ -327,12 +327,12 @@
                     search_result_container.removeClass('d-none');
                 }
                 let search = $(this).val();
-                console.log(search);
                 if(search){
                     $.ajax(`${main_url}/api/search?search=${search}`,{
                         method: "GET",
                         async: true,
                         success: res => {
+                            data = [];
                             data = res.products;
                             list_result.empty();
                             update_search_result();
