@@ -31,6 +31,7 @@ Route::get('products/{brand}/{model}', [App\Http\Controllers\DeviceController::c
 Route::post('products/model', [App\Http\Controllers\DeviceController::class, 'model']);
 Route::post('products/model/filter', [App\Http\Controllers\DeviceController::class, 'filterByStorageCondition']);
 Route::post('products/network', [App\Http\Controllers\DeviceController::class, 'network']);
+Route::get('/api/search',[App\Http\Controllers\DeviceController::class,"search"])->name('device.search');
 Route::resource('device', App\Http\Controllers\DeviceController::class);
 Route::post('device/authStore', [App\Http\Controllers\DeviceController::class, 'store']);
 Route::get('product/storegettings', [App\Http\Controllers\DeviceController::class, 'storeget']);
@@ -38,7 +39,6 @@ Route::get('order/{hashedId}/shippinglabel', [App\Http\Controllers\DeviceControl
 
 Route::get('paypal/success', [App\Http\Controllers\PaypalController::class, 'success'])->name('paypal.success');
 Route::get('paypal/cancel', [App\Http\Controllers\PaypalController::class, 'cancel'])->name('paypal.cancel');
-
 
 
 Route::any('page/{uri}', [

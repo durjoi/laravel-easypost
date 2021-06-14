@@ -29,7 +29,7 @@ use App\Models\Admin\Product as ModelProduct;
 use App\Models\Admin\ProductStorage as StorageProduct;
 use App\Models\TableList as Tablelist;
 use Illuminate\Support\Facades\Auth;
-use PDF;
+use PDF, DB;
 
 
 // For Plivio
@@ -1260,6 +1260,30 @@ Your verification code: '.$request['verification_code'];
         }
 
         $data['status'] = true;
+        return response()->json($data);
+    }
+
+    /**
+     * Search api for products
+     * 
+     * @param Illuminate\Http\Request
+     * 
+     * @return response
+     */
+    public function search(Request $request)
+    {
+
+        $search = $request->get('search');
+        $data['status'] = true;
+        $query = 'SELECT products.id,products.model,photo.photo,settings_brands.name FROM products INNER JOIN settings_brands ON products.brand_id = settings_brands.id INNER JOIN product_photos as photo ON products.id = photo.product_id WHERE products.model LIKE ? OR settings_brands.name LIKE ?';
+        $products = DB::select($query,["%{$search}%","%{$search}%"]);
+
+        foreach ($products as  $product) {
+            $product->link = url("products/{$product->name}/{$product->model}");
+            unset($product->name);
+        }
+        $data['products'] = $products;
+        
         return response()->json($data);
     }
 }

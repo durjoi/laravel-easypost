@@ -8,11 +8,23 @@
                 <div class="text-center pt-50 hero-top">
                     <h1 class="hero-header">Send In Your Mobile Device &amp; Get Paid.</h1>
                     <div class="search-input">
-                        <form action="{{ url('products') }}" method="POST">
+                        <input type="text" name="productname" id="search-input" placeholder="Search for your device..." class="form-control" autocomplete="off"/>
+                        <div class="search d-none" id="search-result-container">
+                            <div class="lds-ring" id="search-loader">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                            <ul id="search-result-list" class="d-none">
+                            </ul>
+                        </div>
+                        {{-- <form action="{{ url('products') }}" method="POST" autocomplete="off">
                             @csrf
-                            <input type="text" name="productname" placeholder="Search for your device..." class="form-control" /><br />
+                            <input type="text" name="productname" placeholder="Search for your device..." class="form-control" />
+                            <br />
                             <button type="submit" class="btn btn-warning btn-md hvr-shrink">Search</button>
-                        </form>
+                        </form> --}}
                     </div>
                 </div>
                 <div class="row mt-50">
@@ -240,13 +252,122 @@
 
 
 @endsection
+@section('page-css')
+    <style>
+        div.search {
+            height: 200px;
+            width: 435px;
+            background-color:white;
+            overflow: auto;
+            position: absolute;
+            z-index: 999;
+        }
+
+        div.search > ul{
+            list-style: none;
+            font-weight: bold;
+            text-align: left
+        }
+
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            border: 5px solid rgb(33, 180, 238);
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: rgb(33, 180, 238) transparent transparent transparent;
+        }
+        .lds-ring div:nth-child(1) {
+            animation-delay: -0.45s;
+        }
+        .lds-ring div:nth-child(2) {
+            animation-delay: -0.3s;
+        }
+        .lds-ring div:nth-child(3) {
+            animation-delay: -0.15s;
+        }
+        @keyframes lds-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+@endsection
 @section('page-js')
     <script>
         window.onload = function(){
+            const search_result_container = $("#search-result-container");
+            const search_loader = $("#search-loader");
+            const list_result = $("#search-result-list");
+            let data = [];
+            let main_url = 'http://localhost:8000';
             if(localStorage.getItem('cart-empty')){
                 alert(`Please add some item in your cart first`);
                 localStorage.removeItem('cart-empty');
             }
+
+
+            $("#search-input").keyup(function(){
+                if(data.length == 0){
+                    search_result_container.css("height","50px");
+                    search_result_container.removeClass('d-none');
+                }
+                let search = $(this).val();
+                if(search){
+                    $.ajax(`http://localhost:8000/api/search?search=${search}`,{
+                        method: "GET",
+                        async: true,
+                        success: res => {
+                            console.log(res);
+                            data = res.products;
+                            list_result.empty();
+                            update_search_result();
+                            append_result();
+                        },
+                        error: err => {
+                            console.log(err);
+                        }
+                    });
+                }
+            });
+
+
+            function update_search_result(){
+                search_result_container.css('height',"250px");
+                search_loader.addClass('d-none');
+                list_result.removeClass('d-none');
+            }
+
+            function append_result(){
+                console.log(data);
+                data.map(phone => {
+                    let li =`<li>
+                                <a href="${phone.link}">
+                                    <img src="${main_url}/${phone.photo}" style="height: 50px;width:50px;margin-right:10px;margin-top:10px" />
+                                    ${phone.model}
+                                </a>
+                            </li>`;
+                    list_result.append(li);
+                });
+            }
+
+            $("body").click(function(){
+                search_result_container.addClass('d-none');
+            });
         }
     </script>
 @endsection
