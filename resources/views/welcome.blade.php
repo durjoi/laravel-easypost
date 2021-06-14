@@ -321,12 +321,13 @@
             }
 
 
-            $("#search-input").keyup(function(){
+            $("#search-input").on('input',function(){
                 if($(this).val().length > 0){
                     // search_result_container.css("height","50px");
                     search_result_container.removeClass('d-none');
                 }
                 let search = $(this).val();
+                console.log(search);
                 if(search){
                     $.ajax(`${main_url}/api/search?search=${search}`,{
                         method: "GET",
