@@ -111,8 +111,12 @@
                                                     <div id="divCartDetails"></div>
                                                     
                                                     <div class="form-row" id="payment-row"></div>
-                                                    <div class="form-group">
-                                                        <div class="float-right">
+                                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <input type="checkbox" value="terms-and-condition" id="terms-and-condition"/>
+                                                            <label for="checkbox">Agree to <a href="#" data-toggle="modal" data-target="#terms-and-conditions-modal">terms and conditions.</a></label>
+                                                        </div>
+                                                        <div>
                                                             <button type="submit" class="btn btn-warning btn-md" id="btn-checkout">Checkout</button>
                                                             <button type="button" class="btn btn-warning btn-md disabled hideme" id="btn-checkout-loader"><i class="fas fa-spinner fa-spin"></i> Please wait...</button>
                                                         </div>
@@ -185,6 +189,8 @@
             </div>
         </div>
     </div>
+
+    @include('admin.modals.terms-and-conditions.index')
 @endsection
 
 @section('page-js')
@@ -213,6 +219,10 @@
         errorMsg = $("#error-msg"),
         validMsg = $("#valid-msg");
 
+        $("#agree-terms-button").click(function(){
+            const terms_and_condition = document.getElementById('terms-and-condition');
+            terms_and_condition.checked = true;
+        });
 
         // initialise plugin
         telInput.intlTelInput({
@@ -267,9 +277,21 @@
 
         $(function () {
             $('#btn-checkout-loader, #checkoutCompletedSection').addClass('hideme');
-            $(document).on('submit', '#form-checkout', function () {
+            $(document).on('submit', '#form-checkout', function (e) {
                 var countryCode = $('.selected-dial-code').html();
+                const terms_and_condition = document.getElementById('terms-and-condition');
                 // return false;
+
+                if(!terms_and_condition.checked){
+                    swal({
+                        title: "Did not agree to terms and conditions",
+                        text: "Please agree to terms and conditions",
+                        icon: "info",
+                        buttons: "Close",
+                    });
+                    e.preventDefault();
+                    return;
+                }
                 $('#btn-checkout-loader').removeClass('hideme');
                 $('#btn-checkout').addClass('hideme');
                 var obj = {
@@ -357,6 +379,7 @@
                     });
                 }); 
         });  
+
         function has(object, key) {
             return object ? hasOwnProperty.call(object, key) : false;
         }
@@ -369,6 +392,12 @@
     <style>
         .intl-tel-input {
             width: 100%;
+        }
+
+        .list-title {
+            color: orange;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 @endsection

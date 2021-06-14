@@ -47,6 +47,7 @@ use Plivo\Exceptions\PlivoAuthenticationException;
 use Plivo\Exceptions\PlivoRestException;
 
 use Illuminate\Routing\UrlGenerator;
+use stdClass;
 
 class FrontPageController extends Controller
 {
@@ -185,12 +186,12 @@ class FrontPageController extends Controller
     public function handleRequest ($uri) 
     {
         $currentUrl = basename(request()->path());
-        
+
         $pagetranslate = $this->pageBuilderPageTranslations->firstWhere('route', $currentUrl);
         $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
   
         if (strlen($pagetranslate) != 0) {
-            
+
                 $page = $this->pageBuiderPages->find($pagetranslate->page_id);
                 if ($page->data == null || $page->data == $default_empty_content) {
                     $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
@@ -220,6 +221,10 @@ class FrontPageController extends Controller
                                 '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
                         ];
                         return view("front.cart.index", $data);
+                    }
+
+                    if($currentUrl == "terms-and-conditions"){
+                        return view("front.terms-and-conditions.index",$data);
                     }
                     
                     if ($currentUrl == "contact-us") {
@@ -279,7 +284,6 @@ class FrontPageController extends Controller
             // }
 
         } else {
-
                 
             /**
              * start: Customer Cart Page
@@ -304,15 +308,21 @@ class FrontPageController extends Controller
                 
                 return view("front.cart.index", $data);
             }
-            
+
+            if($currentUrl == "terms-and-conditions"){
+                $data = [];
+                $data['page'] = new stdClass();
+                $data['page']->title = "Terms and conditions";
+                $data['page']->css = null;
+                return view("front.terms-and-conditions.index",$data);
+            }
+
             return view('404');
             echo '<pre>';
             print_r($currentUrl);
             echo '</pre>';
             exit;
         }
-
-
 
 
         $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
@@ -380,6 +390,10 @@ class FrontPageController extends Controller
             $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
             $data['meta'] = $this->GenerateMetaTags('how-it-works');
             return view('front.howitworks.index', $data);
+        }
+
+        if($page_url == "terms-and-conditions"){
+            return view('front.terms-and-conditions.index',$data);
         }
 
         return view('front.pagebuilder.pagehandler', $data);
