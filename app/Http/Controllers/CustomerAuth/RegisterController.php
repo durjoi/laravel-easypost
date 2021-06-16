@@ -96,14 +96,13 @@ class RegisterController extends Controller
 
     protected function create(CreateCustomerRequest $request)
     {
-        $validateRecaptcha = $this->getCaptcha($request["g-recaptcha-response"]);
-        if($validateRecaptcha->success == true && $validateRecaptcha->score > 0.5)
-        {
-            if ($this->CheckExistingEmail($request['email']) == false) 
-            {
-                return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
-            }
-
+        // $validateRecaptcha = $this->getCaptcha($request["g-recaptcha-response"]);
+        // if($validateRecaptcha->success == true && $validateRecaptcha->score > 0.5)
+        // {
+            // if ($this->CheckExistingEmail($request['email']) == false) 
+            // {
+            //     return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
+            // }
             $password = Str::random(10);
             $customer = Customer::create([
                 'fname' => $request['first_name'],
@@ -111,7 +110,7 @@ class RegisterController extends Controller
                 'email' => $request['email'],
                 'username' => '',
                 'password' => Hash::make($request->get('password')),
-                'authpw' => null,
+                'authpw' => "",
                 'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
                 'status' => 'inactive'
             ]);
@@ -134,11 +133,11 @@ class RegisterController extends Controller
                 return redirect()->to('products/checkout');
             }
             return redirect()->to('customer/dashboard');
-        }
-        else
-        {
-            return redirect('customer/auth/register')->with('error', 'Spammer Detected!');
-        }
+        // }
+        // else
+        // {
+            // return redirect('customer/auth/register')->with('error', 'Spammer Detected!');
+        // }
     }
 
     public function showRegistrationForm()
