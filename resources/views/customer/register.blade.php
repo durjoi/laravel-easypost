@@ -95,10 +95,10 @@
             background-color: #eee !important;
         }
     </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> --}}
     <script src="https://www.google.com/recaptcha/api.js?render=6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         // grecaptcha.ready(function() {
         //     grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
@@ -109,7 +109,9 @@
         //         swalWarning ("Oops!", "{{ session('error') }}", "warning", "Close");
         //     @endif
         // });
-        
+        var onloadCallback = function() {
+            alert("grecaptcha is ready!");
+        };
         // function onSubmit(token) {
         //     document.getElementById("demo-form").submit();
         // }
