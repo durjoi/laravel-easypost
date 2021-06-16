@@ -55,7 +55,7 @@
                                         <input class="bg-input-gray form-control {{ $errors->has('zip_code') ? 'is-invalid' : '' }}" type="text" name="zip_code" placeholder="Zip Code">
                                     </div>
                                 </div>
-                                <div class="g-recaptcha" id="g-recaptcha-response" data-sitekey="6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></div>
+                                <div class="g-recaptcha" data-sitekey="6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></div>
                                 <button type="submit">
                                     Sign Up
                                 </button>
@@ -82,7 +82,7 @@
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script> --}}
-    {{-- <script src="{{ url('library/js/front/registration/components.js') }}"></script> --}}
+    <script src="{{ url('library/js/front/registration/components.js') }}"></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
     <script>
         // grecaptcha.ready(function() {
@@ -103,7 +103,7 @@
             var recaptcha = document.getElementById('g-recaptcha-response');
             if (recaptcha.value === "" || recaptcha.value == null) {
                 e.preventDefault();
-                alert("Please check the recaptcha");
+                swalWarning("Oops!","Please Check Recaptcha","warning","Close");
             }
         });
 

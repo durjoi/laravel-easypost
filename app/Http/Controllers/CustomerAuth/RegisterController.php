@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Http\Requests\Customer\CreateCustomerRequest;
 use App\Repositories\Customer\StateRepositoryEloquent as State;
 use App\Repositories\Customer\CustomerRepositoryEloquent as CustomerRepo;
+use Illuminate\Support\Facades\Http;
 
 class RegisterController extends Controller
 {
@@ -96,13 +97,17 @@ class RegisterController extends Controller
 
     protected function create(CreateCustomerRequest $request)
     {
-        // $validateRecaptcha = $this->getCaptcha($request["g-recaptcha-response"]);
-        // if($validateRecaptcha->success == true && $validateRecaptcha->score > 0.5)
-        // {
-            // if ($this->CheckExistingEmail($request['email']) == false) 
-            // {
-            //     return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
-            // }
+        $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify",[
+            "secret"    => "6LdiaTYbAAAAAPDjkPuyp5UFCfZpF6mre-n5_azz",
+            "response"  => $request->get('g-recaptcha-response'),
+        ]);
+        $response = json_decode($response->body());
+        if($response->success)
+        {
+            if ($this->CheckExistingEmail($request['email']) == false) 
+            {
+                return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
+            }
             $password = Str::random(10);
             $customer = Customer::create([
                 'fname' => $request['first_name'],
@@ -133,11 +138,11 @@ class RegisterController extends Controller
                 return redirect()->to('products/checkout');
             }
             return redirect()->to('customer/dashboard');
-        // }
-        // else
-        // {
-            // return redirect('customer/auth/register')->with('error', 'Spammer Detected!');
-        // }
+        }
+        else
+        {
+            return redirect('customer/auth/register')->with('error', 'Please check recaptcha!');
+        }
     }
 
     public function showRegistrationForm()
