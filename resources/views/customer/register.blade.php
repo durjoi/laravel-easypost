@@ -2,7 +2,15 @@
 @section('content')
     <div class="pt-70">
         <div class="container">
-
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             <div class="row">
                 <div class="col-md-12" align="center">
                     <div class="container-form container-form-register right-panel-active" id="container">
@@ -97,7 +105,7 @@
     </style>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> --}}
-    <script src="https://www.google.com/recaptcha/api.js?render=6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></script>
+    {{-- <script src="https://www.google.com/recaptcha/api.js?render=6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></script> --}}
     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
     <script>
         // grecaptcha.ready(function() {
