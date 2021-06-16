@@ -23,6 +23,7 @@ class CreateCustomerRequest extends FormRequest
      */
     public function rules()
     {
+        dd(request()->all());
         return [
             "first_name"        => "required|string",
             "last_name"         => "required|string",
