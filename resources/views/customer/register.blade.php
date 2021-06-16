@@ -111,6 +111,9 @@
         var onloadCallback = function() {
             alert("grecaptcha is ready!");
         };
+
+        var captcha_response = grecaptcha.getResponse();
+        console.log(captcha_response);
         // function onSubmit(token) {
         //     document.getElementById("demo-form").submit();
         // }
