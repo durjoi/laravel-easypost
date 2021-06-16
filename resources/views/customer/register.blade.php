@@ -56,6 +56,7 @@
                                         <input class="bg-input-gray form-control {{ $errors->has('zip_code') ? 'is-invalid' : '' }}" type="text" name="zip_code" placeholder="Zip Code">
                                     </div>
                                 </div>
+                                <div class="g-recaptcha" data-sitekey="6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></div>
                                 <button type="submit">
                                     Sign Up
                                 </button>
@@ -94,16 +95,23 @@
             background-color: #eee !important;
         }
     </style>
-    <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script>
+    {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> --}}
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
-        grecaptcha.ready(function() {
-            grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
-            .then(function(token) {
-                document.getElementById('recaptcha').value=token;
-            });
-            @if (session('error'))
-                swalWarning ("Oops!", "{{ session('error') }}", "warning", "Close");
-            @endif
-        });
+        // grecaptcha.ready(function() {
+        //     grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
+        //     .then(function(token) {
+        //         document.getElementById('recaptcha').value=token;
+        //     });
+        //     @if (session('error'))
+        //         swalWarning ("Oops!", "{{ session('error') }}", "warning", "Close");
+        //     @endif
+        // });
+        
+        // function onSubmit(token) {
+        //     document.getElementById("demo-form").submit();
+        // }
     </script>
 @endsection
