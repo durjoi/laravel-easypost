@@ -79,11 +79,37 @@
 @endsection
 
 @section('page-js')
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
     <script src="{{ url('library/js/front/registration/components.js') }}"></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+    <script>
+        // grecaptcha.ready(function() {
+        //     grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
+        //     .then(function(token) {
+        //         document.getElementById('recaptcha').value=token;
+        //     });
+        //     @if (session('error'))
+        //         swalWarning ("Oops!", "{{ session('error') }}", "warning", "Close");
+        //     @endif
+        // });
+
+        var onloadCallback = function() {
+            // console.log("grecaptcha is ready!");
+        };
+
+        form.addEventListener('submit',function(e){
+            if (grecaptcha.getResponse() == ""){
+                e.preventDefault();
+                alert("Please check recaptcha first");
+            }
+        });
+
+        // function onSubmit(token) {
+        //     document.getElementById("demo-form").submit();
+        // }
+    </script>
 @endsection
 
 @section('page-css')
@@ -97,25 +123,4 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> --}}
     {{-- <script src="https://www.google.com/recaptcha/api.js?render=6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></script> --}}
-    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
-    <script>
-        // grecaptcha.ready(function() {
-        //     grecaptcha.execute('{{ $recaptcha['site_key'] }}', {action: 'registration'})
-        //     .then(function(token) {
-        //         document.getElementById('recaptcha').value=token;
-        //     });
-        //     @if (session('error'))
-        //         swalWarning ("Oops!", "{{ session('error') }}", "warning", "Close");
-        //     @endif
-        // });
-        var onloadCallback = function() {
-            alert("grecaptcha is ready!");
-        };
-
-        var captcha_response = grecaptcha.getResponse();
-        console.log(captcha_response);
-        // function onSubmit(token) {
-        //     document.getElementById("demo-form").submit();
-        // }
-    </script>
 @endsection
