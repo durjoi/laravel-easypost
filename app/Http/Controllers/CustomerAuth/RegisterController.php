@@ -141,7 +141,7 @@ class RegisterController extends Controller
         }
         else
         {
-            return redirect('customer/auth/register')->with('error', 'Please check recaptcha!');
+            return redirect('customer/auth/register')->with('error', "I'm sorry, but there was an issue with your registration");
         }
     }
 
