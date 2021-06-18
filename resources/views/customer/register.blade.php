@@ -55,7 +55,7 @@
                                         <input class="bg-input-gray form-control {{ $errors->has('zip_code') ? 'is-invalid' : '' }}" type="text" name="zip_code" placeholder="Zip Code">
                                     </div>
                                 </div>
-                                <div class="g-recaptcha" data-sitekey="6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></div>
+                                <div class="g-recaptcha" data-sitekey="{{ env("RECAPTCHA_SITE_KEY") }}"></div>
                                 <button type="submit">
                                     Sign Up
                                 </button>
@@ -122,6 +122,4 @@
         }
     </style>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptcha['site_key'] }}"></script> --}}
-    {{-- <script src="https://www.google.com/recaptcha/api.js?render=6LdiaTYbAAAAAHBX3AdUSp8SV59JRsVQIJfR1MYI"></script> --}}
 @endsection

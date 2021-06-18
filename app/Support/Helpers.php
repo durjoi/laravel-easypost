@@ -253,3 +253,20 @@ function convertYoutube($string) {
   }
   return 'https://www.youtube.com/embed/' . $youtube_id ;
 }
+
+/**
+ * Get the right the 10 digit phone
+ * number for easypost
+ * 
+ * @param string phone_number
+ * 
+ * @return string
+ */
+function easypost_phone_format(string $phone_number)
+{
+  $phone_number = str_replace(["-"," "],"",$phone_number);
+  $phone_number = strrev($phone_number);
+  $phone_number = Str::limit($phone_number,10,"");
+  $phone_number = strrev($phone_number);
+  return $phone_number;
+}

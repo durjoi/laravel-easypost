@@ -319,7 +319,7 @@
                                                                         <div class="pad10rem"><b>Transaction # {{ $order['order_no'] }}</b></div>
                                                                         <br />
                                                                         <div class="pad10rem"><b>Tracking Code:</b> {{ $order['tracking_code'] }}<br /></div>
-                                                                        <div class="pad10rem"><b>Status:</b> {{ $order['status']['name'] }}<br /></div>
+                                                                        <div class="pad10rem"><b>Status:</b> {{ $order['status_details']['name'] }}<br /></div>
                                                                         <div class="pad10rem"><b>Delivery Due:</b> {{ $order['display_delivery_due'] }}<br /></div>
                                                                     </div>
                                                                 </td>

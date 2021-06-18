@@ -34,6 +34,7 @@ use PDF, DB;
 
 // For Plivio
 require __DIR__ . '/../../../vendor/autoload.php';
+
 use Plivo\RestClient;
 use Plivo\Exceptions\PlivoAuthenticationException;
 use Plivo\Exceptions\PlivoRestException;
@@ -644,6 +645,7 @@ class DeviceController extends Controller
         // ]);
         // return $storage[$cart['storage']];
         $response['status'] = 200;
+
         if (Auth::guard('customer')->check() != null) {
             $customer = Auth::guard('customer')->user();
             $request['fname'] = $customer['fname'];
@@ -694,34 +696,67 @@ class DeviceController extends Controller
             }
         }
 
+        $phone_number = easypost_phone_format($request->get('phone'));
+        return strlen($phone_number);
+        if(strlen($phone_number) != 10){
+            return response()->json([
+                "status"    => 400,
+                "message"   => "phone number input should containt a 10 digit number"
+            ]);
+        }
+
         $chkcustomer = $this->customerRepo->findByField('email', $request['email']);
         if ($response['status'] == 200) 
         {
-            
+            // return $request->all();
             EasyPost::setApiKey(config('account.easypost_apikey'));
             $config = $this->configRepo->find(1);
             
             $to_address = Address::create([
-                // "company" => "", // $config->company_name,
+                "company" => "TronicsPay", // $config->company_name,
                 "name" => $config->company_name, // "Dr. Steve Brule",
                 "street1" => $config->address1, //"179 N Harbor Dr", //$config->address1,
-                // "street2" => $config->address2,
+                "street2" => $config->address2,
                 "city"    => $config->city, // "Redondo Beach", // $config->city,
                 "state"   => $config->state, // "CA", // $config->state,
                 "zip"     => $config->zip_code, // "90277",  // $config->zip_code,
+                // "zip"     => "90277",
                 "phone"   => $config->phone, // "310-808-5243", // $config->phone,
             ]);
-    
+
+            // $to_address = Address::create([
+            //     // "company" => "", // $config->company_name,
+            //     "name" => "Dr. Steve Brule", // $config->company_name, 
+            //     "street1" => "179 N Harbor Dr", //$config->address1,
+            //     // "street2" => $config->address2,
+            //     "city"    => "Redondo Beach", // $config->city,
+            //     "state"   => "CA", // $config->state,
+            //     "zip"     => "90277",  // $config->zip_code,
+            //     "phone"   => "310-808-5243", // $config->phone,
+            // ]);
+            
             $from_address = Address::create([
                 "company" => "EasyPost",
                 "street1" => $request['address1'], // "118 2nd Street",
                 "street2" => $request['address2'], // "4th Floor",
                 "city"    => $request['city'], // "San Francisco", 
-                "state"   => $request['state'], // "CA",
-                "zip"     => $request['zip'], // "94105",
-                "phone"   => $request['phone'], // "415-456-7890",
+                "state"   => $request['state_id'], // "CA",
+                "zip"     => $request['zip_code'], // "94105",
+                // "phone"   => $request['phone'], // "415-456-7890",
+                "phone"   => $phone_number,
             ]);
-    
+
+            // $from_address = Address::create([
+            //     "company" => "EasyPost",
+            //     "street1" => "118 2nd Street",
+            //     "street2" => "4th Floor",
+            //     "city"    => "San Francisco", 
+            //     "state"   => "CA",
+            //     "zip"     => "94105",
+            //     // "phone"   => "415-456-7890",
+            //     "phone"   => "+639183219585"
+            // ]);
+            
             // EasyPost::setApiKey(config('account.easypost_apikey'));
             $parcel = Parcel::create([
                 // 'predefined_package' => $this->package($product->height, $product->width),
@@ -734,7 +769,7 @@ class DeviceController extends Controller
                 'from_address' => $from_address,
                 'parcel'       => $parcel
             ]);
-                
+
             if (count($shipment->rates) == 0) {
                 $response['status'] = 400;
                 $response['message'] = "No rates found on your location";
@@ -864,7 +899,7 @@ class DeviceController extends Controller
                     $makeRequest = [
                         'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
                         'product_id' => $product->id,
-                        'network_id' => $value['carrier_id'],
+                        'network_id' => $productStorage->network_id,
                         'order_id' => $order->id,
                         'product_storage_id' => $productStorage['id'], 
                         // 'amount' => $value['amount'],
@@ -872,7 +907,7 @@ class DeviceController extends Controller
                         'quantity' => $value['quantity'], 
                         'device_type' => $value['device_type']
                     ];
-                    
+
                     $this->orderItemRepo->create($makeRequest);
                 }
             }
@@ -891,18 +926,20 @@ class DeviceController extends Controller
             $data['order'] = $this->orderRepo->findWith($order->id, [
                 'customer', 
                 'customer.bill',
+                'status_details',
                 'order_item',
                 'order_item.product',
                 'order_item.product.brand',
                 'order_item.network',
                 'order_item.product_storage'
                 ]);
+            
             $data['config'] = $this->configRepo->find(1);
 
             $data['shippingFee'] = 10;
             $data['overallSubTotal'] = 0;
             $data['counter'] = 1;
-
+            
             if ($chkcustomer != null) 
             {
                 $data['isRegistered'] = true;

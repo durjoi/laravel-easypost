@@ -98,7 +98,7 @@ class RegisterController extends Controller
     protected function create(CreateCustomerRequest $request)
     {
         $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify",[
-            "secret"    => "6LdiaTYbAAAAAPDjkPuyp5UFCfZpF6mre-n5_azz",
+            "secret"    => env("RECAPTCHA_SECRET_KEY"),
             "response"  => $request->get('g-recaptcha-response'),
         ]);
         $response = json_decode($response->body());
