@@ -108,7 +108,11 @@ class DeviceController extends Controller
         $data['chkproduct'] = $this->productRepo->rawCount("brand_id = ?", [$brandDetails->id]);
         $data['networks'] =  $this->productRepo->queryTable()->whereRaw("brand_id = ? AND status = 'active' AND device_type IN ('Buy', 'Both')", [$brandDetails->id])->groupBy('network')->get();
         $data['brandDetails'] = $brandDetails;
-        $allProducts = $this->productRepo->rawByWithFieldAll(['photo'], "brand_id = ?", [$brandDetails->id], 'model');
+        // $allProducts = $this->productRepo->rawByWithFieldAll(['photo'], "brand_id = ?", [$brandDetails->id], 'model');
+        $allProducts = ModelProduct::with(['photo'])
+                                   ->where('brand_id',"=",$brandDetails->id)
+                                   ->orderBy('created_at','desc')
+                                   ->get();
         $data['products'] = [];
         foreach ($allProducts as $key => $val) 
         {

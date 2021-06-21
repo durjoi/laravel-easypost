@@ -62,6 +62,7 @@
                                             <th>Color</th>
                                             <th>Other Info</th>
                                             <th>Last Updated Date</th>
+                                            <th>Created Date</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -136,8 +137,9 @@
                     { data: 'brand', name: 'brand', searchable: true, orderable: true, width:'14%' },
                     { data: 'model', name: 'model', searchable: true, orderable: true, width:'23%' },
                     { data: 'color', name: 'color', searchable: false, orderable: false, width:'9%' }, 
-                    { data: 'otherInfo', name: 'otherInfo', searchable: false, orderable: false, width:'25%' },
+                    { data: 'otherInfo', name: 'otherInfo', searchable: false, orderable: false, width:'21%' },
                     { data: 'dateUpdated', name: 'dateUpdated', searchable: true, orderable: true, width:'4%' },
+                    { data: 'created_at', name: 'created_at', searchable: true, orderable: true, width:'4%' },
                     { data: 'action', name: 'action', searchable: false, orderable: false, width:'10%', className: "text-center" },
                 ],
             });

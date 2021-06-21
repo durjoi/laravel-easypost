@@ -13,6 +13,11 @@ class Product extends Model
     protected $table = "products";
     protected $guarded = [];
     protected $appends = ['dimension', 'hashedid', 'display_created_at', 'display_updated_at'];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y d M',
+    ];
+
     // protected $appedns = ['dimension'];
 
     public function brand()
