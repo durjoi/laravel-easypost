@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\CustomerAuth;
 
+use Laravel\Socialite\Facades\Socialite;
+
 use App\Models\Customer;
 use App\Models\TableList;
 use Illuminate\Support\Str;
@@ -89,7 +91,7 @@ class RegisterController extends Controller
     private function getCaptcha($SecretKey)
     {
         $recaptcha = $this->tablelist->recaptcha_test_local;
-        $Response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha['secret_key']."&response={$SecretKey}");
+        $Response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $recaptcha['secret_key'] . "&response={$SecretKey}");
         $Return = json_decode($Response);
         return $Return;
     }
@@ -97,15 +99,14 @@ class RegisterController extends Controller
 
     protected function create(CreateCustomerRequest $request)
     {
-        $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify",[
+        $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
             "secret"    => env("RECAPTCHA_SECRET_KEY"),
             "response"  => $request->get('g-recaptcha-response'),
         ]);
         $response = json_decode($response->body());
-        if($response->success)
-        {
-            if ($this->CheckExistingEmail($request['email']) == false) 
-            {
+        if ($response->success) {
+            // if (true) { /// ttt
+            if ($this->CheckExistingEmail($request['email']) == false) {
                 return redirect('customer/auth/register')->with('error', 'Email Address has been already used!');
             }
             $password = Str::random(10);
@@ -116,10 +117,10 @@ class RegisterController extends Controller
                 'username' => '',
                 'password' => Hash::make($request->get('password')),
                 'authpw' => "",
-                'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(), 
+                'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(),
                 'status' => 'inactive'
             ]);
-    
+
             CustomerAddress::create([
                 'customer_id' => $customer->id,
                 'address1' => $request['address1'],
@@ -129,18 +130,16 @@ class RegisterController extends Controller
                 'zip' => $request['zip'],
                 'phone' => $request['phone']
             ]);
-    
+
             Auth::guard('customer')->login($customer);
-            if(!Auth::guard('customer')->check()){
-              return redirect()->to('customer/auth/login');  
+            if (!Auth::guard('customer')->check()) {
+                return redirect()->to('customer/auth/login');
             }
-            if($request['cart']){
+            if ($request['cart']) {
                 return redirect()->to('products/checkout');
             }
             return redirect()->to('customer/dashboard');
-        }
-        else
-        {
+        } else {
             return redirect('customer/auth/register')->with('error', "I'm sorry, but there was an issue with your registration");
         }
     }
@@ -153,7 +152,14 @@ class RegisterController extends Controller
         return view('customer.register', $data);
     }
 
-    private function CheckExistingEmail ($email) 
+    public function showGoogleRegistrationForm()
+    {
+        $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
+        $data['cartcount'] = Cart::count();
+        return view('customer.register_google', $data);
+    }
+
+    private function CheckExistingEmail($email)
     {
         $checker = $this->customerRepo->rawByWithField(['bill'], 'email = ?', [$email]);
         if ($checker) {
@@ -161,5 +167,119 @@ class RegisterController extends Controller
         } else {
             return true;
         }
+    }
+
+    public function redirectToGoogle(Request $request)
+    {
+        if (
+            $this->validateAddressData($request)
+        ) {
+            return;
+        }
+        $this->sessionStoreAddressData($request);
+
+        return Socialite::driver('google')
+            ->redirect();
+    }
+
+    public function returnFromGoogle(Request $request)
+    {
+        $user = Socialite::driver('google')->user();
+
+        if (!$user) return;
+
+        if ($this->CheckExistingEmail($user->email) == false) {
+            // return redirect('customer/auth/register-google')->with('error', 'Email Address has been already used!');
+
+            if ($request['cart']) {
+                // TODO ttt
+                return redirect()->back();
+            }
+
+            $customer = Customer::where('email', $user->email)->first();
+
+            if ($customer->provider !== 'google') {
+                return redirect('customer/auth/register-google')->with('error', 'Email Address has been already used!');
+            }
+
+            Auth::guard('customer')->login($customer);
+            return redirect()->to('customer/dashboard');
+        }
+
+        $customer = $this->createOAuthCustomer($request, $user, 'google');
+
+        Auth::guard('customer')->login($customer);
+        if (!Auth::guard('customer')->check()) {
+            return redirect()->to('customer/auth/login');
+        }
+        if ($request['cart']) {
+            // TODO ttt
+            return redirect()->to('products/checkout');
+        }
+        return redirect()->to('customer/dashboard');
+    }
+
+
+    private function validateAddressData(Request $request)
+    {
+        if (
+            !is_string($request['address1']) ||
+            !is_string($request['address2']) ||
+            !is_string($request['city']) ||
+            !is_string($request['state']) ||
+            !is_string($request['zip']) ||
+            !is_string($request['phone'])
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function sessionStoreAddressData(Request $request)
+    {
+
+        $request->session()->put('address1', $request['address1']);
+        $request->session()->put('address2', $request['address2']);
+        $request->session()->put('city', $request['city']);
+        $request->session()->put('state', $request['state']);
+        $request->session()->put('zip', $request['zip']);
+        $request->session()->put('phone', $request['phone']);
+    }
+
+    private function createOAuthCustomer(Request $request, $user, $provider)
+    {
+
+        $customer = Customer::create([
+            'fname' => $user->user['given_name'],
+            'lname' => $user->user['family_name'],
+            'email' => $user->email,
+            'username' => '',
+            'authpw' => "",
+            'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(),
+            'status' => 'inactive',
+            // password omitted, needs a new field for account provider
+            'provider' => $provider,
+        ]);
+
+        CustomerAddress::create([
+            'customer_id' => $customer->id,
+            'address1' => $request->session()->get('address1'),
+            'address2' => $request->session()->get('address2'),
+            'city' => $request->session()->get('city'),
+            'state' => $request->session()->get('state'),
+            'zip' => $request->session()->get('zip'),
+            'phone' => $request->session()->get('phone'),
+        ]);
+
+
+        $request->session()->forget('address1', $request['address1']);
+        $request->session()->forget('address2', $request['address2']);
+        $request->session()->forget('city', $request['city']);
+        $request->session()->forget('state', $request['state']);
+        $request->session()->forget('zip', $request['zip']);
+        $request->session()->forget('phone', $request['phone']);
+
+        return $customer;
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -55,12 +56,12 @@ class LoginController extends Controller
         // return $this->sendFailedLoginResponse($request);
 
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             "email"     => "required|email",
             "password"  => "required",
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -69,21 +70,20 @@ class LoginController extends Controller
             "password"  => $request->get('password'),
         ];
 
-        if(!Auth::guard('customer')->attempt($credentials)){
-            session()->flash('type','error');
-            session()->flash('msg',"wrong login credentials");
+        if (!Auth::guard('customer')->attempt($credentials)) {
+            session()->flash('type', 'error');
+            session()->flash('msg', "wrong login credentials");
             return redirect()->back();
         }
 
         // if(Auth::guard('customer')->check()){
-        if($request['cart']){
+        if ($request['cart']) {
             return redirect()->back();
         }
         if ($request['from_email'] == true) {
             return redirect()->to($request['redirect_to_custom_url']);
         }
-        if (Auth::guard('customer')->user()->status == "In-Active" && Auth::guard('customer')->user()->is_verified == 0) 
-        {
+        if (Auth::guard('customer')->user()->status == "In-Active" && Auth::guard('customer')->user()->is_verified == 0) {
             return redirect()->to('customer/verification');
         }
         return redirect()->to($this->redirectTo);
@@ -102,7 +102,8 @@ class LoginController extends Controller
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt(
-            $this->credentials($request), $request->filled('remember')
+            $this->credentials($request),
+            $request->filled('remember')
         );
     }
 
@@ -118,16 +119,15 @@ class LoginController extends Controller
         if ($response = $this->authenticated($request, $this->guard()->user())) {
             return $response;
         }
-        
-        if(Auth::guard('customer')->check()){
-            if($request['cart']){
+
+        if (Auth::guard('customer')->check()) {
+            if ($request['cart']) {
                 return redirect()->back();
             }
             if ($request['from_email'] == true) {
                 return redirect()->to($request['redirect_to_custom_url']);
             }
-            if (Auth::guard('customer')->user()->status == "In-Active" && Auth::guard('customer')->user()->is_verified == 0) 
-            {
+            if (Auth::guard('customer')->user()->status == "In-Active" && Auth::guard('customer')->user()->is_verified == 0) {
                 return redirect()->to('customer/verification');
             }
             return redirect()->to($this->redirectTo);
@@ -136,7 +136,6 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        
     }
 
     protected function sendFailedLoginResponse(Request $request)
@@ -164,5 +163,12 @@ class LoginController extends Controller
 
         return redirect('/customer/auth/login');
     }
-    
+
+
+    public function redirectToGoogle()
+    {
+
+        return Socialite::driver('google')
+            ->redirect();
+    }
 }

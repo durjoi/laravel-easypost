@@ -68,6 +68,9 @@
 .tronics .tronics-wrap:hover::before {
   left: 0;
 }
+.tronics .tronics-wrap h3 {
+  color: #353535;
+}
 .tronics .tronics-wrap:hover .tronics-links {
   opacity: 1;
   top: calc(50% - 18px);

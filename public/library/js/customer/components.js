@@ -11,6 +11,7 @@ $(function () {
         
     if($("#dashboard-my-device-table").length)
     {
+        console.log("2")
         const DashboardMyDevices = $('#dashboard-my-device-table').DataTable({
             processing: true,
             serverSide: true,
@@ -120,6 +121,33 @@ $(function () {
                 // { data: 'tracking_code', name: 'tracking_code', searchable: true, orderable: false, width:'20%' },
                 { data: 'shipping_status', name: 'shipping_status', searchable: true, orderable: false, width:'20%', className: "text-center" },
                 { data: 'action', name: 'action', searchable: false, orderable: false, width:'18%', className: "text-center" }
+            ]
+        });
+    }
+
+        
+    if($("#dashboard-my-stats").length)
+    {
+        console.log("1")
+        $('#dashboard-my-stats').DataTable({
+            processing: true,
+            serverSide: true,
+            "pagingType": "input",
+            "lengthChange": false,
+            searching: false,
+            ajax: {
+                url: baseUrl+"/customer/datatable/dashboardmystats",
+                type:'POST'
+            },
+             columns: [
+                {
+                    width:'2%', searchable: false, orderable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }, className: "text-center"
+                },
+                { data: 'quantity', name: 'quantity', searchable: true, orderable: false, width:'50%' },
+                { data: 'status', name: 'status', searchable: true, orderable: false, width:'50%', className: "text-center" },
             ]
         });
     }

@@ -360,6 +360,9 @@ $(function() {
     });
 
     $('.edit-row-product-storage').click(function () {
+        $('#network-dropdown-container').show();
+        $('#network-checkboxes-container').hide();
+
         $('#isBuyForEdit, #fieldBuyId').val('');
         var inDb = $(this).attr('data-attr-saved');
         var id = $(this).attr('data-attr-id');
@@ -391,9 +394,12 @@ $(function() {
         $('#fieldBuyId').val(0);
         // $("#fieldBuyId").val(hashed_id);
         $('#modal-product-buy').modal();
+        $('#network-checkboxes-container').show();
+        $('#network-dropdown-container').hide();
+
     });
     
-    var selected_network = "";
+    selected_network = "";
     $("#network").on('change',function(e){
         selected_network = this.options[this.selectedIndex].text
     });
@@ -404,20 +410,35 @@ $(function() {
 
 
     $('#product-buy-submit').click(function (e) {
-        var data = $('#product-buy-form').serializeArray();
-        var setId = (data[6].value == 0) ? 0 : data[6].value;
+        var dataArr = $('#product-buy-form').serializeArray();
+        const data = {}
+        for (let i = 0; i < dataArr.length; i++) {
+            const item = dataArr[i]
+            data[item.name] = item.value
+        }
+
+
+
+        console.log('h1', dataArr);
+        // console.log("h1", data)
+        var setId = (data["hashedid"] == 0) ? 0 : data["hashedid"];
         if ($('#isBuyForEdit').val() == "true") {
             console.log('ajax');
+
+
+            if (!data['storage']) return
+            if (!data['network']) return
+
             var tempId = $('#fieldBuyId').val();
             $.ajax(`${baseUrl}/admin/products/edit/product-storage/${setId}`,{
                 type: "PATCH",
                 data: {
-                    title: data[0].value,
-                    network_id: data[1].value,
-                    excellent_offer: data[2].value,
-                    good_offer: data[3].value,
-                    fair_offer: data[4].value,
-                    poor_offer: data[5].value,
+                    title: data['storage'],
+                    network_id: data["network"],
+                    excellent_offer: data["excellent_offer"],
+                    good_offer: data["good_offer"],
+                    fair_offer: data["fair_offer"],
+                    poor_offer: data["poor_offer"],
                 },
                 success: function(res){
                     $('#modal-product-buy').modal('hide');
@@ -464,40 +485,62 @@ $(function() {
                 
             // $('.tr-id-'+tempId).html(newRecord);
         } else {
-            var newRecord = `<tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
-                <td align="center">
-                    <input type="hidden" name="product-storage-id[]" value="${setId}">
-                    ${data[0].value}
-                    <input type="hidden" name="storage[]" value="${data[0].value}">
-                    <input type="hidden" name="storage_buy[]" value="${data[0].value}">
-                </td>'+
-                <td align="right">${selected_network}<input type="hidden" name="network[]" value="${data[1].value}"></td>
-                <td align="right">$${data[2].value}<input type="hidden" name="excellent_offer[]" value="${data[2].value}"></td>
-                <td align="right">$${data[3].value}<input type="hidden" name="good_offer[]" value="${data[3].value}"></td>
-                <td align="right">$${data[4].value}<input type="hidden" name="fair_offer[]" value="${data[4].value}"></td>
-                <td align="right">$${data[5].value}<input type="hidden" name="poor_offer[]" value="${data[5].value}"></td>
-                <td align="center">
-                    <button type="button"
-                    class="edit-row-product-storage btn btn-primary btn-xs"
-                    data-toggle="modal" data-target="#edit-modal-product-buy"
-                    data-excellent="${data[2].value}" data-good="${data[3].value}"
-                    data-fair="${data[4].value}" data-poor="${data[5].value}" data-network=${data[1].value}
-                    data-storage="${data[0].value}">
-                        <i class="fa fa-edit"></i>
-                    </button>
-                    <button type="button" class="delete-row-product-storage btn btn-danger btn-xs">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>`;
-            $('#table-product-buy').append(newRecord);
+            var checkboxes = document.querySelectorAll(".network-check-input");
+            var checkedNetworks = [];
+            
+            for (let i = 0; i < checkboxes.length; i++) {
+                const checkbox = checkboxes[i];
+                if (checkbox.checked) {
+                    checkedNetworks.push({id: checkbox.id.replace("checkbox-", ""), title: checkbox.dataset.title})
+                    checkbox.checked = false
+                }
+            }
+
+            if (checkedNetworks.length === 0) {
+                return
+            }
+            
+            if (!data['storage']) return
+
+            
+            for (let i = 0; i < checkedNetworks.length; i++) {
+                const network = checkedNetworks[i];
+                var newRecord = `<tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
+                    <td align="center">
+                        <input type="hidden" name="product-storage-id[]" value="${setId}">
+                        ${data['storage']}
+                        <input type="hidden" name="storage[]" value="${data['storage']}">
+                        <input type="hidden" name="storage_buy[]" value="${data['storage']}">
+                    </td>'+
+                    <td align="right">${network.title || ""}<input type="hidden" name="network[]" value="${network.id}"></td>
+                    <td align="right">$${data['excellent_offer']}<input type="hidden" name="excellent_offer[]" value="${data['excellent_offer']}"></td>
+                    <td align="right">$${data['good_offer']}<input type="hidden" name="good_offer[]" value="${data['good_offer']}"></td>
+                    <td align="right">$${data['fair_offer']}<input type="hidden" name="fair_offer[]" value="${data['fair_offer']}"></td>
+                    <td align="right">$${data['poor_offer']}<input type="hidden" name="poor_offer[]" value="${data['poor_offer']}"></td>
+                    <td align="center">
+                        <button type="button"
+                        class="edit-row-product-storage btn btn-primary btn-xs"
+                        data-toggle="modal" data-target="#edit-modal-product-buy"
+                        data-excellent="${data['excellent_offer']}" data-good="${data['good_offer']}"
+                        data-fair="${data['fair_offer']}" data-poor="${data['poor_offer']}" data-network=${network.id}
+                        data-storage="${data['storage']}">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="delete-row-product-storage btn btn-danger btn-xs">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+                $('#table-product-buy').append(newRecord);
+            }
+
             $('#modal-product-buy').modal('hide');
         }
     });
 
     $("#edit-modal-product-buy").on("show.bs.modal",function(e){
         var data = $('#edit-product-buy-form').serializeArray();
-        console.log(data);
+        console.log("h2");
         const button = e.relatedTarget;
         let tr = button.parentElement.parentElement;
         const modal = $(this);
@@ -514,26 +557,47 @@ $(function() {
 
     $("#edit-product-buy-submit").on("click",function(){
         document.getElementById('parent-table-product-buy').deleteRow($('#replacing-row-index').val());
-        var data = $('#edit-product-buy-form').serializeArray();
-        console.log(data);
+        var dataArr = $('#edit-product-buy-form').serializeArray();
+        const data = {}
+        for (let i = 0; i < dataArr.length; i++) {
+            const item = dataArr[i]
+            data[item.name] = item.value
+        }
+        console.log('h3', dataArr);
+        if (!data['storage']) return
+        if (!data['network']) return
+
+        let selected_network = ""
+        const selectNetwork = document.querySelector("#edit-network")
+        const options = selectNetwork.querySelectorAll("option")
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i]
+            if (option.value == data['network']) {
+                selected_network = option.innerHTML
+                break
+            }
+            
+        }
+        
+        // {/* <input type="hidden" name="product-storage-id[]" value="${setId}"> */}
         var newRecord = `<tr class="tr-id" data-attr-saved="false" data-attr-id="${uuidv4()}">
                 <td align="center">
-                    ${data[1].value}
-                    <input type="hidden" name="storage[]" value="${data[1].value}">
-                    <input type="hidden" name="storage_buy[]" value="${data[1].value}">
+                    ${data['storage']}
+                    <input type="hidden" name="storage[]" value="${data['storage']}">
+                    <input type="hidden" name="storage_buy[]" value="${data['storage']}">
                 </td>'+
-                <td align="right">${selected_network}<input type="hidden" name="network[]" value="${data[2].value}"></td>
-                <td align="right">${data[3].value}<input type="hidden" name="excellent_offer[]" value="${data[3].value}"></td>
-                <td align="right">$${data[4].value}<input type="hidden" name="good_offer[]" value="${data[4].value}"></td>
-                <td align="right">$${data[5].value}<input type="hidden" name="fair_offer[]" value="${data[5].value}"></td>
-                <td align="right">$${data[6].value}<input type="hidden" name="poor_offer[]" value="${data[6].value}"></td>
+                <td align="right">${selected_network}<input type="hidden" name="network[]" value="${data['network']}"></td>
+                <td align="right">$${data['excellent_offer']}<input type="hidden" name="excellent_offer[]" value="${data['excellent_offer']}"></td>
+                <td align="right">$${data['good_offer']}<input type="hidden" name="good_offer[]" value="${data['good_offer']}"></td>
+                <td align="right">$${data['fair_offer']}<input type="hidden" name="fair_offer[]" value="${data['fair_offer']}"></td>
+                <td align="right">$${data['poor_offer']}<input type="hidden" name="poor_offer[]" value="${data['poor_offer']}"></td>
                 <td align="center">
                     <button type="button"
                     class="edit-row-product-storage btn btn-primary btn-xs"
                     data-toggle="modal" data-target="#edit-modal-product-buy"
-                    data-excellent="${data[3].value}" data-good="${data[4].value}"
-                    data-fair="${data[5].value}" data-poor="${data[6].value}" data-network=${data[2].value}
-                    data-storage="${data[1].value}">
+                    data-excellent="${data['excellent_offer']}" data-good="${data['good_offer']}"
+                    data-fair="${data['fair_offer']}" data-poor="${data['poor_offer']}" data-network=${data['network']}
+                    data-storage="${data['storage']}">
                         <i class="fa fa-edit"></i>
                     </button>
                     <button type="button" class="delete-row-product-storage btn btn-danger btn-xs">

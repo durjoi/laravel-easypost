@@ -60,24 +60,25 @@ class DeviceController extends Controller
     protected $network;
     protected $storageProduct;
 
-    function __construct(Brand $brandRepo, 
-                        Product $productRepo, 
-                        State $stateRepo, 
-                        Customer $customerRepo, 
-                        CustomerAddress $addressRepo, 
-                        Device $deviceRepo, 
-                        Config $configRepo, 
-                        ProductStorage $productStorageRepo, 
-                        CustomerOrder $customerOrderRepo, 
-                        CustomerSell $customerSellRepo,
-                        CustomerTransaction $customerTransactionRepo, 
-                        ModelProduct $product, 
-                        Order $orderRepo, 
-                        OrderItem $orderItemRepo, 
-                        TableList $tablelist,
-                        Network $network,
-                        StorageProduct $storageProduct)
-    {
+    function __construct(
+        Brand $brandRepo,
+        Product $productRepo,
+        State $stateRepo,
+        Customer $customerRepo,
+        CustomerAddress $addressRepo,
+        Device $deviceRepo,
+        Config $configRepo,
+        ProductStorage $productStorageRepo,
+        CustomerOrder $customerOrderRepo,
+        CustomerSell $customerSellRepo,
+        CustomerTransaction $customerTransactionRepo,
+        ModelProduct $product,
+        Order $orderRepo,
+        OrderItem $orderItemRepo,
+        TableList $tablelist,
+        Network $network,
+        StorageProduct $storageProduct
+    ) {
         $this->brandRepo = $brandRepo;
         $this->productRepo = $productRepo;
         $this->stateRepo = $stateRepo;
@@ -106,18 +107,18 @@ class DeviceController extends Controller
         $data['paymentList'] = $this->tablelist->payment_list;
         $brandDetails = $this->brandRepo->findByField('name', $brand);
         $data['chkproduct'] = $this->productRepo->rawCount("brand_id = ?", [$brandDetails->id]);
+
         $data['networks'] =  $this->productRepo->queryTable()->whereRaw("brand_id = ? AND status = 'active' AND device_type IN ('Buy', 'Both')", [$brandDetails->id])->groupBy('network')->get();
         $data['brandDetails'] = $brandDetails;
         // $allProducts = $this->productRepo->rawByWithFieldAll(['photo'], "brand_id = ?", [$brandDetails->id], 'model');
         $allProducts = ModelProduct::with(['photo'])
-                                   ->where('brand_id',"=",$brandDetails->id)
-                                   ->orderBy('created_at','desc')
-                                   ->get();
+            ->where('brand_id', "=", $brandDetails->id)
+            ->orderBy('priority', 'asc')
+            ->get();
         $data['products'] = [];
-        foreach ($allProducts as $key => $val) 
-        {
-            $product = $this->product->where('status','active')->find($val['id']);
-            if($product){
+        foreach ($allProducts as $key => $val) {
+            $product = $this->product->where('status', 'active')->find($val['id']);
+            if ($product) {
                 if ($product->storagesForBuying()->count() >= 1) {
                     $data['products'][$key] = $val;
                     $data['products'][$key]['storages'] = $this->product->find($val['id'])->storagesForBuying()->get();
@@ -126,15 +127,15 @@ class DeviceController extends Controller
         }
 
         $data['meta'] = [
-            '<meta name="title" content="'.$brand.' - TronicsPay" />', 
-            '<meta name="description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />', 
-            '<meta property="og:type" content="article" />', 
-            '<meta property="og:title" content="'.$brand.' - TronicsPay" />',
-            '<meta property="og:url" content="'.url('/products/category/'.$brand.'/').'" />', 
+            '<meta name="title" content="' . $brand . ' - TronicsPay" />',
+            '<meta name="description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />',
+            '<meta property="og:type" content="article" />',
+            '<meta property="og:title" content="' . $brand . ' - TronicsPay" />',
+            '<meta property="og:url" content="' . url('/products/category/' . $brand . '/') . '" />',
             '<meta property="og:description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />',
-            '<meta name="twitter:title" content="'.$brand.' - TronicsPay" />', 
-            '<meta name="twitter:image" content="'.url('/'.$brandDetails->full_size).'" />', 
-            '<meta name="twitter:url" content="'.url('/products/category/'.$brand.'/').'" />',
+            '<meta name="twitter:title" content="' . $brand . ' - TronicsPay" />',
+            '<meta name="twitter:image" content="' . url('/' . $brandDetails->full_size) . '" />',
+            '<meta name="twitter:url" content="' . url('/products/category/' . $brand . '/') . '" />',
             '<meta name="twitter:description" content="TronicsPay.com - Sell your Smartphones for CASH. You\'re guaranteed the highest offers, free shipping, and SAME-DAY payment.  100% satisfaction is guaranteed, or we will return your phone at no cost." />'
         ];
 
@@ -144,30 +145,30 @@ class DeviceController extends Controller
     public function network(Request $request)
     {
         $brand = $this->brandRepo->findByField('name', $request['brand']);
-        $products = $this->productRepo->rawWithGroup(['photo'], "brand_id = ? and network = ? and device_type IN ('Both', 'Buy')", [$brand->id, $request['network']], 'model'); 
+        $products = $this->productRepo->rawWithGroup(['photo'], "brand_id = ? and network = ? and device_type IN ('Both', 'Buy')", [$brand->id, $request['network']], 'model');
         $content = '';
         foreach ($products as $product) {
             $content .= '<div class="col-md-3">';
-                $content .= '<div class="card tronics">';
-                    $content .= '<div class="card-body tronics-wrap">';
-                        $content .= '<div class="text-center">';
-                            if(!empty($product->photo)){
-                            $content .= '<img src="'.url($product->photo->photo).'" class="img-fluid product-photo">';
-                            }
-                            $content .= '<h3 class="product-name">'.$product->model.'</h3>';
-                            $content .= '<div class="tronics-links">';
-                                $content .= '<a href="javascript:void(0)" onclick="getoffer('.$product->id.')" class="btn btn-warning btn-sm">Get an Offer</a>';
-                            $content .= '</div>';
-                        $content .= '</div>';
-                    $content .= '</div>';
-                $content .= '</div>';
+            $content .= '<div class="card tronics">';
+            $content .= '<div class="card-body tronics-wrap">';
+            $content .= '<div class="text-center">';
+            if (!empty($product->photo)) {
+                $content .= '<img src="' . url($product->photo->photo) . '" class="img-fluid product-photo">';
+            }
+            $content .= '<h3 class="product-name">' . $product->model . '</h3>';
+            $content .= '<div class="tronics-links">';
+            $content .= '<a href="javascript:void(0)" onclick="getoffer(' . $product->id . ')" class="btn btn-warning btn-sm">Get an Offer</a>';
+            $content .= '</div>';
+            $content .= '</div>';
+            $content .= '</div>';
+            $content .= '</div>';
             $content .= '</div>';
         }
         $data['content'] = $content;
         return response()->json($data);
     }
 
-    public function filterByStorageCondition (Request $request) 
+    public function filterByStorageCondition(Request $request)
     {
         $data = [];
         // return $request->all();
@@ -195,7 +196,7 @@ class DeviceController extends Controller
         $data['storagelist'] = $storagelist;
         $condition = '';
         $amount = '';
-        if($device_type == 1){
+        if ($device_type == 1) {
             $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ALL of the following are true:';
@@ -207,7 +208,7 @@ class DeviceController extends Controller
             $condition .= '</ul>';
             $condition .= '</div>';
         }
-        if($device_type == 2){
+        if ($device_type == 2) {
             $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ALL of the following are true:';
@@ -219,7 +220,7 @@ class DeviceController extends Controller
             $condition .= '</ul>';
             $condition .= '</div>';
         }
-        if($device_type == 3){
+        if ($device_type == 3) {
             $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ANY of the following are true:';
@@ -231,7 +232,7 @@ class DeviceController extends Controller
             $condition .= '</ul>';
             $condition .= '</div>';
         }
-        if($device_type == 4){
+        if ($device_type == 4) {
             $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ANY of the following are true:';
@@ -248,14 +249,13 @@ class DeviceController extends Controller
         return $data;
         return $request->all();
     }
-    
+
     public function brandModel($brand, $model)
     {
         $brand = $brand == "brand" ? $model : $brand;
         $brandData = $this->brandRepo->findByField('name', $brand);
-        $result = $brandData ? $this->productRepo->rawByWithField(['photo', 'networks.network'], 'model = ? and brand_id = ?', [$model, $brandData->id]) : null;
-        if ($result) 
-        {
+        $result = $brandData ? $this->productRepo->rawByWithField(['photo', 'networks.network'], 'model = ? and brand_id = ? and status = "active"', [$model, $brandData->id]) : null;
+        if ($result) {
             $id = $result['id'];
             $device_type = 1;
             $storagelist = '';
@@ -272,19 +272,19 @@ class DeviceController extends Controller
             $getProductStorage = $data['productStorage'][0];
 
             $network_ids = [];
-            foreach($data['productStorage'] as $storage){
-                array_push($network_ids,$storage->network_id);
+            foreach ($data['productStorage'] as $storage) {
+                array_push($network_ids, $storage->network_id);
             }
 
-            $data['networks'] = $this->network->getWhereIn('id',$network_ids,null,null,['id','title','image']);
+            $data['networks'] = $this->network->getWhereIn('id', $network_ids, null, null, ['id', 'title', 'image']);
 
             $data['specs'] = [];
-            foreach($network_ids as $network){
+            foreach ($network_ids as $network) {
                 $fetched_data = $this->storageProduct->query()
-                        ->where('network_id',$network)
-                        ->where('product_id',$result->id)
-                        ->where('amount',null)
-                        ->get();
+                    ->where('network_id', $network)
+                    ->where('product_id', $result->id)
+                    ->where('amount', null)
+                    ->get();
                 $data['specs'][$network] = $fetched_data;
             }
 
@@ -356,35 +356,33 @@ class DeviceController extends Controller
 
 
             $data['meta'] = [
-                '<meta name="title" content="'.$brand.' '.$model.' - TronicsPay" />', 
-                '<meta name="description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />', 
-                '<meta property="og:type" content="article" />', 
-                '<meta property="og:title" content="'.$brand.' '.$model.' - TronicsPay" />',
-                '<meta property="og:url" content="'.url('/products/'.$brand.'/'.$model).'" />', 
+                '<meta name="title" content="' . $brand . ' ' . $model . ' - TronicsPay" />',
+                '<meta name="description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />',
+                '<meta property="og:type" content="article" />',
+                '<meta property="og:title" content="' . $brand . ' ' . $model . ' - TronicsPay" />',
+                '<meta property="og:url" content="' . url('/products/' . $brand . '/' . $model) . '" />',
                 '<meta property="og:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />',
-                '<meta name="twitter:title" content="'.$brand.' '.$model.' - TronicsPay" />', 
-                '<meta name="twitter:image" content="'.url('/'.$result->photo->photo).'" />', 
-                '<meta name="twitter:url" content="'.url('/products/'.$brand.'/'.$model).'" />',
+                '<meta name="twitter:title" content="' . $brand . ' ' . $model . ' - TronicsPay" />',
+                '<meta name="twitter:image" content="' . url('/' . $result->photo->photo) . '" />',
+                '<meta name="twitter:url" content="' . url('/products/' . $brand . '/' . $model) . '" />',
                 '<meta name="twitter:description" content="Need fast cash? Sell us your Apple iPhone XS Max. We pay better than anyone else on the Internet. We research our competitors prices." />'
             ];
-        }
-        else 
-        {
+        } else {
             $data['status'] = 404;
-            $data['error'] = $brand.' - '.$model.' not found';
+            $data['error'] = $brand . ' - ' . $model . ' not found';
             $data['brand'] = $brand;
             $data['product'] = null;
             $data['model'] = $model;
         }
 
         return view('front.device.brandmodel', $data);
-        
+
         // $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
         // $device_type = $request['device_type'];
         // $result = $this->productRepo->findWith($id, ['photo', 'networks.network']);
         // $storagelist = '';
         // $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$id]);
-        
+
         // if (isset($request['storage']) && $request['storage'] != null) {
         //     $getProductStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$id, $request['storage']]);
         // } else {
@@ -479,13 +477,13 @@ class DeviceController extends Controller
         //     }
         // }
         return view('front.device.brandmodel', $data);
-        
+
         // $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($request['id']);
         // $device_type = $request['device_type'];
         // $result = $this->productRepo->findWith($id, ['photo', 'networks.network']);
         // $storagelist = '';
         // $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$id]);
-        
+
         // if (isset($request['storage']) && $request['storage'] != null) {
         //     $getProductStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$id, $request['storage']]);
         // } else {
@@ -563,7 +561,7 @@ class DeviceController extends Controller
         $result = $this->productRepo->findWith($id, ['photo', 'networks.network']);
         $storagelist = '';
         $data['productStorage'] = $this->productStorageRepo->rawByFieldAll("product_id = ? and excellent_offer != ''", [$id]);
-        
+
         if (isset($request['storage']) && $request['storage'] != null) {
             $getProductStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$id, $request['storage']]);
         } else {
@@ -573,14 +571,14 @@ class DeviceController extends Controller
         foreach ($data['productStorage'] as $psKey => $psVal) {
             $active = ($psKey == 0) ? ' active' : '';
             $checked = ($psKey == 0) ? ' checked' : '';
-            $storagelist .= '<label class="btn btn-outline-warning radio-btn'.$active.'" style="margin-right: 4px;">';
-            $storagelist .= '<input type="radio" class="device-storage" name="storage" value="'.$psVal->title.'" onchange="storage(\''.$psVal->title.'\')" autocomplete="off"'.$checked.'> '.$psVal->title;
+            $storagelist .= '<label class="btn btn-outline-warning radio-btn' . $active . '" style="margin-right: 4px;">';
+            $storagelist .= '<input type="radio" class="device-storage" name="storage" value="' . $psVal->title . '" onchange="storage(\'' . $psVal->title . '\')" autocomplete="off"' . $checked . '> ' . $psVal->title;
             $storagelist .= '</label>';
         }
         $data['storagelist'] = $storagelist;
         $condition = '';
         $amount = '';
-        if($device_type == 1){
+        if ($device_type == 1) {
             $amount = number_format($getProductStorage['excellent_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ALL of the following are true:';
@@ -592,7 +590,7 @@ class DeviceController extends Controller
             $condition .= '</ul>';
             $condition .= '</div>';
         }
-        if($device_type == 2){
+        if ($device_type == 2) {
             $amount = number_format($getProductStorage['good_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ALL of the following are true:';
@@ -604,7 +602,7 @@ class DeviceController extends Controller
             $condition .= '</ul>';
             $condition .= '</div>';
         }
-        if($device_type == 3){
+        if ($device_type == 3) {
             $amount = number_format($getProductStorage['fair_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ANY of the following are true:';
@@ -616,7 +614,7 @@ class DeviceController extends Controller
             $condition .= '</ul>';
             $condition .= '</div>';
         }
-        if($device_type == 4){
+        if ($device_type == 4) {
             $amount = number_format($getProductStorage['poor_offer'], 2, '.', ',');
             $condition .= '<div class="card-body" style="font-size: 14px;">';
             $condition .= 'If ANY of the following are true:';
@@ -633,7 +631,7 @@ class DeviceController extends Controller
 
         return response()->json($data);
     }
-    
+
 
     public function store(Request $request)
     {
@@ -655,12 +653,12 @@ class DeviceController extends Controller
             $request['fname'] = $customer['fname'];
             $request['lname'] = $customer['lname'];
             $request['address1'] = $customer['address1'];
-            $request['payment_method'] = $customer['payment_method'];
             $request['email'] = $customer['email'];
-            $request['account_username'] = $customer['account_username'];
-            $request['account_name'] = $customer['account_name'];
-            $request['account_number'] = $customer['account_number'];
-            $request['bank'] = $customer['bank'];
+            // $request['payment_method'] = $customer['payment_method'];
+            // $request['account_username'] = $customer['account_username'];
+            // $request['account_name'] = $customer['account_name'];
+            // $request['account_number'] = $customer['account_number'];
+            // $request['bank'] = $customer['bank'];
         } else {
             if ($request['fname'] == null) {
                 $response['status'] = 400;
@@ -684,25 +682,33 @@ class DeviceController extends Controller
                 $response['status'] = 400;
                 $response['message'] = "Invalid Payment Email Address format";
             }
-    
-            if ($request['payment_method'] == "Bank Transfer") 
-            {
-                if (!$request['bank']) {
-                    $response['status'] = 400;
-                    $response['message'] = "Bank is required";
-                } else if (!$request['account_name']) {
-                    $response['status'] = 400;
-                    $response['message'] = "Account name is required";
-                } else if (!$request['account_number']) {
-                    $response['status'] = 400;
-                    $response['message'] = "Account number is required";
-                }
+        }
+
+        if ($request['payment_method'] == null) {
+            $response['status'] = 400;
+            $response['message'] = "Payment method field is required";
+        }
+
+        if ($request['account_username'] != null && !filter_var($request['account_username'], FILTER_VALIDATE_EMAIL)) {
+            $response['status'] = 400;
+            $response['message'] = "Invalid Payment Email Address format";
+        }
+
+        if ($request['payment_method'] == "Bank Transfer") {
+            if (!$request['bank']) {
+                $response['status'] = 400;
+                $response['message'] = "Bank is required";
+            } else if (!$request['account_name']) {
+                $response['status'] = 400;
+                $response['message'] = "Account name is required";
+            } else if (!$request['account_number']) {
+                $response['status'] = 400;
+                $response['message'] = "Account number is required";
             }
         }
 
         $phone_number = easypost_phone_format($request->get('phone'));
-        return strlen($phone_number);
-        if(strlen($phone_number) != 10){
+        if (strlen($phone_number) != 10) {
             return response()->json([
                 "status"    => 400,
                 "message"   => "phone number input should containt a 10 digit number"
@@ -710,15 +716,13 @@ class DeviceController extends Controller
         }
 
         $chkcustomer = $this->customerRepo->findByField('email', $request['email']);
-        if ($response['status'] == 200) 
-        {
+        if ($response['status'] == 200) {
             // return $request->all();
             EasyPost::setApiKey(config('account.easypost_apikey'));
             $config = $this->configRepo->find(1);
-            
+
             $to_address = Address::create([
                 "company" => "TronicsPay", // $config->company_name,
-                "name" => $config->company_name, // "Dr. Steve Brule",
                 "street1" => $config->address1, //"179 N Harbor Dr", //$config->address1,
                 "street2" => $config->address2,
                 "city"    => $config->city, // "Redondo Beach", // $config->city,
@@ -738,9 +742,10 @@ class DeviceController extends Controller
             //     "zip"     => "90277",  // $config->zip_code,
             //     "phone"   => "310-808-5243", // $config->phone,
             // ]);
-            
+
             $from_address = Address::create([
-                "company" => "EasyPost",
+                "company" => null,
+                "name" => $request['fname'] . " " . $request['lname'],
                 "street1" => $request['address1'], // "118 2nd Street",
                 "street2" => $request['address2'], // "4th Floor",
                 "city"    => $request['city'], // "San Francisco", 
@@ -760,14 +765,17 @@ class DeviceController extends Controller
             //     // "phone"   => "415-456-7890",
             //     "phone"   => "+639183219585"
             // ]);
-            
+
             // EasyPost::setApiKey(config('account.easypost_apikey'));
             $parcel = Parcel::create([
                 // 'predefined_package' => $this->package($product->height, $product->width),
-                'predefined_package' => 'LargeFlatRateBox',
-                'weight' => 76.9, // $product->height,
+                // 'predefined_package' => 'LargeFlatRateBox',
+                'length' => 9,
+                'width' => 6,
+                'height' => 2,
+                'weight' => 10,
             ]);
-            
+
             $shipment = Shipment::create([
                 'to_address'   => $to_address,
                 'from_address' => $from_address,
@@ -781,8 +789,7 @@ class DeviceController extends Controller
             }
 
 
-            if (!$chkcustomer) 
-            {
+            if (!$chkcustomer) {
                 $password = Str::random(10);
                 $customerRequest = [
                     'fname' => $request['fname'],
@@ -794,7 +801,7 @@ class DeviceController extends Controller
                     'bank' => $request['bank'],
                     'account_name' => $request['account_name'],
                     'account_number' => $request['account_number'],
-                    'authpw' => $password, 
+                    'authpw' => $password,
                     'verification_code' => app('App\Http\Controllers\GlobalFunctionController')->verificationCode(),
                     'status' => 'In-Active'
                 ];
@@ -814,16 +821,15 @@ class DeviceController extends Controller
                 $password = '';
                 $address = $this->addressRepo->findByField('customer_id', $chkcustomer['id']);
             }
-            
-            if ($request['cart'] != null) 
-            {
+
+            if ($request['cart'] != null) {
                 /**
                  * start: easy post integration
                  */
 
                 // EasyPost::setApiKey(config('account.easypost_apikey'));
                 // $config = $this->configRepo->find(1);
-                
+
                 // $to_address = Address::create([
                 //     // "company" => "", // $config->company_name,
                 //     "name" => $config->company_name, // "Dr. Steve Brule",
@@ -834,7 +840,7 @@ class DeviceController extends Controller
                 //     "zip"     => $config->zip_code, // "90277",  // $config->zip_code,
                 //     "phone"   => $config->phone, // "310-808-5243", // $config->phone,
                 // ]);
-        
+
                 // $from_address = Address::create([
                 //     "company" => "EasyPost",
                 //     "street1" => $address->address1, // "118 2nd Street",
@@ -844,33 +850,33 @@ class DeviceController extends Controller
                 //     "zip"     => $address->zip, // "94105",
                 //     "phone"   => $address->phone, // "415-456-7890",
                 // ]);
-        
+
                 // // EasyPost::setApiKey(config('account.easypost_apikey'));
                 // $parcel = Parcel::create([
                 //     // 'predefined_package' => $this->package($product->height, $product->width),
                 //     'predefined_package' => 'LargeFlatRateBox',
                 //     'weight' => 76.9, // $product->height,
                 // ]);
-                
+
                 // $shipment = Shipment::create([
                 //     'to_address'   => $to_address,
                 //     'from_address' => $from_address,
                 //     'parcel'       => $parcel
                 // ]);
                 // $shipment->buy($shipment->lowest_rate());
-            
+
                 $shipment->buy($shipment->lowest_rate());
-                $shipment->insure(array('amount' => 100));
-                
-                 /**
-                  * end: easy post integration
-                  */
+                // $shipment->insure(array('amount' => 100));
+
+                /**
+                 * end: easy post integration
+                 */
 
 
                 $makeOrderRequest = [
                     'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
                     'order_no' => strtoupper(app('App\Http\Controllers\GlobalFunctionController')->generateUUID()),
-                    'status_id' => 1, 
+                    'status_id' => 1,
                     'transaction_date' => date("Y-m-d h:i:s"),
                     'delivery_due' => $shipment->tracker->est_delivery_date, // date("Y-m-d", strtotime("+30 day")),
                     'payment_method' => $request['payment_method'],
@@ -883,32 +889,31 @@ class DeviceController extends Controller
                     'shipping_fee' => $shipment->rates[0]->retail_rate,
                     'tracking_code' => $shipment->tracking_code,
                     'carrier' => $shipment->rates[0]->carrier,
-                    'delivery_days' => $shipment->rates[0]->delivery_days, 
+                    'delivery_days' => $shipment->rates[0]->delivery_days,
                     'shipping_tracker' => $shipment->tracker->public_url
 
                 ];
-                
+
                 $order = $this->orderRepo->create($makeOrderRequest);
 
 
-                foreach ($request['cart'] as $key => $value) 
-                {
+                foreach ($request['cart'] as $key => $value) {
                     $brand = $this->brandRepo->findByField('name', $value['brand']);
                     // $product = $this->productRepo->rawByField("brand_id = ? and network = ? and storage = ? and model = ?", [$brand->id, $value['network'], $value['storage'], $value['model']]);
                     $product = $this->productRepo->rawByField("brand_id = ? and model = ?", [$brand->id, $value['model']]);
-                    
+
                     $productStorage = $this->productStorageRepo->rawByField("product_id = ? and title = ?", [$product->id, $value['storage']]);
 
 
                     $makeRequest = [
                         'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
                         'product_id' => $product->id,
-                        'network_id' => $productStorage->network_id,
+                        'network_id' => $value['network'],
                         'order_id' => $order->id,
-                        'product_storage_id' => $productStorage['id'], 
+                        'product_storage_id' => $productStorage['id'],
                         // 'amount' => $value['amount'],
                         'amount' => $productStorage[$value['device_type']],
-                        'quantity' => $value['quantity'], 
+                        'quantity' => $value['quantity'],
                         'device_type' => $value['device_type']
                     ];
 
@@ -926,9 +931,9 @@ class DeviceController extends Controller
                 'fname' => $request['fname']
             ];
 
-                
+
             $data['order'] = $this->orderRepo->findWith($order->id, [
-                'customer', 
+                'customer',
                 'customer.bill',
                 'status_details',
                 'order_item',
@@ -936,16 +941,15 @@ class DeviceController extends Controller
                 'order_item.product.brand',
                 'order_item.network',
                 'order_item.product_storage'
-                ]);
-            
+            ]);
+
             $data['config'] = $this->configRepo->find(1);
 
             $data['shippingFee'] = 10;
             $data['overallSubTotal'] = 0;
             $data['counter'] = 1;
-            
-            if ($chkcustomer != null) 
-            {
+
+            if ($chkcustomer != null) {
                 $data['isRegistered'] = true;
                 $subject = "TronicsPay Order Confirmation";
                 $data['header'] = "TronicsPay Order Confirmation";
@@ -955,9 +959,7 @@ class DeviceController extends Controller
                 $response['status'] = 301;
                 $response['message'] = 'Cart has been added to your bundles';
                 $response['redirectTo'] = 'customer/my-bundles';
-            }
-            else 
-            {
+            } else {
                 $data['isRegistered'] = false;
                 $subject = "TronicsPay Email Confirmation";
                 $data['header'] = "TronicsPay Email Confirmation";
@@ -966,7 +968,7 @@ class DeviceController extends Controller
                 $htmlResult = '<div class="container">
                                     <div class="row">
                                         <div class="form-group col-md-12" align="center">
-                                            <img src="'.url("./assets/images/logo.png").'" class="img-fluid">
+                                            <img src="' . url("./assets/images/logo.png") . '" class="img-fluid">
                                         </div>
                                     </div>
                                     <br />
@@ -974,21 +976,21 @@ class DeviceController extends Controller
                                     <div class="row">
                                         <div class="col-md-12">
                                         <div class="text-center">
-                                            <h3>Thank you '.$result['fname'].' for selling '.$result['model'].'!</h3>
+                                            <h3>Thank you ' . $result['fname'] . ' for selling ' . $result['model'] . '!</h3>
                                             <p>
-                                            We are currently reviewing the device, we send a confirmation email.<br>
+                                            We are currently reviewing the device, we will send a confirmation email.<br>
                                             Please check your email and login at <a href="../customer/auth/login">Member Login</a>.
                                             </p>
                                         </div>
                                         </div>
                                     </div>
                                 </div>';
-        
+
                 $response['message'] = $htmlResult;
             }
 
 
-            
+
             Mailer::sendEmail($email, $subject, $content);
         }
         return $response;
@@ -998,7 +1000,7 @@ class DeviceController extends Controller
         /**
          *  start: Customer
          */
-        
+
         // if(empty($chkcustomer)){
         //     $password = Str::random(10);
         //     $customerRequest = [
@@ -1031,11 +1033,11 @@ class DeviceController extends Controller
         //     {
         //         $brand = $this->brandRepo->findByField('name', $value['brand']);
         //         $product = $this->productRepo->rawByField("brand_id = ? and network = ? and storage = ? and model = ?", [$brand->id, $value['network'], $value['storage'], $value['model']]);
-                
+
         //         $parcel = $this->parcel($product);
         //         $shipment = $this->shipping($address, $parcel);
         //         // $ship = $shipment->buy($shipment->lowest_rate());
-        
+
         //         // $makeRequest = [
         //         //     'customer_id' => isset($chkcustomer->id) ? $chkcustomer->id : $customer->id,
         //         //     'product_id' => $product->id,
@@ -1066,7 +1068,7 @@ class DeviceController extends Controller
         //             'carrier' => 'USPS',
         //             'delivery_days' => '5'
         //         ];
-        
+
         //     }
         // }
         // $this->deviceRepo->create($makeRequest);
@@ -1117,7 +1119,7 @@ class DeviceController extends Controller
         // $brand = $this->brandRepo->findByField('name', $request['brand']);
         // $config = $this->configRepo->find(1);
         // $product = $this->productRepo->rawByField("brand_id = ? and network = ? and storage = ? and model = ?", [$brand->id, $request['network'], $request['storage'], $request['model']]);
-        
+
         // if(empty($chkcustomer)){
         //     $password = Str::random(10);
         //     $customerRequest = [
@@ -1198,20 +1200,23 @@ class DeviceController extends Controller
     }
 
 
-    public function shippingLabelPDF ($hashedId) 
+    public function shippingLabelPDF($hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
-        $data['order'] = $order = $this->orderRepo->find($id);
-        $pdf = PDF::loadView('partial.documents.shippinglabel.index', $data);
-        
+        $data['order'] = $this->orderRepo->find($id);
+
+        return redirect($data['order']["shipping_label"]);
+        // $pdf = PDF::loadHTML('<img src="' . $data['order']["shipping_label"] . '" style="width: 96%;">');
+        // $pdf = PDF::loadView('partial.documents.shippinglabel.index', $data);
+
         return $pdf->download('Tronicspay_Shipping_Label.pdf');
     }
-    
+
     private function shipping($address, $parcel)
     {
         EasyPost::setApiKey(config('account.easypost_apikey'));
         $config = $this->configRepo->find(1);
-        
+
         $to_address = Address::create([
             'company' => $config->company_name,
             'street1' => $config->address1,
@@ -1256,25 +1261,25 @@ class DeviceController extends Controller
 
     private function package($height, $width)
     {
-        if($height <= 8 && $width <= 5){
+        if ($height <= 8 && $width <= 5) {
             return 'SmallFlatRateBox';
-        } elseif(($height > 8 && $width > 5) && ($height <= 11 && $width <= 8)){
+        } elseif (($height > 8 && $width > 5) && ($height <= 11 && $width <= 8)) {
             return 'MediumFlatRateBox';
         } else {
             return 'LargeFlatRateBox';
         }
     }
-    
 
-    public function doSMSRegistration($request, $phone) 
-    {   
+
+    public function doSMSRegistration($request, $phone)
+    {
         if (app('App\Http\Controllers\GlobalFunctionController')->checkSMSFeatureIfActive() == false) return false;
 
         $message = 'Thank you for choosing TronicsPay. Your login credential is: 
-email: '.$request['email'].'
-password: '.$request['authpw'].'
+email: ' . $request['email'] . '
+password: ' . $request['authpw'] . '
         
-Your verification code: '.$request['verification_code'];
+Your verification code: ' . $request['verification_code'];
         return app('App\Http\Controllers\GlobalFunctionController')->doSmsSending($phone, $message);
         return true;
     }
@@ -1283,20 +1288,20 @@ Your verification code: '.$request['verification_code'];
     public function storages_api($product_id)
     {
         $id = (app('App\Http\Controllers\GlobalFunctionController'))->decodeHashid($product_id);
-        $product = $this->productRepo->findWith($id,['storagesForBuying']);
-        
+        $product = $this->productRepo->findWith($id, ['storagesForBuying']);
+
         $network_ids = [];
-        foreach($product->storagesForBuying as $storage){
-            array_push($network_ids,$storage->network_id);
+        foreach ($product->storagesForBuying as $storage) {
+            array_push($network_ids, $storage->network_id);
         }
 
         $data['specs'] = [];
-        foreach($network_ids as $network){
+        foreach ($network_ids as $network) {
             $fetched_data = $this->storageProduct->query()
-                    ->where('network_id',$network)
-                    ->where('product_id',$product->id)
-                    ->where('amount',null)
-                    ->get(['id','title','excellent_offer','good_offer',"fair_offer","poor_offer"]);
+                ->where('network_id', $network)
+                ->where('product_id', $product->id)
+                ->where('amount', null)
+                ->get(['id', 'title', 'excellent_offer', 'good_offer', "fair_offer", "poor_offer"]);
             $data['specs'][$network] = $fetched_data;
         }
 
@@ -1317,14 +1322,14 @@ Your verification code: '.$request['verification_code'];
         $search = $request->get('search');
         $data['status'] = true;
         $query = 'SELECT products.id,products.model,photo.photo,settings_brands.name FROM products INNER JOIN settings_brands ON products.brand_id = settings_brands.id INNER JOIN product_photos as photo ON products.id = photo.product_id WHERE products.model LIKE ? OR settings_brands.name LIKE ?';
-        $products = DB::select($query,["%{$search}%","%{$search}%"]);
+        $products = DB::select($query, ["%{$search}%", "%{$search}%"]);
 
         foreach ($products as  $product) {
             $product->link = url("products/{$product->name}/{$product->model}");
             unset($product->name);
         }
         $data['products'] = $products;
-        
+
         return response()->json($data);
     }
 }

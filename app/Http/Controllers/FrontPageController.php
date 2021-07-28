@@ -42,6 +42,7 @@ use App\Models\Admin\PageBuilderPageTranslations;
 
 // For Plivio
 require __DIR__ . '/../../../vendor/autoload.php';
+
 use Plivo\RestClient;
 use Plivo\Exceptions\PlivoAuthenticationException;
 use Plivo\Exceptions\PlivoRestException;
@@ -69,24 +70,25 @@ class FrontPageController extends Controller
     protected $pageBuiderPages;
     protected $pageBuilderPageTranslations;
 
-    function __construct(Page $pageRepo, 
-                         PageSection $sectionRepo, 
-                         PageRow $rowRepo, 
-                         PageColumn $columnRepo, 
-                         PageContent $contentRepo, 
-                         PageStatic $staticRepo, 
-                         Product $productRepo, 
-                         ProductPhoto $productPhotoRepo, 
-                         Brand $brandRepo, 
-                         State $stateRepo, 
-                         PageBuilder $pageBuilderRepo, 
-                         Network $networkRepo,
-                         UrlGenerator $url, 
-                         TableList $tablelist, 
-                         PageMetaTag $pageMetaTagRepo, 
-                         PageBuilderPages $pageBuiderPages, 
-                         PageBuilderPageTranslations $pageBuilderPageTranslations)
-    {
+    function __construct(
+        Page $pageRepo,
+        PageSection $sectionRepo,
+        PageRow $rowRepo,
+        PageColumn $columnRepo,
+        PageContent $contentRepo,
+        PageStatic $staticRepo,
+        Product $productRepo,
+        ProductPhoto $productPhotoRepo,
+        Brand $brandRepo,
+        State $stateRepo,
+        PageBuilder $pageBuilderRepo,
+        Network $networkRepo,
+        UrlGenerator $url,
+        TableList $tablelist,
+        PageMetaTag $pageMetaTagRepo,
+        PageBuilderPages $pageBuiderPages,
+        PageBuilderPageTranslations $pageBuilderPageTranslations
+    ) {
         $this->pageRepo = $pageRepo;
         $this->sectionRepo = $sectionRepo;
         $this->rowRepo = $rowRepo;
@@ -115,7 +117,7 @@ class FrontPageController extends Controller
         // $urlTitle = (substr($currentUrl, 1) == '' || substr($currentUrl, 1) == '/aperemarketing.com') ? '/' : substr($currentUrl, 1);
         $pagetranslate = $this->pageBuilderPageTranslations->where('route', '')->first();
         if (strlen($pagetranslate) != 0) {
-            
+
             $page = $this->pageBuiderPages->find($pagetranslate->page_id);
             if ($page->data == null || $page->data == $default_empty_content) {
                 $data['page'] = $page;
@@ -123,27 +125,41 @@ class FrontPageController extends Controller
                 $data['rowone'] = $this->brandRepo->rawAll("feature = ?", [1]);
                 $data['rowtwo'] = $this->brandRepo->rawAll("feature = ?", [2]);
                 $data['rowtri'] = $this->brandRepo->rawAll("feature = ?", [3]);
+                $data['rowqua'] = $this->brandRepo->rawAll("feature = ?", [4]);
                 $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
                 $data['meta'] = $this->GenerateMetaTags('');
+
+                $data['place_ID'] = ''; // Get from: https://developers.google.com/places/place-id
+                $data['business_type'] = ''; // Example: FinancialService (http://schema.org)
+                $data['business_name'] = '';
+                $data['street_address'] = '';
+                $data['locality'] = ''; // Example: Docklands (http://schema.org/addressLocality)
+                $data['region'] = '';
+                $data['post_code'] = '';
+                $data['logo_path'] = 'logo.png';
+                $data['min_star'] = '1'; // The minimum star rating (min '] = 1)
+                $data['max_rows'] = '5'; // The maximum number of results (max '] = 5)
+                $data['api_key'] = '!1m18!1m12!1m3!1d3097.2195538694464!2d-94.41648289308372!3d39.07869647373669!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87c0fdf2628895ff%3A0x74b538aa176b05bc!2sTronics%20Pay!5e0!3m2!1sen!2sph!4v1605701145623!5m2!1sen!2sph';
+
                 return view('welcome', $data);
             } else {
                 $urlTitle = (substr($currentUrl, 1) == '' || substr($currentUrl, 1) == '/aperemarketing.com') ? '/' : substr($currentUrl, 1);
                 $parameters = array();
                 array_push($parameters, $urlTitle);
-                
+
                 $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
                 if ($page == null) {
                     return view('404');
                     return "invalid page";
                 }
-    
+
                 $data['meta'] = $this->GenerateMetaTags($currentUrl);
                 $data['html'] = $this->trimPageContent($page);
+
+
                 return view('layouts.pagebuilder', $data);
             }
-        }
-        else 
-        {
+        } else {
             echo '<pre>';
             print_r($currentUrl);
             echo '</pre>';
@@ -164,7 +180,7 @@ class FrontPageController extends Controller
         //     $urlTitle = (substr($currentUrl, 1) == '') ? '/' : substr($currentUrl, 1);
         //     $parameters = array();
         //     array_push($parameters, $urlTitle);
-            
+
         //     $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
         //     if ($page == null) {
         //         return view('404');
@@ -177,81 +193,79 @@ class FrontPageController extends Controller
         // }
     }
 
-    private function displayPageBuildTemplate ($currentUrl) 
+    private function displayPageBuildTemplate($currentUrl)
     {
-
     }
 
 
-    public function handleRequest ($uri) 
+    public function handleRequest($uri)
     {
         $currentUrl = basename(request()->path());
 
         $pagetranslate = $this->pageBuilderPageTranslations->firstWhere('route', $currentUrl);
         $default_empty_content = '{"html":[""],"components":[[]],"css":"* { box-sizing: border-box; } body {margin: 0;}","style":[],"blocks":{"en":[]}}';
-  
+
         if (strlen($pagetranslate) != 0) {
 
-                $page = $this->pageBuiderPages->find($pagetranslate->page_id);
-                if ($page->data == null || $page->data == $default_empty_content) {
-                    $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
-                    if ($currentUrl == "about-us") {
-                        $data['meta'] = $this->GenerateMetaTags('about-us');
-                        return view('front.aboutus.index', $data);
-                    }
-                    
-                    if ($currentUrl == "how-it-works") {
-                        $data['meta'] = $this->GenerateMetaTags('how-it-works');
-                        return view('front.howitworks.index', $data);
-                    }
-    
-                    if ($currentUrl == "cart") {
-                        $data['brands'] = $this->brandRepo->all();
-            
-                        $data['meta'] = [
-                                '<meta name="title" content="Cart - Tronics Pay" />', 
-                                '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
-                                '<meta property="og:type" content="article" />', 
-                                '<meta property="og:title" content="Cart - Tronics Pay" />',
-                                '<meta property="og:url" content="'.url('/cart').'" />', 
-                                '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
-                                '<meta name="twitter:title" content="Cart - Tronics Pay" />', 
-                                '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />', 
-                                '<meta name="twitter:url" content="'.url('/cart').'" />',
-                                '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
-                        ];
-                        return view("front.cart.index", $data);
-                    }
-
-                    if($currentUrl == "terms-and-conditions"){
-                        return view("front.terms-and-conditions.index",$data);
-                    }
-                    
-                    if ($currentUrl == "contact-us") {
-                        $data['page'] = $this->staticRepo->findByField('page_id', 4);
-                        $data['meta'] = $this->GenerateMetaTags('contact-us');
-                        return view('front.contactus.index', $data);
-                    }
-
-                } else {
-                    $urlTitle = $currentUrl;
-                    $parameters = array();
-                    array_push($parameters, $urlTitle);
-                    
-                    $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
-                    if ($page == null) {
-                        return view('404');
-                        return "invalid page";
-                    }
-        
-                    $data['meta'] = $this->GenerateMetaTags($currentUrl);
-                    $data['html'] = $this->trimPageContent($page);
-                    return view('layouts.pagebuilder', $data);
-                    echo '<pre>';
-                    print_r($currentUrl);
-                    echo '</pre>';
-                    exit;
+            $page = $this->pageBuiderPages->find($pagetranslate->page_id);
+            if ($page->data == null || $page->data == $default_empty_content) {
+                $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
+                if ($currentUrl == "about-us") {
+                    $data['meta'] = $this->GenerateMetaTags('about-us');
+                    return view('front.aboutus.index', $data);
                 }
+
+                if ($currentUrl == "how-it-works") {
+                    $data['meta'] = $this->GenerateMetaTags('how-it-works');
+                    return view('front.howitworks.index', $data);
+                }
+
+                if ($currentUrl == "cart") {
+                    $data['brands'] = $this->brandRepo->all();
+
+                    $data['meta'] = [
+                        '<meta name="title" content="Cart - Tronics Pay" />',
+                        '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                        '<meta property="og:type" content="article" />',
+                        '<meta property="og:title" content="Cart - Tronics Pay" />',
+                        '<meta property="og:url" content="' . url('/cart') . '" />',
+                        '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                        '<meta name="twitter:title" content="Cart - Tronics Pay" />',
+                        '<meta name="twitter:image" content="' . url('/assets/images/logo-white.png') . '" />',
+                        '<meta name="twitter:url" content="' . url('/cart') . '" />',
+                        '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
+                    ];
+                    return view("front.cart.index", $data);
+                }
+
+                if ($currentUrl == "terms-and-conditions") {
+                    return view("front.terms-and-conditions.index", $data);
+                }
+
+                if ($currentUrl == "contact-us") {
+                    $data['page'] = $this->staticRepo->findByField('page_id', 4);
+                    $data['meta'] = $this->GenerateMetaTags('contact-us');
+                    return view('front.contactus.index', $data);
+                }
+            } else {
+                $urlTitle = $currentUrl;
+                $parameters = array();
+                array_push($parameters, $urlTitle);
+
+                $page = (new PageTranslationRepository)->findWhere("route", $urlTitle);
+                if ($page == null) {
+                    return view('404');
+                    return "invalid page";
+                }
+
+                $data['meta'] = $this->GenerateMetaTags($currentUrl);
+                $data['html'] = $this->trimPageContent($page);
+                return view('layouts.pagebuilder', $data);
+                echo '<pre>';
+                print_r($currentUrl);
+                echo '</pre>';
+                exit;
+            }
 
 
             // $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
@@ -259,7 +273,7 @@ class FrontPageController extends Controller
             //     $data['meta'] = $this->GenerateMetaTags('about-us');
             //     return view('front.aboutus.index', $data);
             // }
-            
+
             // if ($currentUrl == "how-it-works") {
             //     $data['meta'] = $this->GenerateMetaTags('how-it-works');
             //     return view('front.howitworks.index', $data);
@@ -267,7 +281,7 @@ class FrontPageController extends Controller
 
             // if ($currentUrl == "cart") {
             //     $data['brands'] = $this->brandRepo->all();
-    
+
             //     $data['meta'] = [
             //             '<meta name="title" content="Cart - Tronics Pay" />', 
             //             '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
@@ -284,7 +298,7 @@ class FrontPageController extends Controller
             // }
 
         } else {
-                
+
             /**
              * start: Customer Cart Page
              */
@@ -293,28 +307,28 @@ class FrontPageController extends Controller
                 $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
 
                 $data['meta'] = [
-                        '<meta name="title" content="Cart - Tronics Pay" />', 
-                        '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
-                        '<meta property="og:type" content="article" />', 
-                        '<meta property="og:title" content="Cart - Tronics Pay" />',
-                        '<meta property="og:url" content="'.url('/cart').'" />', 
-                        '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
-                        '<meta name="twitter:title" content="Cart - Tronics Pay" />', 
-                        '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />', 
-                        '<meta name="twitter:url" content="'.url('/cart').'" />',
-                        '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
+                    '<meta name="title" content="Cart - Tronics Pay" />',
+                    '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                    '<meta property="og:type" content="article" />',
+                    '<meta property="og:title" content="Cart - Tronics Pay" />',
+                    '<meta property="og:url" content="' . url('/cart') . '" />',
+                    '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                    '<meta name="twitter:title" content="Cart - Tronics Pay" />',
+                    '<meta name="twitter:image" content="' . url('/assets/images/logo-white.png') . '" />',
+                    '<meta name="twitter:url" content="' . url('/cart') . '" />',
+                    '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
                 ];
-                
-                
+
+
                 return view("front.cart.index", $data);
             }
 
-            if($currentUrl == "terms-and-conditions"){
+            if ($currentUrl == "terms-and-conditions") {
                 $data = [];
                 $data['page'] = new stdClass();
                 $data['page']->title = "Terms and conditions";
                 $data['page']->css = null;
-                return view("front.terms-and-conditions.index",$data);
+                return view("front.terms-and-conditions.index", $data);
             }
 
             return view('404');
@@ -329,22 +343,22 @@ class FrontPageController extends Controller
         $data['page'] = $this->pageBuilderRepo->findByField('route', $uri);
         if ($data['page']) {
             $data['page_id'] = $data['page']->id;
-            $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
+            $data['reload_page_api'] = $this->url->to('/') . "/builder/pagecontent/" . $data['page_id'] . "";
         }
         $page_url = basename(request()->path());
-        
+
         /**
          * start: Products Page
          */
         if ($page_url == "products") {
-            return $this->products($data['page_id'] );
+            return $this->products($data['page_id']);
         }
 
         /**
          * start: Device Page
          */
         if ($page_url == "device") {
-            if(session()->has('result')){
+            if (session()->has('result')) {
                 return view('front.device.index');
             }
             return redirect()->to('/');
@@ -358,19 +372,19 @@ class FrontPageController extends Controller
             $data['isValidAuthentication'] = (Auth::guard('customer')->check() != null) ? true : false;
 
             $data['meta'] = [
-                    '<meta name="title" content="Cart - Tronics Pay" />', 
-                    '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />', 
-                    '<meta property="og:type" content="article" />', 
-                    '<meta property="og:title" content="Cart - Tronics Pay" />',
-                    '<meta property="og:url" content="'.url('/cart').'" />', 
-                    '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
-                    '<meta name="twitter:title" content="Cart - Tronics Pay" />', 
-                    '<meta name="twitter:image" content="'.url('/assets/images/logo-white.png').'" />', 
-                    '<meta name="twitter:url" content="'.url('/cart').'" />',
-                    '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
+                '<meta name="title" content="Cart - Tronics Pay" />',
+                '<meta name="description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                '<meta property="og:type" content="article" />',
+                '<meta property="og:title" content="Cart - Tronics Pay" />',
+                '<meta property="og:url" content="' . url('/cart') . '" />',
+                '<meta property="og:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />',
+                '<meta name="twitter:title" content="Cart - Tronics Pay" />',
+                '<meta name="twitter:image" content="' . url('/assets/images/logo-white.png') . '" />',
+                '<meta name="twitter:url" content="' . url('/cart') . '" />',
+                '<meta name="twitter:description" content="Sell your used cell phones and electronics. Sell your iPhone, Samsung Galaxy, iPad, Smart Watches, Game Consoles and more for cash. We will pay you!" />'
             ];
-            
-            
+
+
             return view("front.cart.index", $data);
         }
 
@@ -392,15 +406,15 @@ class FrontPageController extends Controller
             return view('front.howitworks.index', $data);
         }
 
-        if($page_url == "terms-and-conditions"){
-            return view('front.terms-and-conditions.index',$data);
+        if ($page_url == "terms-and-conditions") {
+            return view('front.terms-and-conditions.index', $data);
         }
 
         return view('front.pagebuilder.pagehandler', $data);
     }
 
 
-    public function processRequest ($id) 
+    public function processRequest($id)
     {
         return $data['page'] = $this->pageBuilderRepo->find($id);
     }
@@ -439,10 +453,10 @@ class FrontPageController extends Controller
     public function custompage($page_slug)
     {
         $data['page'] = $page = $this->pageRepo->findByField('slug_title', $page_slug);
-        $data['sections'] = $this->sectionRepo->rawWith(['row.column.content' => function($query){
+        $data['sections'] = $this->sectionRepo->rawWith(['row.column.content' => function ($query) {
             $query->orderBy('order_id');
         }], "page_id = ?", [$page->id], "order_id");
-        $data['customstyle'] = ($page->background_image) ? 'background-image: url('.$page->background_image.')' : 'background-color: '.$page->background_color;
+        $data['customstyle'] = ($page->background_image) ? 'background-image: url(' . $page->background_image . ')' : 'background-color: ' . $page->background_color;
         return view('front.custompage', $data);
     }
 
@@ -450,13 +464,13 @@ class FrontPageController extends Controller
     {
         $data['page'] = $this->pageBuilderRepo->find($page_id);
         $data['page_id'] = $data['page']->id;
-        $data['reload_page_api'] = $this->url->to('/')."/builder/pagecontent/".$data['page_id']."";
+        $data['reload_page_api'] = $this->url->to('/') . "/builder/pagecontent/" . $data['page_id'] . "";
         return view('front.products', $data);
     }
 
-    public function getProductList () 
+    public function getProductList()
     {
-        $products = $this->productRepo->rawWith(['photo' => function($query){
+        $products = $this->productRepo->rawWith(['photo' => function ($query) {
             $query->first();
         }], "status = ?", ['Active']);
         $output['response'] = ($products != null) ? 200 : 204;
@@ -476,7 +490,7 @@ class FrontPageController extends Controller
     public function productsearch(Request $request)
     {
         $searchname = $request['productname'];
-        if($searchname == ''){
+        if ($searchname == '') {
             $data['products'] = $this->productRepo->rawWith(['photo'], "status = ? and device_type in ('Sell','Both')", ['Active']);
             return view('front.products', $data);
         }
@@ -500,60 +514,60 @@ class FrontPageController extends Controller
     {
         $method = $request['payment'];
         $content = '';
-        if($method == 'Apple Pay'){
+        if ($method == 'Apple Pay') {
             $content .= '<div class="form-group col-md-5">';
-                $content .= '<label class="col-form-label col-form-label-sm">Apple ID</label>';
-                $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
-            $content .= '</div>';
-        }
-        
-        if($method == 'Google Pay'){
-            $content .= '<div class="form-group col-md-5">';
-                $content .= '<label class="col-form-label col-form-label-sm">Google Email or Mobile Number</label>';
-                $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
+            $content .= '<label class="col-form-label col-form-label-sm">Apple ID</label>';
+            $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
             $content .= '</div>';
         }
 
-        if($method == 'Venmo'){
+        if ($method == 'Google Pay') {
             $content .= '<div class="form-group col-md-5">';
-                $content .= '<label class="col-form-label col-form-label-sm">Venmo Email or Mobile Number</label>';
-                $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
+            $content .= '<label class="col-form-label col-form-label-sm">Google Email or Mobile Number</label>';
+            $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
             $content .= '</div>';
         }
 
-        if($method == 'Cash App'){
+        if ($method == 'Venmo') {
             $content .= '<div class="form-group col-md-5">';
-                $content .= '<label class="col-form-label col-form-label-sm">Cash App Email or Mobile Number</label>';
-                $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
+            $content .= '<label class="col-form-label col-form-label-sm">Venmo Email or Mobile Number</label>';
+            $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
             $content .= '</div>';
         }
 
-        if($method == 'Paypal'){
+        if ($method == 'Cash App') {
             $content .= '<div class="form-group col-md-5">';
-                $content .= '<label class="col-form-label col-form-label-sm">Paypal Email Address</label>';
-                $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
+            $content .= '<label class="col-form-label col-form-label-sm">Cash App Email or Mobile Number</label>';
+            $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
             $content .= '</div>';
         }
-        
-        if($method == 'Bank Transfer'){
+
+        if ($method == 'Paypal') {
+            $content .= '<div class="form-group col-md-5">';
+            $content .= '<label class="col-form-label col-form-label-sm">Paypal Email Address</label>';
+            $content .= '<input type="text" name="account_username" class="form-control form-control-sm">';
+            $content .= '</div>';
+        }
+
+        if ($method == 'Bank Transfer') {
             $content .= '<div class="form-group col-md-4">';
-                $content .= '<label class="col-form-label col-form-label-sm">Bank</label>';
-                $content .= '<input type="text" name="bank" class="form-control form-control-sm">';
-            $content .= '</div>';
-            $content .= '<div class="form-group col-md-4">';
-                $content .= '<label class="col-form-label col-form-label-sm">Account Name</label>';
-                $content .= '<input type="text" name="account_name" class="form-control form-control-sm">';
+            $content .= '<label class="col-form-label col-form-label-sm">Bank</label>';
+            $content .= '<input type="text" name="bank" class="form-control form-control-sm">';
             $content .= '</div>';
             $content .= '<div class="form-group col-md-4">';
-                $content .= '<label class="col-form-label col-form-label-sm">Accoung Number</label>';
-                $content .= '<input type="text" name="account_number" class="form-control form-control-sm">';
+            $content .= '<label class="col-form-label col-form-label-sm">Account Name</label>';
+            $content .= '<input type="text" name="account_name" class="form-control form-control-sm">';
+            $content .= '</div>';
+            $content .= '<div class="form-group col-md-4">';
+            $content .= '<label class="col-form-label col-form-label-sm">Accoung Number</label>';
+            $content .= '<input type="text" name="account_number" class="form-control form-control-sm">';
             $content .= '</div>';
         }
 
-        return response()->json(['content'=>$content]);
+        return response()->json(['content' => $content]);
     }
 
-    public function getCartList (Request $request) 
+    public function getCartList(Request $request)
     {
         if (!$request->sessionCart) {
             $data['hasCart'] = false;
@@ -564,79 +578,68 @@ class FrontPageController extends Controller
             $data['cartHtml'] = '<div class="row">
                                     <div class="col-md-12">
                                         <h5 class="mt-10">Your Items</h5>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="5%"></th>
-                                                            <th width="13%"></th>
-                                                            <th width="34%">Item</th>
-                                                            <th width="16%">Cash Offer</th>
-                                                            <th width="16%">Quantity</th>
-                                                            <th width="16%">SubTotal</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>';
-                $subTotal = 0;
-                foreach ($request->sessionCart as $key => $value) 
-                {
-                    $device_type = '';
-                    if ($value['device_type'] == 1) {
-                        $device_type = 'Excellent';
-                    } else if ($value['device_type'] == 2) {
-                        $device_type = 'Good';
-                    } else if ($value['device_type'] == 3) {
-                        $device_type = 'Fair';
-                    } else if ($value['device_type'] == 4) {
-                        $device_type = 'Broken';
-                    }
-                    
-                    $network = $this->networkRepo->find($value['cart_id']);
-                    
-                    $brands = $this->brandRepo->findByField('name', $value['brand']);
-                    $product = $this->productRepo->rawWith(['photo'], "brand_id = ? and model = '".$value["model"]."'", [$brands['id']])->first();
-                    
-                    $itemSubTotal = $value['amount'] * $value['quantity'];
-                    $subTotal = $subTotal + $itemSubTotal;
-                    $data['cartHtml'] .= '<tr>
-                                            <td align="center" class="valign-middle">
-                                                <a href="javascript:void(0)" class="removeItem" data-attr-id="'.$key.'">
-                                                    <i class="fa fa-times"></i>
-                                                </a>
-                                            </td>
-                                            <td align="center" class="valign-middle">
-                                                <img src="'.$product['photo']['photo'].'" class="img-fluid">
-                                            </td>
-                                            <td align="left" class="valign-middle font14">
-                                                <b>Model:</b> '.$value['brand'].' '.$value['model'].'<br /> 
-                                                <b>Storage:</b> '.$value['storage'].'<br />
-                                                <b>Carrier:</b> '.$network['title'].'<br />
-                                                <b>Condition: </b> '.$device_type.'
-                                            </td>
-                                            <td align="right" class="valign-middle font14">
-                                                $'.number_format($value['amount'], 2).'
-                                            </td>
-                                            <td align="center" class="valign-middle">
-                                                <input type="number" name="quantity[]" min="1" data-attr-id="'.$key.'" class="form-control cart-item-quantity"  style="width: 75px !important;" value="'.$value['quantity'].'">
-                                            </td>
-                                            <td align="right" class="valign-middle font14">
-                                                $'.number_format($itemSubTotal, 2).'
-                                            </td>
-                                </tr>';
+                                            <div class="">
+                                                <div class="">
+                                                    <div class="container-fluid p-0">';
+            $subTotal = 0;
+            foreach ($request->sessionCart as $key => $value) {
+                $device_type = '';
+                if ($value['device_type'] == 1) {
+                    $device_type = 'Excellent';
+                } else if ($value['device_type'] == 2) {
+                    $device_type = 'Good';
+                } else if ($value['device_type'] == 3) {
+                    $device_type = 'Fair';
+                } else if ($value['device_type'] == 4) {
+                    $device_type = 'Broken';
                 }
 
-                                $data['cartHtml'] .= '</tbody>
-                                            </table>
+                $network = $this->networkRepo->find($value['cart_id']);
+
+                $brands = $this->brandRepo->findByField('name', $value['brand']);
+                $product = $this->productRepo->rawWith(['photo'], "brand_id = ? and model = '" . $value["model"] . "'", [$brands['id']])->first();
+
+                $itemSubTotal = $value['amount'] * $value['quantity'];
+                $subTotal = $subTotal + $itemSubTotal;
+                $data['cartHtml'] .= '<div class="row mb-5 border-bottom py-3">
+                                            <div align="center" class="valign-middle col-1 d-flex align-items-center">
+                                                <a href="javascript:void(0)" class="removeItem" data-attr-id="' . $key . '">
+                                                    <i class="fa fa-times"></i>
+                                                </a>
+                                            </div>
+                                            <div align="center" class="valign-middle col-4 col-md-2">
+                                                <img src="' . $product['photo']['photo'] . '" class="img-fluid">
+                                            </div>
+                                            <div align="left" class="valign-middle font14 col-7 col-md-3">
+                                                <b>Model:</b> ' . $value['brand'] . ' ' . $value['model'] . '<br /> 
+                                                <b>Storage:</b> ' . $value['storage'] . '<br />
+                                                <b>Carrier:</b> ' . $network['title'] . '<br />
+                                                <b>Condition: </b> ' . $device_type . '
+                                            </div>
+                                            <div align="center" class="valign-middle font14 col-4 mt-3 col-md-2">
+                                                <small class="d-block">Cash Offer</small> $' . number_format($value['amount'], 2) . '
+                                            </div>
+                                            <div align="center" class="valign-middle col-4 mt-3 col-md-2">
+                                                <label style="margin:-2px 0 0;display:block;" for="quant-' . $key . '"><small style="font-size:12.25px;">Quantity</small></label> <input type="number" name="quantity[]"  id="quant-' . $key . '" min="1" data-attr-id="' . $key . '" class="form-control cart-item-quantity"  style="width: 75px !important;" value="' . $value['quantity'] . '">
+                                            </div>
+                                            <div align="center" class="valign-middle font14 col-4 mt-3 col-md-2">
+                                                <small class="d-block">Subtotal</small> $' . number_format($itemSubTotal, 2) . '
+                                            </div>
+                                </div>';
+            }
+
+            $data['cartHtml'] .= '</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>';
-                $data['subTotal'] = '$'.number_format($subTotal, 2);
+            $data['subTotal'] = '$' . number_format($subTotal, 2);
         }
         return $data;
     }
 
 
-    private function GenerateMetaTags ($page_url) 
+    private function GenerateMetaTags($page_url)
     {
         $pagetranslation = $this->pageBuilderPageTranslations->where('route', $page_url)->first();
         $page = $this->pageBuiderPages->find($pagetranslation->page_id);
@@ -644,17 +647,17 @@ class FrontPageController extends Controller
         $meta = [];
         $pageMeta = $this->pageMetaTagRepo->rawByFieldAll("page_id = ?", [$page->id]);
         foreach ($pageMeta as $key => $val) {
-            $meta[] = '<meta '.$val['meta_type'].'="'.$val['name'].'" content="'.$val['content'].'" />';
+            $meta[] = '<meta ' . $val['meta_type'] . '="' . $val['name'] . '" content="' . $val['content'] . '" />';
         }
         return $meta;
     }
 
 
-    private function trimPageContent ($page) 
+    private function trimPageContent($page)
     {
         // return phpb_e(phpb_full_url(phpb_current_relative_url()));
         $pageId = $page[0]->page_id;
-        
+
         $theme = new Theme(config('pagebuilder.theme'), config('pagebuilder.theme.active_theme'));
         $page = (new PageRepository)->findWithId($pageId);
         $pageRenderer = new PageRenderer($theme, $page);
@@ -673,10 +676,10 @@ class FrontPageController extends Controller
     <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
     <!-- Favicons -->
-    <link rel="shortcut icon" href="'.url('/library/images/favicon.ico').'" />
+    <link rel="shortcut icon" href="' . url('/library/images/favicon.ico') . '" />
     <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-    <link rel="icon" href="'.url('/library/images/favicon.ico').'" sizes="32x32" type="image/png">
-    <link rel="icon" href="'.url('/library/images/favicon.ico').'" sizes="16x16" type="image/png">
+    <link rel="icon" href="' . url('/library/images/favicon.ico') . '" sizes="32x32" type="image/png">
+    <link rel="icon" href="' . url('/library/images/favicon.ico') . '" sizes="16x16" type="image/png">
     <link rel="manifest" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/manifest.json">
     <link rel="mask-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
 
@@ -700,9 +703,9 @@ class FrontPageController extends Controller
         return $html;
     }
 
-    public function test () 
+    public function test()
     {
-        
+
 
         /**
          * Plivo
@@ -730,9 +733,9 @@ class FrontPageController extends Controller
         // curl_setopt($ch, CURLOPT_URL, 'https://api.plivo.com/v1/Account/MAMTDJN2Q2Y2Q3NJY5MJ/');
         // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        
+
         // curl_setopt($ch, CURLOPT_USERPWD, 'AUTH_ID' . ':' . 'ZGM5YzUzNTZlODJmNjkyNDIxNDRjYjQ1NDAwMjhk');
-        
+
         // $result = curl_exec($ch);
         // if (curl_errno($ch)) {
         //     echo 'Error:' . curl_error($ch);
@@ -757,7 +760,7 @@ class FrontPageController extends Controller
             'hello there testq'
             // 'Howdy Glenn,
             // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
-            
+
             // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.'
         );
         echo '<pre>';
@@ -778,7 +781,7 @@ class FrontPageController extends Controller
         // // Prints only the message_uuid
         // print_r($response->getmessageUuid(0));
 
-        
+
         // // Sample 2 : Retrieve a message
         // // reference: https://www.plivo.com/docs/sms/api/message#retrieve-a-message
         // GET: https://api.plivo.com/v1/Account/{auth_id}/Message/{message_uuid}/
@@ -789,7 +792,7 @@ class FrontPageController extends Controller
 
         // Sample 4 : Bulk messaging 
         // reference : https://www.plivo.com/docs/sms/api/message#bulk-messaging
-        
+
         // Sample 5 : Message status callback
         // reference : https://www.plivo.com/docs/sms/api/message#message-status-callbacks
 
@@ -814,18 +817,18 @@ class FrontPageController extends Controller
         //         "x-rapidapi-key: c8a5d53049mshc975f6f3daf6b26p112be4jsna78fc552d17a"
         //     ],
         // ]);
-        
+
         // $response = curl_exec($curl);
         // $err = curl_error($curl);
-        
+
         // curl_close($curl);
-        
+
         // if ($err) {
         //     echo "cURL Error #:" . $err;
         // } else {
         //     echo $response;
         // }
-        
+
         // if ($err) {
         //     echo "cURL Error #:" . $err;
         // } else {
@@ -865,7 +868,7 @@ class FrontPageController extends Controller
         // echo '<pre>';
         // print_r($result);
         // echo '</pre>';
-        
+
         // exit; 
 
 
@@ -903,9 +906,9 @@ class FrontPageController extends Controller
         // echo '<pre>';
         // print_r($responses);
         // echo '</pre>';
-        
+
         // exit;
-        
+
 
 
 
@@ -918,7 +921,7 @@ class FrontPageController extends Controller
         // $twilio_number = "+13347210661";
         // $message = 'Howdy Glenn,
         // We`re excited that you`ve decided to sell your device to TronicsPay. We currently reviewing your application and we will get back to you as soon as possible. To print your free shipping label you can click here.
-        
+
         // We also created an account for you, you can login at Member Login using these email aen00100@gmail.com with the password H4KybWoVI2.';
         // try {
         //     $client = new Client($account_sid, $auth_token);
@@ -933,7 +936,7 @@ class FrontPageController extends Controller
         //     echo '<pre>';
         //     print_r($client);
         //     echo '</pre>';
-        
+
         // } catch (\Exception $e) {
         //     echo $e->getMessage();
         // }
@@ -967,7 +970,7 @@ class FrontPageController extends Controller
 
         // require_once __DIR__.'/../../../vendor/messagebird/php-rest-api/autoload.php';
         // $messageBird = new \MessageBird\Client('HfIDBYwzbzKvk8obYtMkkKoWo'); // Set your own API access key here.
-        
+
         // $message             = new \MessageBird\Objects\Message();
         // $message->originator = 'YourBrand';
         // $message->recipients = ['+971503361319'];
@@ -979,15 +982,15 @@ class FrontPageController extends Controller
         // try {
         //     $messageResult = $messageBird->messages->create($message);
         //     var_dump($messageResult);
-        
+
         // } catch (\MessageBird\Exceptions\AuthenticateException $e) {
         //     // That means that your accessKey is unknown
         //     echo 'wrong login';
-        
+
         // } catch (\MessageBird\Exceptions\BalanceException $e) {
         //     // That means that you are out of credits, so do something about it.
         //     echo 'no balance';
-        
+
         // } catch (\Exception $e) {
         //     echo $e->getMessage();
         // }
@@ -995,7 +998,7 @@ class FrontPageController extends Controller
         // return 'adsads';
         // return $message;
 
-        
-        
+
+
     }
 }

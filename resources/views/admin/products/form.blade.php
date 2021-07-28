@@ -51,7 +51,7 @@
 
                         <label class="col-form-label col-form-label-sm">Device Photo</label>
                         <div style="<?php echo isset($product->photo) ? 'display:none' : ''; ?>">
-                        
+
                             <!-- <div class="input-group">
                                 <div class="custom-file">
                                     <input class="custom-file-input" name="photo" id="inputGroupFile04" type="file" accept="image/*">
@@ -97,139 +97,125 @@
                             @if(count($networkList) >= 1)
                                 @foreach($networkList as $nlKey => $nlVal)
                                     <option 
-                                        value="{{ $nlVal->id }}" 
-                                        <?php if (isset($product) && $product->networks != null) {?>
-                                            {{ (selectItem($product->networks, 'network_id', $nlVal->id) == true) ? ' selected="selected"' : '' }}
-                                        <?php } ?>
-                                    >
-                                        {{ $nlVal->title }}
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
-                    </div> --}}
-                    <div class="form-group col-md-6">
-                        <label class="col-form-label col-form-label-sm">Categories</label>
-                        <select name="categories[]" class="form-control" multiple>
-                            @if(count($categoryList) >= 1)
-                                @foreach($categoryList as $clKey => $clVal)
-                                    <option 
-                                        value="{{ $clVal->id }}" 
-                                        <?php if (isset($product) && $product->categories != null) {?>
-                                            {{ (selectItem($product->categories, 'category_id', $clVal->id) == true) ? ' selected="selected"' : '' }}
-                                        <?php } ?>
-                                    >
-                                        {{ $clVal->name }}
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
-                    </div>
+                                        value="{{ $nlVal->id }}"
+                    <?php if (isset($product) && $product->networks != null) { ?>
+                        {{ (selectItem($product->networks, 'network_id', $nlVal->id) == true) ? ' selected="selected"' : '' }}
+                    <?php } ?>
+                    >
+                    {{ $nlVal->title }}
+                    </option>
+                    @endforeach
+                    @endif
+                    </select>
+                </div> --}}
+                <div class="form-group col-md-6">
+                    <label class="col-form-label col-form-label-sm">Categories</label>
+                    <select name="categories[]" class="form-control" multiple>
+                        @if(count($categoryList) >= 1)
+                        @foreach($categoryList as $clKey => $clVal)
+                        <option value="{{ $clVal->id }}" <?php if (isset($product) && $product->categories != null) { ?> {{ (selectItem($product->categories, 'category_id', $clVal->id) == true) ? ' selected="selected"' : '' }} <?php } ?>>
+                            {{ $clVal->name }}
+                        </option>
+                        @endforeach
+                        @endif
+                    </select>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label class="col-form-label col-form-label-sm">Description</label>
-                        <textarea name="description" id="description" class="textarea">{{ isset($product->description) ? $product->description : '' }}</textarea>
-                    </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label class="col-form-label col-form-label-sm">Description</label>
+                    <textarea name="description" id="description" class="textarea">{{ isset($product->description) ? $product->description : '' }}</textarea>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-    <!-- style="<?php  // echo (isset($product->device_type) && in_array($product->device_type, ['Buy','Both'])) ? '' : 'display: none'; ?>" -->
-        <div class="row" id="div-offer" >
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <nav class="navbar navbar-light bg-light">
-                                    <div class="container-fluid">
-                                        <span class="navbar-brand mb-0"><b>Buy Device Information</b></span>
-                                    </div>
-                                </nav>
-                                <p style="margin-top: 10px;">Input a price offer depends on the condition</p>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped text-nowrap table-sm" id="parent-table-product-buy">
-                                        <thead>
-                                            <tr>
-                                                <th width="20%"><center>Storage</center></th>
-                                                <th width="20%"><center>Network</center></th>
-                                                <th width="16%"><center>Excellent Offer</center></th>
-                                                <th width="16%"><center>Good Offer</center></th>
-                                                <th width="16%"><center>Fair Offer</center></th>
-                                                <th width="16%"><center>Poor Offer</center></th>
-                                                <!-- <th width="14%"><center>Amount</center></th> -->
-                                                <th width="16%"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="table-product-buy">
-                                            @if(isset($product) && count($product['storages']) > 0)
-                                                @foreach($product['storages'] as $sKey => $sVal)
-                                                    @if($sVal['amount'] == '')
-                                                    <tr class="tr-id-{{ $sVal['hashedId']}}" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
-                                                        <td align="center">{{ $sVal['title'] }}</td>
-                                                        <td align="center">{{ optional($sVal->network)->title }}</td>
-                                                        <td align="right">${{ number_format($sVal['excellent_offer'], 2, '.', ',') }}</td>
-                                                        <td align="right">${{ number_format($sVal['good_offer'], 2, '.', ',') }}</td>
-                                                        <td align="right">${{ number_format($sVal['fair_offer'], 2, '.', ',') }}</td>
-                                                        <td align="right">${{ number_format($sVal['poor_offer'], 2, '.', ',') }}</td>
-                                                        <td align="center">
-                                                            @if(Route::current()->getName() == 'products.edit')
-                                                                <a 
-                                                                    href="javascript:void(0);" 
-                                                                    class="edit-row-product-storage btn btn-primary btn-xs" 
-                                                                    data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-edit"></i>
-                                                                </a>
-                                                            @else
-                                                                <a 
-                                                                    href="javascript:void(0);" 
-                                                                    class="edit-row-product-storage btn btn-primary btn-xs" 
-                                                                    data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-trash"></i>
-                                                                </a>
-                                                            @endif
-                                                            @if(Route::current()->getName() != 'products.edit')
-                                                                <a 
-                                                                    href="javascript:void(0);" 
-                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
-                                                                    data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-trash"></i>
-                                                                </a>
-                                                            @else
-                                                                <button 
-                                                                    type="button"
-                                                                    onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}')"
-                                                                    class="btn btn-danger btn-xs" 
-                                                                    data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-trash"></i>
-                                                                </button>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
+</div>
+<div class="col-md-6">
+    <!-- style="<?php  // echo (isset($product->device_type) && in_array($product->device_type, ['Buy','Both'])) ? '' : 'display: none'; 
+                ?>" -->
+    <div class="row" id="div-offer">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nav class="navbar navbar-light bg-light">
+                                <div class="container-fluid">
+                                    <span class="navbar-brand mb-0"><b>Buy Device Information</b></span>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <button type="button" id="btn-product-buy" class="btn btn-sm btn-primary">
-                                            Add Storage Prices
-                                        </button>
-                                    </div>
+                            </nav>
+                            <p style="margin-top: 10px;">Input a price offer depends on the condition</p>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped text-nowrap table-sm" id="parent-table-product-buy">
+                                    <thead>
+                                        <tr>
+                                            <th width="20%">
+                                                <center>Storage</center>
+                                            </th>
+                                            <th width="20%">
+                                                <center>Network</center>
+                                            </th>
+                                            <th width="16%">
+                                                <center>Excellent Offer</center>
+                                            </th>
+                                            <th width="16%">
+                                                <center>Good Offer</center>
+                                            </th>
+                                            <th width="16%">
+                                                <center>Fair Offer</center>
+                                            </th>
+                                            <th width="16%">
+                                                <center>Poor Offer</center>
+                                            </th>
+                                            <!-- <th width="14%"><center>Amount</center></th> -->
+                                            <th width="16%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-product-buy">
+                                        @if(isset($product) && count($product['storages']) > 0)
+                                        @foreach($product['storages'] as $sKey => $sVal)
+                                        @if($sVal['amount'] == '')
+                                        <tr class="tr-id-{{ $sVal['hashedId']}}" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                            <td align="center">{{ $sVal['title'] }}</td>
+                                            <td align="center">{{ optional($sVal->network)->title }}</td>
+                                            <td align="right">${{ number_format($sVal['excellent_offer'], 2, '.', ',') }}</td>
+                                            <td align="right">${{ number_format($sVal['good_offer'], 2, '.', ',') }}</td>
+                                            <td align="right">${{ number_format($sVal['fair_offer'], 2, '.', ',') }}</td>
+                                            <td align="right">${{ number_format($sVal['poor_offer'], 2, '.', ',') }}</td>
+                                            <td align="center">
+                                                @if(Route::current()->getName() == 'products.edit')
+                                                <a href="javascript:void(0);" class="edit-row-product-storage btn btn-primary btn-xs" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                @else
+                                                <a href="javascript:void(0);" class="edit-row-product-storage btn btn-primary btn-xs" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                                @endif
+                                                @if(Route::current()->getName() != 'products.edit')
+                                                <a href="javascript:void(0);" class="delete-row-product-storage btn btn-danger btn-xs" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                                @else
+                                                <button type="button" onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}')" class="btn btn-danger btn-xs" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endif
+                                        @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btn-product-buy" class="btn btn-sm btn-primary">
+                                        Add Storage Prices
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -237,93 +223,79 @@
                 </div>
             </div>
         </div>
-        <!-- style="<?php // echo (isset($product->device_type) && in_array($product->device_type, ['Sell','Both'])) ? '' : 'display: none'; ?>" -->
-        <div class="row" id="div-amount">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <nav class="navbar navbar-light bg-light">
-                                    <div class="container-fluid">
-                                        <span class="navbar-brand mb-0"><b>Sell Device Information</b></span>
-                                    </div>
-                                </nav>
-                                <p style="margin-top: 10px;">Input a price for the device you are selling</p>
-                            </div>
-                            <div class="col-md-12 fn">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped text-nowrap table-sm" id="parent-table-product-sell">
-                                        <thead>
-                                            <tr>
-                                                <th width="30%"><center>Storage</center></th>
-                                                <th width="30%"><center>Network</center></th>
-                                                <th width="30%"><center>Price</center></th>
-                                                <!-- <th width="14%"><center>Amount</center></th> -->
-                                                <th width="10%"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="table-product-sell">
-                                            @if(isset($product) && count($product['storages']) > 0)
-                                                @foreach($product['storages'] as $sKey => $sVal)
-                                                    @if($sVal['amount'] != '')
-                                                        <tr class="tr-id-{{ $sVal['hashedId']}}" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
-                                                            <td align="center">{{ $sVal['title'] }}</td>
-                                                            <td align="center">{{ optional($sVal->network)->title }}</td>
-                                                            <td align="right">${{ number_format($sVal['amount'], 2, '.', ',') }}</td>
-                                                            <td align="center">
-                                                                <button
-                                                                    type="button"
-                                                                    class="edit-row-product-sell btn btn-primary btn-xs"
-                                                                    data-target="#edit-modal-product-sell"
-                                                                    data-toggle="modal" 
-                                                                    data-attr-saved="true" 
-                                                                    data-storage="{{ $sVal->title }}"
-                                                                    data-amount="{{ $sVal->amount }}"
-                                                                    data-network_id="{{ $sVal->network_id }}"
-                                                                    data-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-edit"></i>
-                                                                </button>
-                                                                @if(Route::current()->getName() != 'products.edit')
-                                                                <a 
-                                                                    href="javascript:void(0);" 
-                                                                    class="delete-row-product-storage btn btn-danger btn-xs" 
-                                                                    data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-trash"></i>
-                                                                </a>
-                                                                @else
-                                                                <button 
-                                                                    type="button"
-                                                                    onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}',true)"
-                                                                    class="btn btn-danger btn-xs" 
-                                                                    data-attr-saved="true" 
-                                                                    data-attr-id="{{ $sVal['hashedId']}}"
-                                                                >
-                                                                    <i class="fa fa-trash"></i>
-                                                                </button>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                            <!-- <tr>
+    </div>
+    <!-- style="<?php // echo (isset($product->device_type) && in_array($product->device_type, ['Sell','Both'])) ? '' : 'display: none'; 
+                ?>" -->
+    <div class="row" id="div-amount">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nav class="navbar navbar-light bg-light">
+                                <div class="container-fluid">
+                                    <span class="navbar-brand mb-0"><b>Sell Device Information</b></span>
+                                </div>
+                            </nav>
+                            <p style="margin-top: 10px;">Input a price for the device you are selling</p>
+                        </div>
+                        <div class="col-md-12 fn">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped text-nowrap table-sm" id="parent-table-product-sell">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">
+                                                <center>Storage</center>
+                                            </th>
+                                            <th width="30%">
+                                                <center>Network</center>
+                                            </th>
+                                            <th width="30%">
+                                                <center>Price</center>
+                                            </th>
+                                            <!-- <th width="14%"><center>Amount</center></th> -->
+                                            <th width="10%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-product-sell">
+                                        @if(isset($product) && count($product['storages']) > 0)
+                                        @foreach($product['storages'] as $sKey => $sVal)
+                                        @if($sVal['amount'] != '')
+                                        <tr class="tr-id-{{ $sVal['hashedId']}}" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                            <td align="center">{{ $sVal['title'] }}</td>
+                                            <td align="center">{{ optional($sVal->network)->title }}</td>
+                                            <td align="right">${{ number_format($sVal['amount'], 2, '.', ',') }}</td>
+                                            <td align="center">
+                                                <button type="button" class="edit-row-product-sell btn btn-primary btn-xs" data-target="#edit-modal-product-sell" data-toggle="modal" data-attr-saved="true" data-storage="{{ $sVal->title }}" data-amount="{{ $sVal->amount }}" data-network_id="{{ $sVal->network_id }}" data-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                @if(Route::current()->getName() != 'products.edit')
+                                                <a href="javascript:void(0);" class="delete-row-product-storage btn btn-danger btn-xs" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                                @else
+                                                <button type="button" onClick="deleteStoragePrice('{{ $sVal['hashedId'] }}',true)" class="btn btn-danger btn-xs" data-attr-saved="true" data-attr-id="{{ $sVal['hashedId']}}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endif
+                                        @endforeach
+                                        @endif
+                                        <!-- <tr>
                                                 <td colspan="7" align="center">
                                                     No Record Found.
                                                 </td>
                                             </tr> -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <a href="javascript:void(0);" id="btn-product-sell" class="btn btn-sm btn-primary">
-                                            Add Device Prices
-                                        </a>
-                                    </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="javascript:void(0);" id="btn-product-sell" class="btn btn-sm btn-primary">
+                                        Add Device Prices
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -331,12 +303,13 @@
                 </div>
             </div>
         </div>
-
     </div>
+
+</div>
 </div>
 
 
-<!-- <div class="row" id="div-offer" style="<?php echo (isset($product->device_type) && in_array($product->device_type, ['Buy','Both'])) ? '' : 'display: none'; ?>">
+<!-- <div class="row" id="div-offer" style="<?php echo (isset($product->device_type) && in_array($product->device_type, ['Buy', 'Both'])) ? '' : 'display: none'; ?>">
     <div class="col-md-4 fn">
         <div class="config-legend">
             <h4>Price Offer</h4>
@@ -374,7 +347,7 @@
 </div> -->
 
 
-<!-- <div class="row" id="div-amount" style="<?php echo (isset($product->device_type) && in_array($product->device_type, ['Sell','Both'])) ? '' : 'display: none'; ?>">
+<!-- <div class="row" id="div-amount" style="<?php echo (isset($product->device_type) && in_array($product->device_type, ['Sell', 'Both'])) ? '' : 'display: none'; ?>">
     <div class="col-md-4 fn">
         <div class="config-legend">
             <h4>Device Price</h4>

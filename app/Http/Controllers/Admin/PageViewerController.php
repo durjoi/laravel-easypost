@@ -23,7 +23,7 @@ class PageViewerController extends Controller
     protected $menuRepo;
     protected $tablelist;
 
-    public function __construct (Config $configRepo, PageMetaTag $pageMetaTagRepo, PageBuilder $pageBuilderRepo, Menu $menuRepo, Tablelist $tablelist) 
+    public function __construct(Config $configRepo, PageMetaTag $pageMetaTagRepo, PageBuilder $pageBuilderRepo, Menu $menuRepo, Tablelist $tablelist)
     {
         $this->configRepo = $configRepo;
         $this->pageMetaTagRepo = $pageMetaTagRepo;
@@ -50,7 +50,7 @@ class PageViewerController extends Controller
         return view('admin.customers.index', $data);
     }
 
-    public function MetaTags ($hashedId) 
+    public function MetaTags($hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $data['page'] = $this->pageBuilderRepo->find($id);
@@ -63,8 +63,8 @@ class PageViewerController extends Controller
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.pagebuilder.tag', $data);
     }
-    
-    public function Status () 
+
+    public function Status()
     {
         $data['module'] = 'status';
         $data['tvsettings'] = true;
@@ -73,8 +73,8 @@ class PageViewerController extends Controller
         $data['badges'] = $this->tablelist->badge;
         return view('admin.settings.status.index', $data);
     }
-    
-    public function Categories () 
+
+    public function Categories()
     {
         $data['module'] = 'category';
         $data['tvsettings'] = true;
@@ -93,7 +93,7 @@ class PageViewerController extends Controller
         return view('admin.settings.menus.index', $data);
     }
 
-    public function Users () 
+    public function Users()
     {
         $data['module'] = 'user';
         $data['tvsettings'] = true;
@@ -125,8 +125,8 @@ class PageViewerController extends Controller
     public function ProductMaps()
     {
         return 'asd';
-        $data['storageList'] = [''=>'--','32GB', '64GB','128GB','256GB','512GB'];
-        $data['networkList'] = [''=>'--','AT&T'=>'AT&T','Sprint'=>'Sprint','T-Mobile'=>'T-Mobile','Verizon'=>'Verizon','Unlocked'=>'Unlocked'];
+        $data['storageList'] = ['' => '--', '32GB', '64GB', '128GB', '256GB', '512GB'];
+        $data['networkList'] = ['' => '--', 'AT&T' => 'AT&T', 'Sprint' => 'Sprint', 'T-Mobile' => 'T-Mobile', 'Verizon' => 'Verizon', 'Unlocked' => 'Unlocked'];
         $data['config'] = $this->configRepo->find(1);
         $data['module'] = 'product';
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
@@ -139,14 +139,14 @@ class PageViewerController extends Controller
     {
         $data['module'] = 'brand';
         $data['tvsettings'] = true;
-        $data['types'] = [''=>'Choose Device', 'Mobile'=>'Mobile Device', 'Other'=>'Other Devices'];
-        $data['featureList'] = [''=>'No', 1=>'Yes at Row 1', 2=>'Yes at Row 2', 3=>'Yes at Row 3'];
+        $data['types'] = ['' => 'Choose Device', 'Mobile' => 'Mobile Device', 'Other' => 'Other Devices', 'Gaming' => 'Gaming Devices'];
+        $data['featureList'] = ['' => 'No', 1 => 'Yes at Row 1', 2 => 'Yes at Row 2', 3 => 'Yes at Row 3', 4 => 'Yes at Row 4'];
         $data['config'] = $this->configRepo->find(1);
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.settings.brands.index', $data);
     }
 
-    public function EmailTemplates () 
+    public function EmailTemplates()
     {
         $data['module'] = 'email';
         $data['tvtemplates'] = true;
@@ -155,7 +155,7 @@ class PageViewerController extends Controller
         return view('admin.templates.email.index', $data);
     }
 
-    public function SmsTemplates () 
+    public function SmsTemplates()
     {
         $data['module'] = 'sms';
         $data['tvtemplates'] = true;
@@ -165,5 +165,4 @@ class PageViewerController extends Controller
         $data['is_dark_mode'] = ($data['config']['is_dark_mode'] == 1) ? true : false;
         return view('admin.templates.sms.index', $data);
     }
-    
 }

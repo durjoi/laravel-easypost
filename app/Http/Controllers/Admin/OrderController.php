@@ -20,12 +20,13 @@ class OrderController extends Controller
     protected $productRepo;
     protected $tablelist;
 
-    function __construct(Order $orderRepo, 
-                         OrderItem $orderItemRepo, 
-                         Config $configRepo, 
-                         Product $productRepo,
-                         Tablelist $tablelist)
-    {
+    function __construct(
+        Order $orderRepo,
+        OrderItem $orderItemRepo,
+        Config $configRepo,
+        Product $productRepo,
+        Tablelist $tablelist
+    ) {
         $this->orderRepo = $orderRepo;
         $this->orderItemRepo = $orderItemRepo;
         $this->configRepo = $configRepo;
@@ -43,52 +44,90 @@ class OrderController extends Controller
     }
 
 
-    public function edit ($hashedId) 
+    public function edit($hashedId)
     {
-        
+
         $data['module'] = 'order';
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $data['config'] = $this->configRepo->find(1);
-        
+
         $data['order'] = $this->orderRepo
-                                                ->rawByWithField(
-                                                    [
-                                                        'customer', 
-                                                        'customer.bill',
-                                                        'order_item',
-                                                        'order_item.product',
-                                                        'order_item.product.brand',
-                                                        'order_item.network',
-                                                        'order_item.product_storage'
-                                                    ], "id = ?", [$id]);
+            ->rawByWithField(
+                [
+                    'customer',
+                    'customer.bill',
+                    'order_item',
+                    'order_item.product',
+                    'order_item.product.brand',
+                    'order_item.network',
+                    'order_item.product_storage'
+                ],
+                "id = ?",
+                [$id]
+            );
         // $data['customer'] = $this->customerTransactionRepo->rawByWithField(['bill', 'sells', 'sells.product', 'sells.network', 'sells.product_storage'], "id = ?", [$id]);
         $data['hashedId'] = $hashedId;
-        
+
         $config = $this->configRepo->find(1);
-        $data['products'] = $this->productRepo->rawWith(['brand','photo','networks.network','storages'], "status = ?", ['Active']);
+        $data['products'] = $this->productRepo->rawWith(['brand', 'photo', 'networks.network', 'storages'], "status = ?", ['Active']);
         $data['is_dark_mode'] = ($config['is_dark_mode'] == 1) ? true : false;
         return view('admin.orders.edit', $data);
     }
 
+    public function delete($hashedId)
+    {
 
-    public function generatePDF ($hashedId) 
+        $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
+        $data = $this->orderRepo
+            ->rawByWithField(
+                [
+                    'order_item.product',
+                ],
+                "id = ?",
+                [$id]
+            );
+
+
+        if (!$data) {
+            return response()->json([
+                "status" => false,
+                "message" => "No order found",
+            ]);
+        }
+
+        foreach ($data['order_item'] as $item) {
+            $this->orderItemRepo->delete($item['id']);
+        }
+        $this->orderRepo->delete($id);
+
+        return response()->json([
+            "status" => 200,
+            "message" => "Successfully deleted",
+        ]);
+    }
+
+
+    public function generatePDF($hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $config = $this->configRepo->find(1);
-        
+
         $overallSubTotal = 0;
         $counter = 1;
 
         $customer_transaction = $this->orderRepo->rawByWithField(
-                                                    [
-                                                        'customer', 
-                                                        'customer.bill',
-                                                        'order_item',
-                                                        'order_item.product',
-                                                        'order_item.product.brand',
-                                                        'order_item.network',
-                                                        'order_item.product_storage'
-                                                    ], "id = ?", [$id]);
+            [
+                'customer',
+                'customer.bill',
+                'order_item',
+                'order_item.product',
+                'order_item.product.brand',
+                'order_item.network',
+                'order_item.product_storage'
+            ],
+            "id = ?",
+            [$id]
+        );
 
         $shippingFee = $customer_transaction['shipping_fee'];
         $generateHtml = '<html>
@@ -178,7 +217,7 @@ class OrderController extends Controller
                                     <table width="100%">
                                         <tr>
                                             <td><img src="http://tronicspay.saperemarketing.com/assets/images/logo.png"></td>
-                                            <td align=right>Date: '.$customer_transaction['display_transaction_date'].'</td>
+                                            <td align=right>Date: ' . $customer_transaction['display_transaction_date'] . '</td>
                                         </tr>
                                     </table>
                                     <br />
@@ -187,27 +226,27 @@ class OrderController extends Controller
                                             <td width="34%" style="vertical-align: top;">
                                                 <div class="pad10rem">From</div>
                                                 <div>
-                                                    <div class="pad10rem"><strong>'.$customer_transaction['customer']['fullname'].'</strong><br></div>
-                                                    <div class="pad10rem">'.$customer_transaction['customer']['bill']['address1'].'<br></div>
-                                                    <div class="pad10rem">Phone: '.$customer_transaction['customer']['bill']['phone'].'<br></div>
-                                                    <div class="pad10rem">Email: '.$customer_transaction['customer']['email'].'</div>
+                                                    <div class="pad10rem"><strong>' . $customer_transaction['customer']['fullname'] . '</strong><br></div>
+                                                    <div class="pad10rem">' . $customer_transaction['customer']['bill']['address1'] . '<br></div>
+                                                    <div class="pad10rem">Phone: ' . $customer_transaction['customer']['bill']['phone'] . '<br></div>
+                                                    <div class="pad10rem">Email: ' . $customer_transaction['customer']['email'] . '</div>
                                                 </div>
                                             </td>
                                             <td width="33%" style="vertical-align: top;">
                                                 <div class="pad10rem">To</div>
                                                 <div>
-                                                    <div class="pad10rem"><strong>'.$config['company_name'].'</strong><br></div>
-                                                    <div class="pad10rem">'.$config['address1'].'<br></div>
-                                                    <div class="pad10rem">Phone: '.$config['address1'].'<br></div>
-                                                    <div class="pad10rem">Email: '.$config['company_email'].'</div>
+                                                    <div class="pad10rem"><strong>' . $config['company_name'] . '</strong><br></div>
+                                                    <div class="pad10rem">' . $config['address1'] . '<br></div>
+                                                    <div class="pad10rem">Phone: ' . $config['address1'] . '<br></div>
+                                                    <div class="pad10rem">Email: ' . $config['company_email'] . '</div>
                                                 </div>
                                             </td>
                                             <td width="33%" style="vertical-align: top;">
-                                                <div class="pad10rem"><b>Transaction #'.$customer_transaction['order_no'].'</b></div>
+                                                <div class="pad10rem"><b>Transaction #' . $customer_transaction['order_no'] . '</b></div>
                                                 <br />
-                                                <div class="pad10rem"><b>Tracking Code:</b> '.$customer_transaction['tracking_code'].'<br /></div>
-                                                <div class="pad10rem"><b>Status:</b> '.strtoupper(str_replace("_", " ", $customer_transaction['shipping_status'])).'<br /></div>
-                                                <div class="pad10rem"><b>Delivery Due:</b> '.$customer_transaction['display_delivery_due'].'<br /></div>
+                                                <div class="pad10rem"><b>Tracking Code:</b> ' . $customer_transaction['tracking_code'] . '<br /></div>
+                                                <div class="pad10rem"><b>Status:</b> ' . strtoupper(str_replace("_", " ", $customer_transaction['shipping_status'])) . '<br /></div>
+                                                <div class="pad10rem"><b>Delivery Due:</b> ' . $customer_transaction['display_delivery_due'] . '<br /></div>
                                             </td>
                                         </tr>
                                     </table>
@@ -225,32 +264,31 @@ class OrderController extends Controller
                                             </tr>
                                         </thead>
                                         <tbody>';
-                                            foreach($customer_transaction['order_item'] as $key => $value)
-                                            {
-                                                $subTotal = $value['quantity'] * $value['amount'];
-                                                $overallSubTotal = $overallSubTotal + $subTotal;
-                                                $displayCounter = $counter + $key;
-                                                $generateHtml .= '<tr>
-                                                    <td align="center">'.$displayCounter.'</td>
-                                                    <td>'.$value['product']['brand']['name'].' '.$value['product']['model'].'</td>
-                                                    <td align="center">'.$value['product_storage']['title'].'</td>
-                                                    <td align="center">'.$value['quantity'].'</td>
+        foreach ($customer_transaction['order_item'] as $key => $value) {
+            $subTotal = $value['quantity'] * $value['amount'];
+            $overallSubTotal = $overallSubTotal + $subTotal;
+            $displayCounter = $counter + $key;
+            $generateHtml .= '<tr>
+                                                    <td align="center">' . $displayCounter . '</td>
+                                                    <td>' . $value['product']['brand']['name'] . ' ' . $value['product']['model'] . '</td>
+                                                    <td align="center">' . $value['product_storage']['title'] . '</td>
+                                                    <td align="center">' . $value['quantity'] . '</td>
                                                     <td align="center">';
-                                                        if ($value['device_type'] == 1) {
-                                                            $generateHtml .= '<label class="label label-success">Excellent</label>';
-                                                        } else if($value['device_type'] == 2) {
-                                                            $generateHtml .= '<label class="label label-info">Good</label>';
-                                                        } else if($value['device_type'] == 3) {
-                                                            $generateHtml .= '<label class="label label-warning">Fair</label>';
-                                                        } else {
-                                                            $generateHtml .= '<label class="label label-danger">Poor</label>';
-                                                        }
-                                    $generateHtml .= '</td>
-                                                    <td align="center">'.$value['network']['title'].'</td>
-                                                    <td align="right">$'.number_format($subTotal, 2, '.', ',').'</td>
+            if ($value['device_type'] == 1) {
+                $generateHtml .= '<label class="label label-success">Excellent</label>';
+            } else if ($value['device_type'] == 2) {
+                $generateHtml .= '<label class="label label-info">Good</label>';
+            } else if ($value['device_type'] == 3) {
+                $generateHtml .= '<label class="label label-warning">Fair</label>';
+            } else {
+                $generateHtml .= '<label class="label label-danger">Poor</label>';
+            }
+            $generateHtml .= '</td>
+                                                    <td align="center">' . $value['network']['title'] . '</td>
+                                                    <td align="right">$' . number_format($subTotal, 2, '.', ',') . '</td>
                                                 </tr>';
-                                            }
-                        $generateHtml .= '</tbody>
+        }
+        $generateHtml .= '</tbody>
                                         </table>
                                         <table width="100%">
                                             <tr>
@@ -265,61 +303,61 @@ class OrderController extends Controller
                                                                     <tbody>
                                                                         <tr>
                                                                             <td width="20%">';
-                                                                                                                
-                                                                                if(isset($customer_transaction) && $customer_transaction['payment_method'] != '') {
-                                                                                    if($customer_transaction['payment_method'] == "Bank Transfer") {
-                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/6.png" alt="Bank Transfer" style="width: 60px;">';
-                                                                                    } else if ($customer_transaction['payment_method'] == "Apple Pay") {
-                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/1.png" alt="Apple Pay" style="width: 60px;">';
-                                                                                    } else if ($customer_transaction['payment_method'] == "Google Pay") {
-                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/2.png" alt="Google Pay" style="width: 60px;">';
-                                                                                    } else if ($customer_transaction['payment_method'] == "Venmo") {
-                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/3.png" alt="Venmo" style="width: 60px;">';
-                                                                                    } else if ($customer_transaction['payment_method'] == "Cash App") {
-                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/4.png" alt="Cash App" style="width: 60px; height: 30px;">';
-                                                                                    } else if ($customer_transaction['payment_method'] == "Paypal") {
-                                                                                        $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/5.png" alt="Paypal" style="width: 60px;">';
-                                                                                    }
-                                                                                }
-                                                                            
-                                                        $generateHtml .= '</td>
-                                                                            <td width="80%">'.$customer_transaction['payment_method'] .'</td>
+
+        if (isset($customer_transaction) && $customer_transaction['payment_method'] != '') {
+            if ($customer_transaction['payment_method'] == "Bank Transfer") {
+                $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/6.png" alt="Bank Transfer" style="width: 60px;">';
+            } else if ($customer_transaction['payment_method'] == "Apple Pay") {
+                $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/1.png" alt="Apple Pay" style="width: 60px;">';
+            } else if ($customer_transaction['payment_method'] == "Google Pay") {
+                $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/2.png" alt="Google Pay" style="width: 60px;">';
+            } else if ($customer_transaction['payment_method'] == "Venmo") {
+                $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/3.png" alt="Venmo" style="width: 60px;">';
+            } else if ($customer_transaction['payment_method'] == "Cash App") {
+                $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/4.png" alt="Cash App" style="width: 60px; height: 30px;">';
+            } else if ($customer_transaction['payment_method'] == "Paypal") {
+                $generateHtml .= '<img src="http://tronicspay.saperemarketing.com/assets/images/payments/5.png" alt="Paypal" style="width: 60px;">';
+            }
+        }
+
+        $generateHtml .= '</td>
+                                                                            <td width="80%">' . $customer_transaction['payment_method'] . '</td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </td>
                                                         </tr>';
-                                                if ($customer_transaction['payment_method'] == "Bank Transfer") {
-                                        $generateHtml .= '<tr>
-                                                            <td class="pad10rem"><b>Bank Name: </b>'.$customer_transaction['account_bank'].'</td>
+        if ($customer_transaction['payment_method'] == "Bank Transfer") {
+            $generateHtml .= '<tr>
+                                                            <td class="pad10rem"><b>Bank Name: </b>' . $customer_transaction['account_bank'] . '</td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="pad10rem"><b>Account Name: </b>'.$customer_transaction['account_name'].'</td>
+                                                            <td class="pad10rem"><b>Account Name: </b>' . $customer_transaction['account_name'] . '</td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="pad10rem"><b>Account Number: </b>'.$customer_transaction['account_number'].'</td>
+                                                            <td class="pad10rem"><b>Account Number: </b>' . $customer_transaction['account_number'] . '</td>
                                                         </tr>';
-                                                } else {
-                                        $generateHtml .= '<tr>
-                                                            <td class="pad10rem"><b>Account Username: </b>'.$customer_transaction['account_username'].'</td>
+        } else {
+            $generateHtml .= '<tr>
+                                                            <td class="pad10rem"><b>Account Username: </b>' . $customer_transaction['account_username'] . '</td>
                                                         </tr>';
-                                                }
-                        $generateHtml .= '</table>
+        }
+        $generateHtml .= '</table>
                                         </td>
                                         <td width="50%" class="valign-top">
                                             <table class="table" width="100%">
                                                 <tbody>
                                                     <tr>
                                                         <th style="width:50%">Subtotal:</th>
-                                                        <td>$'.number_format($overallSubTotal, 2, '.', ',').'</td>
+                                                        <td>$' . number_format($overallSubTotal, 2, '.', ',') . '</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Shipping:</th>
-                                                        <td>$'.number_format($shippingFee, 2, '.', ',').'</td>
+                                                        <td>$' . number_format($shippingFee, 2, '.', ',') . '</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Total:</th>
-                                                        <td>$'.number_format($overallSubTotal + $shippingFee, 2, '.', ',').'</td>
+                                                        <td>$' . number_format($overallSubTotal + $shippingFee, 2, '.', ',') . '</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -327,16 +365,16 @@ class OrderController extends Controller
                                     </tr>
                                 </table>
                                 </div>';
-            $generateHtml .= '</body>
+        $generateHtml .= '</body>
                         </html>';
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->setOptions(['isRemoteEnabled' => true])->loadHTML($generateHtml);
-        return $pdf->download('Customer_Device_'.$customer_transaction['customer']['fullname'].'.pdf');
+        return $pdf->download('Customer_Device_' . $customer_transaction['customer']['fullname'] . '.pdf');
         return $pdf->stream();
     }
 
-    public function getOrderItem ($hashedId) 
+    public function getOrderItem($hashedId)
     {
         $id = app('App\Http\Controllers\GlobalFunctionController')->decodeHashid($hashedId);
         $data['customerSell'] = $this->orderItemRepo->rawByWithField(['product_storage'], 'id = ?', [$id]);
@@ -354,27 +392,38 @@ class OrderController extends Controller
      * 
      * @return view
      */
-    public function bulk_update(BulkCompleteRequest $request,$type = null)
+    public function bulk_update(BulkCompleteRequest $request, $type = null)
     {
         $status_id = null;
-        switch($type){
-            case 'complete'     : $status_id = 5; break;
-            case 'in-transit'   : $status_id = 3; break;
-            case 'on-hold'      : $status_id = 4; break;
-            case 'have-comments': $status_id = 2; break;
-            case 'for-approval' : $status_id = 1; break;
-            default: $status_id = null;
+        switch ($type) {
+            case 'complete':
+                $status_id = 5;
+                break;
+            case 'in-transit':
+                $status_id = 3;
+                break;
+            case 'on-hold':
+                $status_id = 4;
+                break;
+            case 'have-comments':
+                $status_id = 2;
+                break;
+            case 'for-approval':
+                $status_id = 1;
+                break;
+            default:
+                $status_id = null;
         }
 
-        if(!$status_id){
-            session()->flash("notification-status","error");
-            session()->flash("notification-message","Something went wrong!");
+        if (!$status_id) {
+            session()->flash("notification-status", "error");
+            session()->flash("notification-message", "Something went wrong!");
             return redirect()->route('orders.index');
         }
 
         foreach ($request->get('form_ids') as $id) {
             $order = $this->orderRepo->find($id);
-            if($order) {
+            if ($order) {
                 $order->update([
                     "status_id" => $status_id
                 ]);

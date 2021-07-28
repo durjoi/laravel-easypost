@@ -47,6 +47,25 @@
                         <p>Product List</p>
                     </a>
                 </li>
+                <li class="nav-item has-treeview">
+                    <a href="{{ url('admin/sorting') }}" class="nav-link {{ (isset($module) && $module == 'sorting') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-sort-alpha-down"></i>
+                        <p>Products Order</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview"> 
+                    <a href="https://dashboard.tawk.to/" class="nav-link" target="_blank">
+                        <i class="nav-icon fas fa-headset"></i>
+                        <p>Live Chat</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="https://tronicspay.com/support/staff" class="nav-link" target="_blank">
+                        <i class="nav-icon fas fa-comment-dots"></i>
+                        <p>Tickets</p>
+                    </a>
+                </li>
+
                 <li class="nav-item has-treeview {{ (isset($tvtemplates) && $tvtemplates == true) ? 'menu-open' : '' }} ">
                     <a href="#" class="nav-link {{ (isset($tvtemplates) && $tvtemplates == true) ? 'active' : '' }}">
                         <i class="nav-icon fas fa fa-clone"></i>
@@ -143,7 +162,7 @@
                         </li>
                     </ul>
                 </li>
-            <!-- </li>
+                <!-- </li>
             </ul> -->
         </nav>
     </div>

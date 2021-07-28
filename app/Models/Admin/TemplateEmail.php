@@ -7,7 +7,7 @@ use Vinkla\Hashids\HashidsManager;
 
 class TemplateEmail extends Model
 {
-    protected $table = "template__email";
+    protected $table = "settings_emailtemplate";
     protected $guarded = [];
     protected $appends = ['hashedid'];
 

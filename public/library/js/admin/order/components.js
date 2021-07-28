@@ -318,3 +318,48 @@ function modalDeleteNotes (hashedId)
 		}
 	});
 }
+
+function deleteOrder (hashedId)
+{
+    var form_url = baseUrl+"/admin/orders/"+hashedId+"/delete";
+	swal({
+		title: "Are you sure?",
+		text: "Once deleted, you will not be able to recover this data!",
+		icon: "warning",
+		// buttons: true,
+		buttons: ["No", "Yes"],
+		dangerMode: true,
+	})
+	.then((willDelete) => {
+		if (willDelete) {
+			// doAjaxProcess('DELETE', '', {}, form_url);
+            $.ajax({
+            url: baseUrl+"/admin/orders/"+hashedId+"/delete",
+            type: 'DELETE',
+            success: function (data) {
+                if (data.status == 200) {
+                    // toastr.success('Product has been deleted!')
+                    swal({
+                        title : "Order has been deleted!",
+                        text : data.message,
+                        icon : "success", 
+                    }).then(() => {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 0);
+                    });
+
+                } else {
+                    swal(
+                        'Something went wrong!',
+                        `${data.message}`,
+                        'error',
+                    );
+                }
+            }
+        });
+            // $('#modal-order-notes-div-'+hashedId).html('');
+            // $('#modal-order-notes-div-'+hashedId).attr('style', '');
+		}
+	});
+}

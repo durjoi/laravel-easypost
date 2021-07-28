@@ -80,16 +80,16 @@ class CartController extends Controller
     public function checkout()
     {
         $data['cartcount'] = $activeCart = Cart::count();
-        if(!Auth::guard('customer')->check() && $activeCart){
+        if (!Auth::guard('customer')->check() && $activeCart) {
             return redirect()->to('customer/auth/login');
         }
-        
-        if($activeCart){
+
+        if ($activeCart) {
             $data['carts'] = $carts = Cart::content();
             $data['tax'] = Cart::tax();
             $data['totalamount'] = Cart::total();
             $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
-            if(Auth::guard('customer')->check()){
+            if (Auth::guard('customer')->check()) {
                 $customer_id = Auth::guard('customer')->user()->id;
                 $data['customer'] = $this->customerRepo->findWith($customer_id, ['bill']);
                 $parcel = $this->parcel($carts);
@@ -103,8 +103,39 @@ class CartController extends Controller
         return view('front.seller.index', $data);
     }
 
-    public function cartCheckout () 
+    public function cartCheckout()
     {
+        $is_auth = (Auth::guard('customer')->check() != null) ? true : false;
+
+        if ($is_auth) {
+            $customer = Auth::guard('customer')->user();
+
+            $customer_id = Auth::guard('customer')->user()->id;
+            $customer_data = $this->customerRepo->rawByWithField(['addresses'], 'id = ?', [$customer_id]);
+            $data['fname'] = $customer_data['fname'];
+            $data['lname'] = $customer_data['lname'];
+            $data['email'] = $customer_data['email'];
+
+            $has_address = count($customer_data['addresses']) > 0;
+            if ($has_address) {
+                $address = $customer_data['addresses'][0];
+                $data['address1'] = $address['address1'];
+                $data['address2'] = $address['address2'];
+                $data['city'] = $address['city'];
+                $data['state'] = $address['state'];
+                $data['zip'] = $address['zip'];
+                $data['phone'] = $address['phone'];
+            }
+
+            // return "<pre>" . print_r($data, true) . "</pre>";
+            // $request['payment_method'] = $customer['payment_method'];
+            // $request['account_username'] = $customer['account_username'];
+            // $request['account_name'] = $customer['account_name'];
+            // $request['account_number'] = $customer['account_number'];
+            // $request['bank'] = $customer['bank'];
+
+        }
+        $data['user'] = $is_auth;
         $data['stateList'] = $this->stateRepo->selectlist('name', 'abbr');
         $data['brands'] = $this->brandRepo->all();
         $data['paymentList'] = $this->tablelist->payment_list;
@@ -114,7 +145,7 @@ class CartController extends Controller
     public function storecheckout(Request $request)
     {
         session(['session_rate' => $request['rate']]);
-        $cartItems = array_map(function($item){
+        $cartItems = array_map(function ($item) {
             return [
                 'name' => $item['name'],
                 'price' => $item['price'],
@@ -129,7 +160,7 @@ class CartController extends Controller
             'invoice_description' => "Order description",
             'total' => $request['total']
         ];
-        
+
         $provider = new ExpressCheckout();
         $response = $provider->setExpressCheckout($checkoutData);
         return redirect()->to($response['paypal_link']);
@@ -141,7 +172,7 @@ class CartController extends Controller
         $customer = $this->customerRepo->findWith($id, ['bill']);
         $config = $this->configRepo->find(1);
         $to_address = Address::create([
-            'name'    => $customer->fname.' '.$customer->lname,
+            'name'    => $customer->fname . ' ' . $customer->lname,
             'street1' => (!empty($customer->bill)) ? $customer->bill->street : '',
             'city'    => (!empty($customer->bill)) ? $customer->bill->city : '',
             'state'   => (!empty($customer->bill)) ? $customer->bill->state : '',
@@ -193,9 +224,9 @@ class CartController extends Controller
 
     private function package($height, $width)
     {
-        if($height <= 8 && $width <= 5){
+        if ($height <= 8 && $width <= 5) {
             return 'SmallFlatRateBox';
-        } elseif(($height > 8 && $width > 5) && ($height <= 11 && $width <= 8)){
+        } elseif (($height > 8 && $width > 5) && ($height <= 11 && $width <= 8)) {
             return 'MediumFlatRateBox';
         } else {
             return 'LargeFlatRateBox';
